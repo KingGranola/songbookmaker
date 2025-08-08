@@ -201,6 +201,8 @@ export function setupUI(ctx) {
   ctx.highlightSelectedChip = highlightSelectedChip;
   ctx.setCurrentChord = setCurrentChord;
   ctx.applySelectedChord = applySelectedChord;
+  ctx.renderPage = renderPage;
+  ctx.persist = persist;
 }
 
 

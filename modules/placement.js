@@ -122,6 +122,62 @@ export function enableChordPlacement(ctx) {
     }
     currentLineWrap = null;
   });
+  
+  // コード編集機能（ダブルクリック）
+  el.pageContent.addEventListener('dblclick', (ev) => {
+    const chordEl = ev.target.closest('.chord');
+    if (!chordEl || chordEl.classList.contains('sep')) return;
+    
+    ev.preventDefault();
+    ev.stopPropagation();
+    
+    const originalText = chordEl.textContent;
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.value = originalText;
+    input.style.cssText = `
+      position: absolute;
+      left: ${chordEl.style.left};
+      top: ${chordEl.style.top || '0'};
+      width: ${Math.max(60, originalText.length * 12)}px;
+      height: 20px;
+      border: 2px solid #3b82f6;
+      border-radius: 4px;
+      padding: 2px 4px;
+      font-size: ${state.fontSizeChord}px;
+      font-weight: 700;
+      color: ${state.chordColor};
+      background: white;
+      z-index: 1001;
+    `;
+    
+    chordEl.style.visibility = 'hidden';
+    chordEl.parentNode.appendChild(input);
+    input.focus();
+    input.select();
+    
+    const finishEdit = () => {
+      const newText = input.value.trim();
+      if (newText && newText !== originalText) {
+        chordEl.textContent = newText;
+        chordEl.dataset.raw = newText;
+        applyChordStyles(ctx);
+      }
+      chordEl.style.visibility = '';
+      input.remove();
+    };
+    
+    input.addEventListener('blur', finishEdit);
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        finishEdit();
+      } else if (e.key === 'Escape') {
+        chordEl.style.visibility = '';
+        input.remove();
+      }
+    });
+  });
+  
   el.pageContent.addEventListener('click', (ev) => {
     const lineWrap = ev.target.closest('.song-line');
     if (!lineWrap) return;
@@ -172,7 +228,10 @@ export function enableChordPlacement(ctx) {
     const dx = e.clientX - startX; const next = Math.max(0, startLeft + dx);
     dragEl.style.left = `${next}px`;
   });
-  window.addEventListener('pointerup', (e) => { if (pid!==e.pointerId) return; dragEl=null; pid=null; });
+  window.addEventListener('pointerup', (e) => {
+    if (pid !== e.pointerId) return;
+    dragEl = null; pid = null;
+  });
 }
 
 

@@ -3,8 +3,11 @@
 export function getPresetChords(ctx) {
   const { state } = ctx;
   const SEMITONES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+  
+  // マイナースケールの正しいダイアトニックコード
   const scaleSteps = state.mode === 'minor' ? [0,2,3,5,7,8,10] : [0,2,4,5,7,9,11];
   const qualities = state.mode === 'minor' ? ['m','dim','M','m','m','M','M'] : ['M','m','m','M','M','m','dim'];
+  
   const keyIdx = SEMITONES.indexOf(state.key);
   if (keyIdx < 0) return [];
 
@@ -15,10 +18,15 @@ export function getPresetChords(ctx) {
     const triad = q === 'M' ? '' : q === 'm' ? 'm' : 'dim';
     return root + triad;
   });
-  // seventh
-  const diatonic7 = diatonic.map((name) => {
+  
+  // seventh - マイナースケールの7番目はm7（Bm7）になるように修正
+  const diatonic7 = diatonic.map((name, i) => {
     if (name.endsWith('dim')) return name.replace('dim', 'm7(b5)');
     if (name.endsWith('m')) return name + '7';
+    // マイナースケールの7番目（B）はm7にする
+    if (state.mode === 'minor' && i === 6) {
+      return name.replace('M', 'm') + '7';
+    }
     return name + 'maj7';
   });
 
@@ -45,6 +53,33 @@ export function updatePresetList(ctx) {
   const { el } = ctx;
   const chords = getPresetChords(ctx);
   el.presetList.innerHTML = '';
+  
+  // セクション追加ボタン
+  const sectionButtons = [
+    { text: 'イントロ', placeholder: '[Intro]' },
+    { text: '間奏', placeholder: '[Interlude]' },
+    { text: 'アウトロ', placeholder: '[Outro]' },
+    { text: 'ブリッジ', placeholder: '[Bridge]' }
+  ];
+  
+  sectionButtons.forEach(section => {
+    const chip = document.createElement('button');
+    chip.type = 'button';
+    chip.className = 'chip section-chip';
+    chip.textContent = section.text;
+    chip.title = `${section.text}セクションを歌詞に追加`;
+    chip.addEventListener('click', () => {
+      addSectionToLyrics(ctx, section.placeholder);
+    });
+    el.presetList.appendChild(chip);
+  });
+  
+  // 区切り線
+  const separator = document.createElement('div');
+  separator.style.cssText = 'width: 100%; height: 1px; background: var(--border); margin: 8px 0;';
+  el.presetList.appendChild(separator);
+  
+  // コードプリセット
   chords.forEach((name) => {
     const chip = document.createElement('button');
     chip.type = 'button';
@@ -57,6 +92,32 @@ export function updatePresetList(ctx) {
     el.presetList.appendChild(chip);
   });
   if (ctx.highlightSelectedChip) ctx.highlightSelectedChip();
+}
+
+function addSectionToLyrics(ctx, sectionText) {
+  const { state, el } = ctx;
+  const currentLyrics = el.lyricsInput.value;
+  const lines = currentLyrics.split('\n');
+  
+  // 空行を削除してから追加
+  while (lines.length > 0 && lines[lines.length - 1].trim() === '') {
+    lines.pop();
+  }
+  
+  // セクションを追加
+  lines.push('');
+  lines.push(sectionText);
+  lines.push('');
+  
+  el.lyricsInput.value = lines.join('\n');
+  state.lyrics = el.lyricsInput.value;
+  
+  // プレビューを更新
+  if (ctx.renderPage) ctx.renderPage(ctx);
+  if (ctx.persist) ctx.persist();
+  
+  // テキストエリアの最後にスクロール
+  el.lyricsInput.scrollTop = el.lyricsInput.scrollHeight;
 }
 
 

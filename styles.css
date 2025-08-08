@@ -105,6 +105,18 @@ button:disabled { opacity: 0.6; cursor: not-allowed; }
   user-select: none;
 }
 .chip:hover { outline: 2px solid rgba(37, 99, 235, 0.35); }
+.chip.section-chip {
+  background: var(--surface-2);
+  color: var(--muted);
+  border-color: var(--border);
+  font-size: 12px;
+  padding: 4px 8px;
+}
+.chip.section-chip:hover {
+  background: var(--surface-1);
+  color: var(--text);
+  outline: 2px solid rgba(59, 130, 246, 0.35);
+}
 .current-chord { font-weight: 700; color: #f59e0b; }
 
 .page {
@@ -163,8 +175,25 @@ dialog { border: 1px solid var(--border); border-radius: 12px; background: var(-
   .app-header, .left-panel, .note, .app-footer { display: none !important; }
   .app-main { display: block; padding: 0; }
   .right-panel { border: none; padding: 0; }
-  .page { box-shadow: none; border-radius: 0; border: none; transform: none; }
-  .page-content { padding: 0; }
+  .page { 
+    box-shadow: none; 
+    border-radius: 0; 
+    border: none; 
+    transform: none !important; 
+    width: 210mm !important;
+    height: 297mm !important;
+  }
+  .page-content { 
+    padding: 15mm !important; 
+    transform: none !important;
+  }
+  .chords-row {
+    transform: translateY(-18px) !important;
+  }
+  .chord {
+    position: absolute !important;
+    transform: none !important;
+  }
 }
 
 /* スマホ対応 */
