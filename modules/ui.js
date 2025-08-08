@@ -49,10 +49,7 @@ export function setupUI(ctx) {
     state.selectedChord = chordOrNull;
     if (el.currentChord) el.currentChord.textContent = chordOrNull || 'なし';
     
-    // オーバーレイの更新
-    if (el.overlayChordText) {
-      el.overlayChordText.textContent = chordOrNull || 'なし';
-    }
+
     
     highlightSelectedChip();
     updateCursor();
