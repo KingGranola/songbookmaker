@@ -182,18 +182,37 @@ export function setupUI(ctx) {
 
   el.lyricsFont?.addEventListener('input', ()=>{
     state.fontSizeLyrics = Number(el.lyricsFont.value);
-    el.pageContent.querySelectorAll('.lyrics-text').forEach((n)=> n.style.fontSize = `${state.fontSizeLyrics}px`);
+    el.pageContent.querySelectorAll('.lyrics-text').forEach((n)=> {
+      n.style.fontSize = `${state.fontSizeLyrics}px`;
+      // フォントファミリーも再適用
+      n.classList.remove('ff-serif', 'ff-sans', 'ff-rounded', 'ff-mincho');
+      n.classList.add(getFontClass(state.lyricsFontFamily));
+    });
   });
   el.lyricsLeading?.addEventListener('input', ()=>{
     state.lineGap = Number(el.lyricsLeading.value);
     el.pageContent.querySelectorAll('.lyrics-text').forEach((n)=> n.style.marginBottom = `${state.lineGap}px`);
     persist();
   });
+  el.letterSpacing?.addEventListener('input', ()=>{
+    state.letterSpacing = Number(el.letterSpacing.value);
+    el.pageContent.querySelectorAll('.lyrics-text').forEach((n)=> n.style.letterSpacing = `${state.letterSpacing}px`);
+    persist();
+  });
+  // フォントクラス取得関数
+  function getFontClass(fontFamily) {
+    switch (fontFamily) {
+      case 'serif': return 'ff-serif';
+      case 'rounded': return 'ff-rounded';
+      default: return 'ff-sans';
+    }
+  }
+
   el.lyricsFF?.addEventListener('change', ()=>{
     state.lyricsFontFamily = el.lyricsFF.value;
     el.pageContent.querySelectorAll('.lyrics-text').forEach((n)=>{
       // 既存のフォントクラスを削除
-      n.classList.remove('ff-serif', 'ff-sans', 'ff-mono', 'ff-rounded', 'ff-mincho');
+      n.classList.remove('ff-serif', 'ff-sans', 'ff-rounded');
       // 新しいフォントクラスを追加
       n.classList.add(getFontClass(state.lyricsFontFamily));
     });
@@ -306,7 +325,7 @@ export function setupUI(ctx) {
     const { state, el } = ctx;
     const blob = new Blob([ JSON.stringify({ version:1, project: {
       key: state.key, mode: state.mode, presetType: state.presetType,
-      lyrics: state.lyrics, lineGap: state.lineGap,
+      lyrics: state.lyrics, lineGap: state.lineGap, letterSpacing: state.letterSpacing,
       fontSizeLyrics: state.fontSizeLyrics, fontSizeChord: state.fontSizeChord,
       chordColor: state.chordColor, lyricsFontFamily: state.lyricsFontFamily, chordFontFamily: state.chordFontFamily,
       marginMm: state.marginMm, history: state.history,
@@ -322,17 +341,17 @@ export function setupUI(ctx) {
     try{
       const data = JSON.parse(text); const p = data.project||data; Object.assign(state, {
         key:p.key||state.key, mode:p.mode||state.mode, presetType:p.presetType||state.presetType,
-        lyrics:p.lyrics||'', lineGap:p.lineGap??state.lineGap, fontSizeLyrics:p.fontSizeLyrics??state.fontSizeLyrics,
-        fontSizeChord:p.fontSizeChord??state.fontSizeChord, chordColor:p.chordColor||state.chordColor,
-        lyricsFontFamily:p.lyricsFontFamily||state.lyricsFontFamily, chordFontFamily:p.chordFontFamily||state.chordFontFamily,
-        marginMm:p.marginMm??state.marginMm, history:Array.isArray(p.history)?p.history:[],
-        title:p.title||'', artist:p.artist||'', composer:p.composer||'',
+        lyrics:p.lyrics||'', lineGap:p.lineGap??state.lineGap, letterSpacing:p.letterSpacing??state.letterSpacing,
+        fontSizeLyrics:p.fontSizeLyrics??state.fontSizeLyrics, fontSizeChord:p.fontSizeChord??state.fontSizeChord,
+        chordColor:p.chordColor||state.chordColor, lyricsFontFamily:p.lyricsFontFamily||state.lyricsFontFamily,
+        chordFontFamily:p.chordFontFamily||state.chordFontFamily, marginMm:p.marginMm??state.marginMm,
+        history:Array.isArray(p.history)?p.history:[], title:p.title||'', artist:p.artist||'', composer:p.composer||'',
       });
       // UI反映
       el.keySelect.value=state.key; el.modeSelect.value=state.mode; el.presetType.value=state.presetType;
       el.lyricsInput.value=state.lyrics; el.lyricsFont.value=String(state.fontSizeLyrics); el.chordFont.value=String(state.fontSizeChord);
       el.chordColor.value=state.chordColor; el.lyricsFF.value=state.lyricsFontFamily; el.chordFF.value=state.chordFontFamily;
-      el.lyricsLeading.value=String(state.lineGap); if(el.titleInput) el.titleInput.value=state.title; if(el.artistInput) el.artistInput.value=state.artist; if(el.composerInput) el.composerInput.value=state.composer;
+      el.lyricsLeading.value=String(state.lineGap); if(el.letterSpacing) el.letterSpacing.value=String(state.letterSpacing); if(el.titleInput) el.titleInput.value=state.title; if(el.artistInput) el.artistInput.value=state.artist; if(el.composerInput) el.composerInput.value=state.composer;
       // 再描画
       renderPage(ctx);
       if(Array.isArray(p.chords)){

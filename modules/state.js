@@ -21,6 +21,7 @@ export function setupState() {
     composer: '',
     presetType: 'triad',
     chordOffsetPx: -18,
+    letterSpacing: 0,
     batchQueue: [],
   };
 
@@ -40,6 +41,7 @@ export function setupState() {
     artistInput: document.getElementById('artist-input'),
     composerInput: document.getElementById('composer-input'),
     chordOffset: document.getElementById('chord-offset'),
+    letterSpacing: document.getElementById('letter-spacing'),
     btnPrint: document.getElementById('btn-print'),
     btnSave: document.getElementById('btn-save'),
     btnLoad: document.getElementById('btn-load'),
@@ -96,6 +98,7 @@ export function setupState() {
         composer: state.composer,
         presetType: state.presetType,
         chordOffsetPx: state.chordOffsetPx,
+        letterSpacing: state.letterSpacing,
         batchQueue: state.batchQueue,
       };
       localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
@@ -124,6 +127,7 @@ export function setupState() {
       if (el.composerInput) el.composerInput.value = state.composer;
       if (el.presetType) el.presetType.value = state.presetType;
       if (el.lyricsLeading) el.lyricsLeading.value = String(state.lineGap);
+      if (el.letterSpacing) el.letterSpacing.value = String(state.letterSpacing);
       if (el.chordOffset) el.chordOffset.value = String(state.chordOffsetPx);
     } catch {}
   }

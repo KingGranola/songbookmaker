@@ -90,9 +90,7 @@
             <button id="btn-sep" class="chip" title="区切り線">｜</button>
             <button id="btn-eraser" class="danger ghost">消しゴム</button>
           </div>
-          <div class="palette-row">
-            <div>選択中コード: <span id="current-chord" class="current-chord">なし</span></div>
-          </div>
+
         </div>
       </section>
 
@@ -102,41 +100,38 @@
           <div class="preview-wrap">
             <div id="page" class="page a4 portrait" aria-label="A4プレビュー">
               <div id="page-content" class="page-content"></div>
-              <div id="selected-chord-overlay" class="selected-chord-overlay">
-                <div class="overlay-content">
-                  <div class="overlay-label">選択中コード</div>
-                  <span id="overlay-chord-text">なし</span>
-                </div>
-              </div>
             </div>
             <div class="note">A4最適化。書き出しは「PDF書き出し」。</div>
           </div>
-          <aside class="right-controls">
-            <div class="ctrl-title">表示設定</div>
-            <label class="field"><span>歌詞サイズ</span><input id="lyrics-font" type="range" min="10" max="28" value="16" /></label>
-            <label class="field"><span>コードサイズ</span><input id="chord-font" type="range" min="10" max="28" value="14" /></label>
-            <label class="field"><span>コード色</span><input id="chord-color" type="color" value="#b00020" /></label>
-            <label class="field"><span>歌詞フォント</span>
-              <select id="lyrics-ff">
-                <option value="sans" selected>ゴシック</option>
-                <option value="serif">明朝</option>
-                <option value="mono">等幅</option>
-                <option value="rounded">丸ゴシック</option>
-                <option value="mincho">楷書</option>
-              </select>
-            </label>
-            <label class="field"><span>コードフォント</span>
-              <select id="chord-ff">
-                <option value="sans" selected>ゴシック</option>
-                <option value="serif">明朝</option>
-                <option value="mono">等幅</option>
-                <option value="rounded">丸ゴシック</option>
-                <option value="bold">太字ゴシック</option>
-              </select>
-            </label>
-            <label class="field"><span>行間</span><input id="lyrics-leading" type="range" min="0" max="24" value="8" /></label>
-            <label class="field"><span>コード縦位置</span><input id="chord-offset" type="range" min="-40" max="0" value="-18" /></label>
-          </aside>
+          <div class="right-sidebar">
+            <div class="current-chord-display">
+              <div class="current-chord-label">選択中コード</div>
+              <div class="current-chord-value" id="current-chord">なし</div>
+            </div>
+            <aside class="right-controls">
+              <div class="ctrl-title">表示設定</div>
+              <label class="field"><span>歌詞サイズ</span><input id="lyrics-font" type="range" min="10" max="28" value="16" /></label>
+              <label class="field"><span>コードサイズ</span><input id="chord-font" type="range" min="10" max="28" value="14" /></label>
+              <label class="field"><span>コード色</span><input id="chord-color" type="color" value="#b00020" /></label>
+              <label class="field"><span>歌詞フォント</span>
+                <select id="lyrics-ff">
+                  <option value="sans" selected>ゴシック</option>
+                  <option value="serif">明朝</option>
+                  <option value="rounded">丸ゴシック</option>
+                </select>
+              </label>
+              <label class="field"><span>コードフォント</span>
+                <select id="chord-ff">
+                  <option value="sans" selected>ゴシック</option>
+                  <option value="serif">明朝</option>
+                  <option value="rounded">丸ゴシック</option>
+                </select>
+              </label>
+              <label class="field"><span>行間</span><input id="lyrics-leading" type="range" min="0" max="24" value="8" /></label>
+              <label class="field"><span>字間</span><input id="letter-spacing" type="range" min="-2" max="8" value="0" /></label>
+              <label class="field"><span>コード縦位置</span><input id="chord-offset" type="range" min="-40" max="0" value="-18" /></label>
+            </aside>
+          </div>
         </div>
       </section>
     </main>

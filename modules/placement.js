@@ -32,6 +32,7 @@ export function renderPage(ctx) {
     lyricsEl.className = 'lyrics-text';
     lyricsEl.style.fontSize = `${state.fontSizeLyrics}px`;
     lyricsEl.style.marginBottom = `${state.lineGap}px`;
+    lyricsEl.style.letterSpacing = `${state.letterSpacing}px`;
     lyricsEl.classList.add(getFontClass(state.lyricsFontFamily));
     lyricsEl.textContent = line || '\u00A0';
 
@@ -50,7 +51,7 @@ export function applyChordStyles(ctx) {
     c.style.fontSize = `${state.fontSizeChord}px`;
     
     // 既存のフォントクラスを削除
-    c.classList.remove('ff-mono', 'ff-sans', 'ff-serif', 'ff-rounded', 'ff-bold');
+    c.classList.remove('ff-sans', 'ff-serif', 'ff-rounded');
     
     // 新しいフォントクラスを追加
     c.classList.add(getFontClass(state.chordFontFamily));
@@ -300,11 +301,7 @@ export function enableChordPlacement(ctx) {
 function getFontClass(fontFamily) {
   switch (fontFamily) {
     case 'serif': return 'ff-serif';
-    case 'sans': return 'ff-sans';
-    case 'mono': return 'ff-mono';
     case 'rounded': return 'ff-rounded';
-    case 'mincho': return 'ff-mincho';
-    case 'bold': return 'ff-bold';
     default: return 'ff-sans';
   }
 }

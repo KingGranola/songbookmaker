@@ -113,7 +113,41 @@ button:disabled { opacity: 0.6; cursor: not-allowed; }
 }
 .right-panel { overflow: auto; }
 .right-content { display: grid; grid-template-columns: 1fr 240px; gap: 12px; align-items: start; }
+
+.right-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
 .preview-wrap { overflow: auto; }
+.current-chord-display {
+  background: rgba(17,24,39,0.5);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.current-chord-label {
+  font-size: 11px;
+  color: var(--muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+
+.current-chord-value {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--primary-light);
+  min-height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .right-controls { position: sticky; top: 12px; display: grid; gap: 8px; align-content: start; background: rgba(17,24,39,0.5); border: 1px solid var(--border); border-radius: 10px; padding: 10px; }
 .ctrl-title { color: var(--muted); font-size: 12px; }
 .left-panel h2, .right-panel h2 { margin: 0 0 8px; font-size: 14px; color: var(--muted); }
@@ -245,10 +279,7 @@ button:disabled { opacity: 0.6; cursor: not-allowed; }
 }
 .ff-serif { font-family: ui-serif, "Hiragino Mincho ProN", "Noto Serif JP", serif; }
 .ff-sans { font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans JP", Helvetica, Arial; }
-.ff-mono { font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; }
 .ff-rounded { font-family: "Hiragino Maru Gothic ProN", "Rounded Mplus 1c", "Yu Gothic UI", "Meiryo UI", sans-serif; }
-.ff-mincho { font-family: "Hiragino Mincho ProN", "Yu Mincho", "Noto Serif JP", serif; }
-.ff-bold { font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans JP", Helvetica, Arial; font-weight: 700; }
 
 /* 選択中コードハイライト */
 .chip.active { outline: 2px solid rgba(59, 130, 246, 0.9); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2) inset; }
