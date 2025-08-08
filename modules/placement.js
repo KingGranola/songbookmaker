@@ -73,22 +73,24 @@ function addToHistory(ctx, chord) {
   }
 }
 
-// chords-rowに配置されたコード名を取得して履歴に追加する関数
+// ページ（A4 portrait）に配置されたコード名を取得して履歴に記録する関数
 function addChordsToHistory(ctx) {
   const { state } = ctx;
-  const chordElements = document.querySelectorAll('.chords-row .chord');
-  const newHistory = [];
+  
+  // ページ全体のコードを取得
+  const chordElements = document.querySelectorAll('.page-content .chords-row .chord');
+  const pageChords = [];
   
   chordElements.forEach((chordEl) => {
     const chordName = chordEl.textContent.trim();
     if (chordName && chordName !== '｜' && chordName !== '×') {
-      newHistory.push(chordName);
+      pageChords.push(chordName);
     }
   });
   
-  // 重複を除去して履歴を更新（右に追加する方式）
-  const existingHistory = state.history.filter(h => !newHistory.includes(h));
-  state.history = [...existingHistory, ...newHistory].slice(-16); // 右端から16個まで保持
+  // 重複を除去して履歴を更新
+  const uniqueChords = [...new Set(pageChords)];
+  state.history = uniqueChords.slice(-16); // 最大16個まで保持
   
   // 履歴表示を更新
   if (ctx.renderHistory) {

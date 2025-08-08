@@ -63,8 +63,13 @@ export function setupState() {
   const CHORD_CONFIG = {
     // ルールの書き方: コメントは README/SPEC にも記載
     normalizeRules: [
+      // ハーフディミニッシュ：C-7-5, C-7b5, Cmin7b5, Cm7b5, Ch7 → Cm7(b5)
+      { pattern: /^([A-G][#b]?)(?:-7-5|-7b5|min7b5|m7b5|h7)$/i, replace: (m, r) => r.toUpperCase() + 'm7(b5)' },
+      // マイナー：C-7, Cmin7 → Cm7
       { pattern: /^([A-G][#b]?)(?:-7|min7)$/i, replace: (m, r) => r.toUpperCase() + 'm7' },
-      { pattern: /^([A-G][#b]?)(?:-7b5|min7b5|h7)$/i, replace: (m, r) => r.toUpperCase() + 'm7(b5)' },
+      // オーギュメント：C+, C#5 → Caug
+      { pattern: /^([A-G][#b]?)(?:\+|#5)$/i, replace: (m, r) => r.toUpperCase() + 'aug' },
+      // メジャー：CM7, C^7, Cmaj7 → C△7
       { pattern: /^([A-G][#b]?)(?:M7|maj7|\^7)$/i, replace: (m, r) => r.toUpperCase() + '△7' },
     ],
   };

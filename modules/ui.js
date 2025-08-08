@@ -63,8 +63,8 @@ export function setupUI(ctx) {
   function renderHistory() {
     if (!el.historyList) return;
     el.historyList.innerHTML = '';
-    el.historyList.className = 'chip-row history-row';
-    // 履歴を右から左に表示（最新のものが右端に）
+    el.historyList.className = 'chip-row';
+    // 左→右で表示。state.historyの末尾が最新（右端）
     state.history.forEach((c)=>{
       const chip = document.createElement('button');
       chip.type = 'button'; chip.className='chip'; chip.textContent=c;

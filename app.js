@@ -121,7 +121,7 @@
     const diatonic7 = diatonic.map((name, i) => {
       if (name.endsWith('dim')) return name.replace('dim', 'm7b5');
       if (name.endsWith('m')) return name + '7';
-      return name + 'maj7';
+      return name + '△7';
     });
 
     // セカンダリードミナント（V/ii, V/iii, V/IV, V/V, V/vi）
@@ -135,7 +135,7 @@
     // サブドミナントマイナー（簡易）: iv, bVII, bIII(maj7)
     const iv = SEMITONES[(keyIdx + 5) % 12] + 'm';
     const bVII = SEMITONES[(keyIdx + 10) % 12];
-    const bIIImaj7 = SEMITONES[(keyIdx + 3) % 12] + 'maj7';
+    const bIIImaj7 = SEMITONES[(keyIdx + 3) % 12] + '△7';
     const subDomMinor = [iv, bVII, bIIImaj7];
 
     const base = state.presetType === 'seventh' ? diatonic7 : diatonic;
@@ -157,11 +157,13 @@
     //   { pattern: /^([A-G][#b]?)sus4$/i, replace: (m, r) => r.toUpperCase()+"sus4" }
     //   { pattern: /^([A-G][#b]?)M9$/i,    replace: (m, r) => r.toUpperCase()+"maj9" }
     normalizeRules: [
-      // 例: C-7, Cmin7 → Cm7
+      // ハーフディミニッシュ：C-7-5, C-7b5, Cmin7b5, Cm7b5, Ch7 → Cm7(b5)
+      { pattern: /^([A-G][#b]?)(?:-7-5|-7b5|min7b5|m7b5|h7)$/i, replace: (m, r) => r.toUpperCase() + 'm7(b5)' },
+      // マイナー：C-7, Cmin7 → Cm7
       { pattern: /^([A-G][#b]?)(?:-7|min7)$/i, replace: (m, r) => r.toUpperCase() + 'm7' },
-      // C-7b5, Cmin7b5, Ch7 → Cm7(b5)
-      { pattern: /^([A-G][#b]?)(?:-7b5|min7b5|h7)$/i, replace: (m, r) => r.toUpperCase() + 'm7(b5)' },
-      // CM7, Cmaj7, C^7 → C△7
+      // オーギュメント：C+, C#5 → Caug
+      { pattern: /^([A-G][#b]?)(?:\+|#5)$/i, replace: (m, r) => r.toUpperCase() + 'aug' },
+      // メジャー：CM7, C^7, Cmaj7 → C△7
       { pattern: /^([A-G][#b]?)(?:M7|maj7|\^7)$/i, replace: (m, r) => r.toUpperCase() + '△7' },
     ],
   };

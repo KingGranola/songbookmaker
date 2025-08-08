@@ -27,7 +27,7 @@ export function getPresetChords(ctx) {
     if (state.mode === 'minor' && i === 6) {
       return name.replace('M', 'm') + '7';
     }
-    return name + 'maj7';
+    return name + '△7';
   });
 
   // Secondary dominants (V/ii, V/iii, V/IV, V/V, V/vi)
@@ -41,7 +41,7 @@ export function getPresetChords(ctx) {
   // Subdominant minor (simple set)
   const iv = SEMITONES[(keyIdx + 5) % 12] + 'm';
   const bVII = SEMITONES[(keyIdx + 10) % 12];
-  const bIIImaj7 = SEMITONES[(keyIdx + 3) % 12] + 'maj7';
+  const bIIImaj7 = SEMITONES[(keyIdx + 3) % 12] + '△7';
   const subDomMinor = [iv, bVII, bIIImaj7];
 
   const base = state.presetType === 'seventh' ? diatonic7 : diatonic;
