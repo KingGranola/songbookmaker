@@ -6,7 +6,7 @@
 
 **GitHub Pages**: https://[your-username].github.io/songbookmaker/
 
-## ✨ 機能 (ver0.1)
+## ✨ 機能 (ver0.2)
 
 ### 基本機能
 - **歌詞エディット**: 歌詞を入力・編集
@@ -86,12 +86,10 @@ open http://localhost:8000/index.html
 
 MIT License
 
-## 🎵 参考資料
 
-- [ダイアトニックコード理論](https://watanabejunya.com/diatonic-code/)
 
 ---
 
-**ver0.1** - 2024年12月
+**ver0.2** - 2025年8月
 
 
