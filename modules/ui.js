@@ -13,16 +13,36 @@ export function setupUI(ctx) {
     
     // プリセットチップのハイライト
     presetChips.forEach((chip) => {
-      chip.classList.toggle('active', chip.textContent === state.selectedChord);
+      if (chip.textContent === state.selectedChord) {
+        chip.style.outline = '2px solid rgba(245, 158, 11, 0.9)';
+        chip.style.boxShadow = '0 0 0 3px rgba(245, 158, 11, 0.2) inset';
+      } else {
+        chip.style.outline = '';
+        chip.style.boxShadow = '';
+      }
     });
     
     // 履歴チップのハイライト
     historyChips.forEach((chip) => {
-      chip.classList.toggle('active', chip.textContent === state.selectedChord);
+      if (chip.textContent === state.selectedChord) {
+        chip.style.outline = '2px solid rgba(245, 158, 11, 0.9)';
+        chip.style.boxShadow = '0 0 0 3px rgba(245, 158, 11, 0.2) inset';
+      } else {
+        chip.style.outline = '';
+        chip.style.boxShadow = '';
+      }
     });
     
     // 区切り線ボタンのハイライト
-    if (sepBtn) sepBtn.classList.toggle('active', isSepSelected);
+    if (sepBtn) {
+      if (isSepSelected) {
+        sepBtn.style.outline = '2px solid rgba(245, 158, 11, 0.9)';
+        sepBtn.style.boxShadow = '0 0 0 3px rgba(245, 158, 11, 0.2) inset';
+      } else {
+        sepBtn.style.outline = '';
+        sepBtn.style.boxShadow = '';
+      }
+    }
   }
 
   function setCurrentChord(chordOrNull) {
@@ -43,6 +63,8 @@ export function setupUI(ctx) {
   function renderHistory() {
     if (!el.historyList) return;
     el.historyList.innerHTML = '';
+    el.historyList.className = 'chip-row history-row';
+    // 履歴を右から左に表示（最新のものが右端に）
     state.history.forEach((c)=>{
       const chip = document.createElement('button');
       chip.type = 'button'; chip.className='chip'; chip.textContent=c;

@@ -197,8 +197,8 @@
   function setCurrentChord(chordOrNull) {
     state.selectedChord = chordOrNull;
     el.currentChord.textContent = chordOrNull || 'なし';
-    highlightSelectedChip();
-    updateCursor();
+    // highlightSelectedChip(); // 削除 - modules/ui.jsで管理
+    // updateCursor(); // 削除 - modules/ui.jsで管理
   }
 
   // 古いapplySelectedChord関数を削除 - modules/ui.jsで管理
@@ -255,76 +255,9 @@
     });
   }
 
-  // クリックでコード設置
-  function enableChordPlacement() {
-    el.pageContent.addEventListener('click', (ev) => {
-      const lineWrap = ev.target.closest('.song-line');
-      if (!lineWrap) return;
-      const chordsRow = lineWrap.querySelector('.chords-row');
-      if (!chordsRow) return;
-
-      // 消しゴム
-      if (state.selectedChord === '__ERASE__') {
-        const chordEl = ev.target.closest('.chord');
-        if (chordEl && chordsRow.contains(chordEl)) {
-          chordEl.remove();
-        }
-        return;
-      }
-
-      if (!state.selectedChord) return;
-
-      const rect = chordsRow.getBoundingClientRect();
-      const offsetX = (ev.clientX - rect.left) + lineWrap.scrollLeft;
-      const chord = state.selectedChord;
-      // 区切り
-      if (chord === '|') {
-        const sep = document.createElement('span');
-        sep.className = 'chord sep';
-        sep.dataset.raw = '|';
-        sep.textContent = '｜';
-        sep.style.left = `${Math.max(0, offsetX)}px`;
-        chordsRow.appendChild(sep);
-        applyChordStyles();
-        return;
-      }
-
-      const span = document.createElement('span');
-      span.className = 'chord';
-      span.dataset.raw = chord;
-      span.textContent = displayChordForKey(chord);
-      span.style.left = `${Math.max(0, offsetX)}px`;
-      chordsRow.appendChild(span);
-      applyChordStyles();
-    });
-
-    // ドラッグで移動（Pointer Events 対応）
-    let dragEl = null;
-    let startX = 0;
-    let startLeft = 0;
-    let activePointerId = null;
-    el.pageContent.addEventListener('pointerdown', (e) => {
-      const target = e.target.closest('.chord');
-      if (!target) return;
-      dragEl = target;
-      activePointerId = e.pointerId;
-      startX = e.clientX;
-      startLeft = parseFloat(dragEl.style.left || '0');
-      dragEl.setPointerCapture?.(activePointerId);
-      e.preventDefault();
-    });
-    window.addEventListener('pointermove', (e) => {
-      if (!dragEl || activePointerId !== e.pointerId) return;
-      const dx = e.clientX - startX;
-      const next = Math.max(0, startLeft + dx);
-      dragEl.style.left = `${next}px`;
-    });
-    window.addEventListener('pointerup', (e) => {
-      if (activePointerId !== e.pointerId) return;
-      dragEl = null;
-      activePointerId = null;
-    });
-  }
+  // クリックでコード設置 - 古い処理を削除、modules/placement.jsで管理
+  // 古い関数を削除 - modules/ui.jsとmodules/placement.jsで管理
+  // enableChordPlacement, updateCursor, displayChordForKey, transposeAllExistingChords, refreshChordTexts, highlightSelectedChip
 
   // カーソル切替
   function updateCursor() {
@@ -333,24 +266,8 @@
     el.pageContent.classList.toggle('cursor-pencil', !isErase && !!state.selectedChord);
   }
 
-  function displayChordForKey(symbol) {
-    // 表示時の自動移調は行わない。キー変更時に既存コードを一括移調する方針。
-    return symbol;
-  }
-
-  function transposeAllExistingChords(fromKey, toKey) {
-    const interval = computeInterval(fromKey, toKey);
-    if (!interval) return;
-    const chordEls = el.pageContent.querySelectorAll('.chord');
-    chordEls.forEach((n) => {
-      const raw = n.dataset.raw || n.textContent;
-      if (raw === '|' || raw === '｜') return;
-      const next = transposeChord(raw, interval);
-      n.dataset.raw = next;
-      n.textContent = displayChordForKey(next);
-    });
-    applyChordStyles();
-  }
+  // 古い関数を削除
+  // transposeAllExistingChords, refreshChordTexts, highlightSelectedChip
 
   // イベント
   function bindEvents() {
@@ -463,37 +380,8 @@
     el.btnEraser.addEventListener('click', () => setCurrentChord('__ERASE__'));
   }
 
-  function refreshChordTexts() {
-    const chordEls = el.pageContent.querySelectorAll('.chord');
-    chordEls.forEach((n) => {
-      const raw = n.dataset.raw || n.textContent;
-      n.dataset.raw = raw;
-      if (raw === '|') {
-        n.textContent = '｜';
-      } else {
-        n.textContent = displayChordForKey(raw);
-      }
-    });
-    applyChordStyles();
-  }
-
-  // ハイライト
-  function highlightSelectedChip() {
-    const presetChips = el.presetList.querySelectorAll('.chip');
-    const historyChips = el.historyList.querySelectorAll('.chip');
-    const sepBtn = el.btnSep;
-    const isSepSelected = state.selectedChord === '|' || state.selectedChord === '｜';
-
-    function mark(nodes) {
-      nodes.forEach((chip) => {
-        chip.classList.toggle('active', chip.textContent === state.selectedChord);
-      });
-    }
-
-    mark(presetChips);
-    mark(historyChips);
-    if (sepBtn) sepBtn.classList.toggle('active', isSepSelected);
-  }
+  // 古い関数を削除 - modules/ui.jsで管理
+  // refreshChordTexts, highlightSelectedChip
 
   // ローカル保存
   const STORAGE_KEY = 'sbm:v1';
@@ -663,7 +551,7 @@
     restore();
 
     bindEvents();
-    enableChordPlacement();
+    // enableChordPlacement(); // 削除 - modules/placement.jsで管理
     updatePresetList();
     renderPage();
     renderHistory();

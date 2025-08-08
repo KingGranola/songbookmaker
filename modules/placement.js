@@ -73,6 +73,33 @@ function addToHistory(ctx, chord) {
   }
 }
 
+// chords-rowに配置されたコード名を取得して履歴に追加する関数
+function addChordsToHistory(ctx) {
+  const { state } = ctx;
+  const chordElements = document.querySelectorAll('.chords-row .chord');
+  const newHistory = [];
+  
+  chordElements.forEach((chordEl) => {
+    const chordName = chordEl.textContent.trim();
+    if (chordName && chordName !== '｜' && chordName !== '×') {
+      newHistory.push(chordName);
+    }
+  });
+  
+  // 重複を除去して履歴を更新（右に追加する方式）
+  const existingHistory = state.history.filter(h => !newHistory.includes(h));
+  state.history = [...existingHistory, ...newHistory].slice(-16); // 右端から16個まで保持
+  
+  // 履歴表示を更新
+  if (ctx.renderHistory) {
+    ctx.renderHistory();
+  }
+  // 状態を保存
+  if (ctx.persist) {
+    ctx.persist();
+  }
+}
+
 export function enableChordPlacement(ctx) {
   const { state, el } = ctx;
   let hoverEl = null;
@@ -183,7 +210,7 @@ export function enableChordPlacement(ctx) {
         chordEl.dataset.raw = newText;
         applyChordStyles(ctx);
         // 編集したコードも履歴に追加
-        addToHistory(ctx, newText);
+        addChordsToHistory(ctx);
       }
       chordEl.style.visibility = '';
       input.remove();
@@ -242,11 +269,8 @@ export function enableChordPlacement(ctx) {
     
     // コードが実際に配置された場合のみ履歴に追加
     if (chordAdded) {
-      if (chord !== '|' && chord !== '｜') {
-        addToHistory(ctx, chord);
-      } else {
-        addToHistory(ctx, '|');
-      }
+      // 配置されたコードを履歴に追加
+      addChordsToHistory(ctx);
     }
     
     if (hoverEl) { hoverEl.remove(); hoverEl=null; }
