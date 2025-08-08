@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Songbook Maker</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="app-header">
+      <div class="brand">SONGBOOK MAKER</div>
+      <div class="toolbar">
+        <button id="btn-print" class="primary">PDF書き出し</button>
+        <button id="btn-save" class="ghost">保存</button>
+        <button id="btn-load" class="ghost">読み込み</button>
+        <input id="file-input" type="file" accept="application/json" style="display:none" />
+      </div>
+    </header>
+
+    <main class="app-main">
+      <section class="left-panel">
+        <h2>歌詞エディット</h2>
+        <div class="meta-row">
+          <label class="field"><span>タイトル</span><input id="title-input" type="text" placeholder="曲名" /></label>
+          <label class="field"><span>アーティスト</span><input id="artist-input" type="text" placeholder="アーティスト名" /></label>
+          <label class="field"><span>作曲者</span><input id="composer-input" type="text" placeholder="作曲者名" /></label>
+        </div>
+        <textarea id="lyrics-input" placeholder="ここに歌詞を貼り付け/入力してください。改行で行が分割されます。"></textarea>
+        <div class="helpers">
+          <button id="btn-clear" class="ghost">歌詞をクリア</button>
+        </div>
+
+        <div class="palette">
+          <div class="palette-row">
+            <div class="palette-title">キー・モード・プリセット</div>
+            <div class="chip-row">
+              <label class="field"><span>キー</span>
+                <select id="key-select" aria-label="キー選択">
+                  <option value="C">C</option>
+                  <option value="G">G</option>
+                  <option value="D">D</option>
+                  <option value="A">A</option>
+                  <option value="E">E</option>
+                  <option value="B">B</option>
+                  <option value="F#">F#</option>
+                  <option value="C#">C#</option>
+                  <option value="F">F</option>
+                  <option value="Bb">Bb</option>
+                  <option value="Eb">Eb</option>
+                  <option value="Ab">Ab</option>
+                  <option value="Db">Db</option>
+                  <option value="Gb">Gb</option>
+                  <option value="Cb">Cb</option>
+                </select>
+              </label>
+              <label class="field"><span>モード</span>
+                <select id="mode-select" aria-label="モード選択">
+                  <option value="major">メジャー</option>
+                  <option value="minor">マイナー</option>
+                </select>
+              </label>
+              <label class="field"><span>プリセット和音</span>
+                <select id="preset-type" aria-label="プリセットの和音タイプ">
+                  <option value="triad">3和音</option>
+                  <option value="seventh">4和音</option>
+                </select>
+              </label>
+              <button id="btn-manual-transpose" class="ghost">移調する</button>
+            </div>
+          </div>
+          <div class="palette-row">
+            <div class="palette-title">履歴</div>
+            <div id="history-list" class="chip-row"></div>
+          </div>
+          <div class="palette-row">
+            <div class="palette-title">プリセット</div>
+            <div id="preset-list" class="chip-row"></div>
+            <div class="chip-row">
+              
+            </div>
+          </div>
+          <div class="palette-row">
+            <input id="custom-chord" type="text" placeholder="カスタムコード (例: G7, F#m7b5, C/E)" />
+            <button id="btn-set-custom">選択中コードに設定</button>
+            <button id="btn-sep" class="chip" title="区切り線">｜</button>
+            <button id="btn-eraser" class="danger ghost">消しゴム</button>
+          </div>
+          <div class="palette-row current">
+            <div>選択中コード: <span id="current-chord" class="current-chord">なし</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="right-panel">
+        <h2>プレビュー (A4縦)</h2>
+        <div class="right-content">
+          <div class="preview-wrap">
+            <div id="page" class="page a4 portrait" aria-label="A4プレビュー">
+              <div id="page-content" class="page-content"></div>
+            </div>
+            <div class="note">A4最適化。書き出しは「PDF書き出し」。</div>
+          </div>
+          <aside class="right-controls">
+            <div class="ctrl-title">表示設定</div>
+            <label class="field"><span>歌詞サイズ</span><input id="lyrics-font" type="range" min="10" max="28" value="16" /></label>
+            <label class="field"><span>コードサイズ</span><input id="chord-font" type="range" min="10" max="28" value="14" /></label>
+            <label class="field"><span>コード色</span><input id="chord-color" type="color" value="#b00020" /></label>
+            <label class="field"><span>歌詞フォント</span>
+              <select id="lyrics-ff"><option value="serif">明朝</option><option value="sans">ゴシック</option></select>
+            </label>
+            <label class="field"><span>コードフォント</span>
+              <select id="chord-ff"><option value="mono">等幅</option><option value="sans">ゴシック</option></select>
+            </label>
+            <label class="field"><span>行間</span><input id="lyrics-leading" type="range" min="0" max="24" value="8" /></label>
+            <label class="field"><span>コード縦位置</span><input id="chord-offset" type="range" min="-40" max="0" value="-18" /></label>
+          </aside>
+        </div>
+      </section>
+    </main>
+
+    
+
+    <footer class="app-footer">
+      <div>完全ローカルで動作します。ブラウザはChrome/Safariを推奨。</div>
+    </footer>
+
+    <script type="module" src="./main.js"></script>
+  </body>
+  </html>
+
+
