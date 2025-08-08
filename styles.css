@@ -230,8 +230,12 @@ dialog { border: 1px solid var(--border); border-radius: 12px; background: var(-
   @page { size: A4 portrait; margin: 0; }
   body { background: white; }
   .app-header, .left-panel, .note, .app-footer, .version-badge { display: none !important; }
+  .right-panel > h2 { display: none !important; }
+  .right-controls { display: none !important; }
   .app-main { display: block; padding: 0; }
   .right-panel { border: none; padding: 0; }
+  .right-content { display: block !important; }
+  .preview-wrap { overflow: visible !important; }
   .page { 
     box-shadow: none; 
     border-radius: 0; 
