@@ -90,7 +90,7 @@
             <button id="btn-sep" class="chip" title="区切り線">｜</button>
             <button id="btn-eraser" class="danger ghost">消しゴム</button>
           </div>
-          <div class="palette-row current">
+          <div class="palette-row">
             <div>選択中コード: <span id="current-chord" class="current-chord">なし</span></div>
           </div>
         </div>
@@ -102,6 +102,12 @@
           <div class="preview-wrap">
             <div id="page" class="page a4 portrait" aria-label="A4プレビュー">
               <div id="page-content" class="page-content"></div>
+              <div id="selected-chord-overlay" class="selected-chord-overlay">
+                <div class="overlay-content">
+                  <div class="overlay-label">選択中コード</div>
+                  <span id="overlay-chord-text">なし</span>
+                </div>
+              </div>
             </div>
             <div class="note">A4最適化。書き出しは「PDF書き出し」。</div>
           </div>

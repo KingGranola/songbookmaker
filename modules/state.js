@@ -55,6 +55,7 @@ export function setupState() {
     btnEraser: document.getElementById('btn-eraser'),
     currentChord: document.getElementById('current-chord'),
     presetType: document.getElementById('preset-type'),
+    overlayChordText: document.getElementById('overlay-chord-text'),
   };
 
   const SEMITONES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];

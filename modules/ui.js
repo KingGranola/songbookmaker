@@ -14,8 +14,8 @@ export function setupUI(ctx) {
     // プリセットチップのハイライト
     presetChips.forEach((chip) => {
       if (chip.textContent === state.selectedChord) {
-        chip.style.outline = '2px solid rgba(245, 158, 11, 0.9)';
-        chip.style.boxShadow = '0 0 0 3px rgba(245, 158, 11, 0.2) inset';
+        chip.style.outline = '2px solid rgba(59, 130, 246, 0.9)';
+        chip.style.boxShadow = '0 0 0 3px rgba(59, 130, 246, 0.2) inset';
       } else {
         chip.style.outline = '';
         chip.style.boxShadow = '';
@@ -25,8 +25,8 @@ export function setupUI(ctx) {
     // 履歴チップのハイライト
     historyChips.forEach((chip) => {
       if (chip.textContent === state.selectedChord) {
-        chip.style.outline = '2px solid rgba(245, 158, 11, 0.9)';
-        chip.style.boxShadow = '0 0 0 3px rgba(245, 158, 11, 0.2) inset';
+        chip.style.outline = '2px solid rgba(59, 130, 246, 0.9)';
+        chip.style.boxShadow = '0 0 0 3px rgba(59, 130, 246, 0.2) inset';
       } else {
         chip.style.outline = '';
         chip.style.boxShadow = '';
@@ -36,8 +36,8 @@ export function setupUI(ctx) {
     // 区切り線ボタンのハイライト
     if (sepBtn) {
       if (isSepSelected) {
-        sepBtn.style.outline = '2px solid rgba(245, 158, 11, 0.9)';
-        sepBtn.style.boxShadow = '0 0 0 3px rgba(245, 158, 11, 0.2) inset';
+        sepBtn.style.outline = '2px solid rgba(59, 130, 246, 0.9)';
+        sepBtn.style.boxShadow = '0 0 0 3px rgba(59, 130, 246, 0.2) inset';
       } else {
         sepBtn.style.outline = '';
         sepBtn.style.boxShadow = '';
@@ -48,6 +48,12 @@ export function setupUI(ctx) {
   function setCurrentChord(chordOrNull) {
     state.selectedChord = chordOrNull;
     if (el.currentChord) el.currentChord.textContent = chordOrNull || 'なし';
+    
+    // オーバーレイの更新
+    if (el.overlayChordText) {
+      el.overlayChordText.textContent = chordOrNull || 'なし';
+    }
+    
     highlightSelectedChip();
     updateCursor();
   }
@@ -210,8 +216,32 @@ export function setupUI(ctx) {
     persist();
   });
 
-  el.btnPrint?.addEventListener('click', ()=> window.print());
-  el.btnSave?.addEventListener('click', ()=> exportProject(ctx));
+  // バリデーション関数
+  function validateRequiredFields() {
+    const title = state.title?.trim() || '';
+    const artist = state.artist?.trim() || '';
+    
+    if (!title || !artist) {
+      const missingFields = [];
+      if (!title) missingFields.push('曲タイトル');
+      if (!artist) missingFields.push('アーティスト名');
+      
+      alert(`以下の項目を入力してください：\n${missingFields.join('\n')}`);
+      return false;
+    }
+    return true;
+  }
+
+  el.btnPrint?.addEventListener('click', ()=> {
+    if (validateRequiredFields()) {
+      window.print();
+    }
+  });
+  el.btnSave?.addEventListener('click', ()=> {
+    if (validateRequiredFields()) {
+      exportProject(ctx);
+    }
+  });
   el.btnLoad?.addEventListener('click', ()=> el.fileInput.click());
   el.fileInput?.addEventListener('change', (e)=> onImportFile(ctx, e));
   el.btnClear?.addEventListener('click', ()=>{ if (!el.lyricsInput) return; el.lyricsInput.value=''; state.lyrics=''; renderPage(ctx); persist(); });
