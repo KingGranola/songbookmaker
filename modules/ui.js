@@ -6,14 +6,22 @@ export function setupUI(ctx) {
   const { state, el, persist, computeInterval, transposeChord, normalizeChordName } = ctx;
 
   function highlightSelectedChip() {
-    const presetChips = el.presetList?.querySelectorAll('.chip') || [];
+    const presetChips = el.presetList?.querySelectorAll('.chip:not(.section-chip)') || [];
     const historyChips = el.historyList?.querySelectorAll('.chip') || [];
     const sepBtn = el.btnSep;
     const isSepSelected = state.selectedChord === '|' || state.selectedChord === '｜';
     
-    [...presetChips, ...historyChips].forEach((chip) => {
+    // プリセットチップのハイライト
+    presetChips.forEach((chip) => {
       chip.classList.toggle('active', chip.textContent === state.selectedChord);
     });
+    
+    // 履歴チップのハイライト
+    historyChips.forEach((chip) => {
+      chip.classList.toggle('active', chip.textContent === state.selectedChord);
+    });
+    
+    // 区切り線ボタンのハイライト
     if (sepBtn) sepBtn.classList.toggle('active', isSepSelected);
   }
 
@@ -27,9 +35,7 @@ export function setupUI(ctx) {
   function applySelectedChord(chord) {
     const norm = normalizeChordName(chord);
     setCurrentChord(norm);
-    // history更新
-    state.history = [norm].concat(state.history.filter((c)=>c!==norm)).slice(0,16);
-    renderHistory();
+    // 履歴追加は削除 - 実際に配置した時のみ履歴に追加
   }
 
 
@@ -70,6 +76,59 @@ export function setupUI(ctx) {
     applyChordStyles(ctx);
   }
 
+  function reduceLines(lyrics) {
+    const lines = lyrics.split('\n');
+    const result = [];
+    let currentLine = '';
+    
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i].trim();
+      
+      // 空行の場合は新しい行を開始
+      if (!line) {
+        if (currentLine) {
+          result.push(currentLine);
+          currentLine = '';
+        }
+        continue;
+      }
+      
+      // セクション記号（[Intro]など）の場合は新しい行を開始
+      if (line.startsWith('[') && line.endsWith(']')) {
+        if (currentLine) {
+          result.push(currentLine);
+          currentLine = '';
+        }
+        result.push(line);
+        continue;
+      }
+      
+      // 通常の歌詞行の場合
+      if (currentLine) {
+        // 既存の行がある場合、結合後の文字数をチェック
+        const combinedLine = currentLine + ' ' + line;
+        if (combinedLine.length <= 25) {
+          // 25文字以下なら結合
+          currentLine = combinedLine;
+        } else {
+          // 25文字を超える場合は改行しない
+          result.push(currentLine);
+          currentLine = line;
+        }
+      } else {
+        // 新しい行を開始
+        currentLine = line;
+      }
+    }
+    
+    // 最後の行を追加
+    if (currentLine) {
+      result.push(currentLine);
+    }
+    
+    return result.join('\n');
+  }
+
   function updateCursor() {
     const isErase = state.selectedChord === '__ERASE__';
     el.pageContent.classList.toggle('cursor-eraser', isErase);
@@ -105,12 +164,18 @@ export function setupUI(ctx) {
   el.lyricsFF?.addEventListener('change', ()=>{
     state.lyricsFontFamily = el.lyricsFF.value;
     el.pageContent.querySelectorAll('.lyrics-text').forEach((n)=>{
-      n.classList.toggle('ff-serif', state.lyricsFontFamily==='serif');
-      n.classList.toggle('ff-sans', state.lyricsFontFamily==='sans');
+      // 既存のフォントクラスを削除
+      n.classList.remove('ff-serif', 'ff-sans', 'ff-mono', 'ff-rounded', 'ff-mincho');
+      // 新しいフォントクラスを追加
+      n.classList.add(getFontClass(state.lyricsFontFamily));
     });
     persist();
   });
-  el.chordFF?.addEventListener('change', ()=>{ state.chordFontFamily = el.chordFF.value; applyChordStyles(ctx); persist(); });
+  el.chordFF?.addEventListener('change', ()=>{ 
+    state.chordFontFamily = el.chordFF.value; 
+    applyChordStyles(ctx); 
+    persist(); 
+  });
   el.chordFont?.addEventListener('input', ()=>{ state.fontSizeChord = Number(el.chordFont.value); applyChordStyles(ctx); persist(); });
   el.chordColor?.addEventListener('input', ()=>{ state.chordColor = el.chordColor.value; applyChordStyles(ctx); persist(); });
   // コード縦位置
@@ -129,8 +194,46 @@ export function setupUI(ctx) {
   el.fileInput?.addEventListener('change', (e)=> onImportFile(ctx, e));
   el.btnClear?.addEventListener('click', ()=>{ if (!el.lyricsInput) return; el.lyricsInput.value=''; state.lyrics=''; renderPage(ctx); persist(); });
 
-  el.btnSetCustom?.addEventListener('click', ()=>{ const v=(el.customChord.value||'').trim(); if(!v) return; applySelectedChord(v); el.customChord.value=''; });
-  el.btnSep?.addEventListener('click', ()=>{ setCurrentChord('|'); state.history=[ '|', ...state.history.filter(c=>c!=='|')].slice(0,16); renderHistory();});
+  el.btnReduceLines?.addEventListener('click', () => {
+    if (!el.lyricsInput) return;
+    const lyrics = el.lyricsInput.value;
+    if (!lyrics.trim()) return;
+    
+    // 現在の歌詞をundo履歴に保存
+    if (!state.lyricsHistory) state.lyricsHistory = [];
+    state.lyricsHistory.push(lyrics);
+    if (state.lyricsHistory.length > 10) state.lyricsHistory.shift(); // 最大10個まで
+    
+    // 行を減らす処理
+    const reducedLyrics = reduceLines(lyrics);
+    el.lyricsInput.value = reducedLyrics;
+    state.lyrics = reducedLyrics;
+    renderPage(ctx);
+    persist();
+  });
+
+  // Undoボタンのイベントハンドラー
+  el.btnUndo?.addEventListener('click', () => {
+    if (!el.lyricsInput || !state.lyricsHistory || state.lyricsHistory.length === 0) return;
+    
+    const previousLyrics = state.lyricsHistory.pop();
+    el.lyricsInput.value = previousLyrics;
+    state.lyrics = previousLyrics;
+    renderPage(ctx);
+    persist();
+  });
+
+  el.btnSetCustom?.addEventListener('click', ()=>{ 
+    const v=(el.customChord.value||'').trim(); 
+    if(!v) return; 
+    applySelectedChord(v); 
+    el.customChord.value=''; 
+    // 履歴追加は削除 - 実際に配置した時のみ履歴に追加
+  });
+  el.btnSep?.addEventListener('click', ()=>{ 
+    setCurrentChord('|'); 
+    // 履歴追加は削除 - 実際に配置した時のみ履歴に追加
+  });
   // 手動移調ボタン（入力済みのみ）
   const btnManualTranspose = document.getElementById('btn-manual-transpose');
   btnManualTranspose?.addEventListener('click', ()=>{
@@ -203,6 +306,8 @@ export function setupUI(ctx) {
   ctx.applySelectedChord = applySelectedChord;
   ctx.renderPage = renderPage;
   ctx.persist = persist;
+  ctx.renderHistory = renderHistory;
 }
+
 
 

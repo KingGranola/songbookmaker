@@ -8,7 +8,10 @@
   </head>
   <body>
     <header class="app-header">
-      <div class="brand">SONGBOOK MAKER</div>
+      <div class="brand">
+        SONGBOOK MAKER
+        <span class="version-badge" title="バージョン 0.2">v0.2</span>
+      </div>
       <div class="toolbar">
         <button id="btn-print" class="primary">PDF書き出し</button>
         <button id="btn-save" class="ghost">保存</button>
@@ -28,6 +31,8 @@
         <textarea id="lyrics-input" placeholder="ここに歌詞を貼り付け/入力してください。改行で行が分割されます。"></textarea>
         <div class="helpers">
           <button id="btn-clear" class="ghost">歌詞をクリア</button>
+          <button id="btn-reduce-lines" class="ghost">行を減らす</button>
+          <button id="btn-undo" class="ghost">元に戻す</button>
         </div>
 
         <div class="palette">
@@ -106,10 +111,22 @@
             <label class="field"><span>コードサイズ</span><input id="chord-font" type="range" min="10" max="28" value="14" /></label>
             <label class="field"><span>コード色</span><input id="chord-color" type="color" value="#b00020" /></label>
             <label class="field"><span>歌詞フォント</span>
-              <select id="lyrics-ff"><option value="serif">明朝</option><option value="sans">ゴシック</option></select>
+              <select id="lyrics-ff">
+                <option value="sans" selected>ゴシック</option>
+                <option value="serif">明朝</option>
+                <option value="mono">等幅</option>
+                <option value="rounded">丸ゴシック</option>
+                <option value="mincho">楷書</option>
+              </select>
             </label>
             <label class="field"><span>コードフォント</span>
-              <select id="chord-ff"><option value="mono">等幅</option><option value="sans">ゴシック</option></select>
+              <select id="chord-ff">
+                <option value="sans" selected>ゴシック</option>
+                <option value="serif">明朝</option>
+                <option value="mono">等幅</option>
+                <option value="rounded">丸ゴシック</option>
+                <option value="bold">太字ゴシック</option>
+              </select>
             </label>
             <label class="field"><span>行間</span><input id="lyrics-leading" type="range" min="0" max="24" value="8" /></label>
             <label class="field"><span>コード縦位置</span><input id="chord-offset" type="range" min="-40" max="0" value="-18" /></label>

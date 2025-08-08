@@ -13,8 +13,9 @@ export function setupState() {
     lineGap: 8,
     selectedChord: null,
     history: [],
-    lyricsFontFamily: 'serif',
-    chordFontFamily: 'mono',
+    lyricsHistory: [], // 歌詞のundo履歴
+    lyricsFontFamily: 'sans', // デフォルトをゴシックに変更
+    chordFontFamily: 'sans', // デフォルトをゴシックに変更
     title: '',
     artist: '',
     composer: '',
@@ -44,6 +45,8 @@ export function setupState() {
     btnLoad: document.getElementById('btn-load'),
     fileInput: document.getElementById('file-input'),
     btnClear: document.getElementById('btn-clear'),
+    btnReduceLines: document.getElementById('btn-reduce-lines'),
+    btnUndo: document.getElementById('btn-undo'),
     historyList: document.getElementById('history-list'),
     presetList: document.getElementById('preset-list'),
     customChord: document.getElementById('custom-chord'),

@@ -96,28 +96,40 @@ export function updatePresetList(ctx) {
 
 function addSectionToLyrics(ctx, sectionText) {
   const { state, el } = ctx;
-  const currentLyrics = el.lyricsInput.value;
+  const textarea = el.lyricsInput;
+  if (!textarea) return;
+  
+  const currentLyrics = textarea.value;
+  const cursorPos = textarea.selectionStart;
   const lines = currentLyrics.split('\n');
   
-  // 空行を削除してから追加
-  while (lines.length > 0 && lines[lines.length - 1].trim() === '') {
-    lines.pop();
+  // カーソル位置の行を特定
+  let currentLineIndex = 0;
+  let charCount = 0;
+  
+  for (let i = 0; i < lines.length; i++) {
+    charCount += lines[i].length + 1; // +1 for newline
+    if (charCount > cursorPos) {
+      currentLineIndex = i;
+      break;
+    }
   }
   
-  // セクションを追加
-  lines.push('');
-  lines.push(sectionText);
-  lines.push('');
+  // セクションを挿入
+  lines.splice(currentLineIndex, 0, sectionText, '');
   
-  el.lyricsInput.value = lines.join('\n');
-  state.lyrics = el.lyricsInput.value;
+  const newLyrics = lines.join('\n');
+  textarea.value = newLyrics;
+  state.lyrics = newLyrics;
   
   // プレビューを更新
   if (ctx.renderPage) ctx.renderPage(ctx);
   if (ctx.persist) ctx.persist();
   
-  // テキストエリアの最後にスクロール
-  el.lyricsInput.scrollTop = el.lyricsInput.scrollHeight;
+  // カーソル位置を調整
+  const newCursorPos = cursorPos + sectionText.length + 1; // +1 for newline
+  textarea.setSelectionRange(newCursorPos, newCursorPos);
+  textarea.focus();
 }
 
 

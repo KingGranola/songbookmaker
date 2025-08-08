@@ -194,25 +194,6 @@
     highlightSelectedChip();
   }
 
-  function pushHistory(chord) {
-    const exists = state.history.find((c) => c === chord);
-    state.history = [chord].concat(state.history.filter((c) => c !== chord)).slice(0, 16);
-    if (!exists) renderHistory(); else renderHistory();
-  }
-
-  function renderHistory() {
-    el.historyList.innerHTML = '';
-    state.history.forEach((c) => {
-      const chip = document.createElement('button');
-      chip.type = 'button';
-      chip.className = 'chip';
-      chip.textContent = c;
-      chip.addEventListener('click', () => setCurrentChord(c));
-      el.historyList.appendChild(chip);
-    });
-    highlightSelectedChip();
-  }
-
   function setCurrentChord(chordOrNull) {
     state.selectedChord = chordOrNull;
     el.currentChord.textContent = chordOrNull || 'なし';
@@ -220,11 +201,7 @@
     updateCursor();
   }
 
-  function applySelectedChord(chord) {
-    const norm = normalizeChordName(chord);
-    setCurrentChord(norm);
-    pushHistory(norm);
-  }
+  // 古いapplySelectedChord関数を削除 - modules/ui.jsで管理
 
   // 歌詞→表示構築
   function renderPage() {
@@ -476,12 +453,12 @@
     el.btnSetCustom.addEventListener('click', () => {
       const v = (el.customChord.value || '').trim();
       if (!v) return;
-      applySelectedChord(v);
+      // 古いapplySelectedChord関数を削除 - modules/ui.jsで管理
       el.customChord.value = '';
     });
     el.btnSep.addEventListener('click', () => {
       setCurrentChord('|');
-      pushHistory('|');
+      // 古いpushHistory関数を削除 - modules/ui.jsで管理
     });
     el.btnEraser.addEventListener('click', () => setCurrentChord('__ERASE__'));
   }

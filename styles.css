@@ -31,7 +31,35 @@ body {
   background: rgba(8, 13, 30, 0.9);
   backdrop-filter: blur(8px);
 }
-.brand { font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase; }
+
+.brand { 
+  font-weight: 800; 
+  letter-spacing: 1.2px; 
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.version-badge {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  color: white;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  cursor: help;
+  transition: all 0.2s ease;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.version-badge:hover {
+  transform: scale(1.05);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
 .toolbar { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
 .divider { width: 1px; height: 28px; background: var(--border); margin: 0 4px; }
 .field { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); font-size: 13px; background: rgba(31,41,55,0.5); padding: 6px 8px; border-radius: 999px; }
@@ -88,7 +116,12 @@ button:disabled { opacity: 0.6; cursor: not-allowed; }
   background: var(--surface-2);
   color: var(--text);
 }
-.helpers { margin-top: 8px; display: flex; gap: 8px; }
+.helpers { 
+  margin-top: 8px; 
+  display: flex; 
+  gap: 8px; 
+  flex-wrap: wrap;
+}
 .meta-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 8px; }
 
 .palette { margin-top: 16px; display: grid; gap: 10px; }
@@ -143,6 +176,9 @@ button:disabled { opacity: 0.6; cursor: not-allowed; }
 .ff-serif { font-family: ui-serif, "Hiragino Mincho ProN", "Noto Serif JP", serif; }
 .ff-sans { font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans JP", Helvetica, Arial; }
 .ff-mono { font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; }
+.ff-rounded { font-family: "Hiragino Maru Gothic ProN", "Rounded Mplus 1c", "Yu Gothic UI", "Meiryo UI", sans-serif; }
+.ff-mincho { font-family: "Hiragino Mincho ProN", "Yu Mincho", "Noto Serif JP", serif; }
+.ff-bold { font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans JP", Helvetica, Arial; font-weight: 700; }
 
 /* 選択中コードハイライト */
 .chip.active { outline: 2px solid rgba(245, 158, 11, 0.9); box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2) inset; }
@@ -172,7 +208,7 @@ dialog { border: 1px solid var(--border); border-radius: 12px; background: var(-
 @media print {
   @page { size: A4 portrait; margin: 0; }
   body { background: white; }
-  .app-header, .left-panel, .note, .app-footer { display: none !important; }
+  .app-header, .left-panel, .note, .app-footer, .version-badge { display: none !important; }
   .app-main { display: block; padding: 0; }
   .right-panel { border: none; padding: 0; }
   .page { 

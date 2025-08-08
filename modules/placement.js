@@ -7,7 +7,7 @@ export function renderPage(ctx) {
 
   // タイトル
   const titleWrap = document.createElement('div');
-  titleWrap.className = 'page-title ' + (state.lyricsFontFamily === 'serif' ? 'ff-serif' : 'ff-sans');
+  titleWrap.className = 'page-title ' + getFontClass(state.lyricsFontFamily);
   const titleEl = document.createElement('div');
   titleEl.className = 'title';
   titleEl.textContent = state.title || '';
@@ -32,7 +32,7 @@ export function renderPage(ctx) {
     lyricsEl.className = 'lyrics-text';
     lyricsEl.style.fontSize = `${state.fontSizeLyrics}px`;
     lyricsEl.style.marginBottom = `${state.lineGap}px`;
-    lyricsEl.classList.add(state.lyricsFontFamily === 'serif' ? 'ff-serif' : 'ff-sans');
+    lyricsEl.classList.add(getFontClass(state.lyricsFontFamily));
     lyricsEl.textContent = line || '\u00A0';
 
     lineWrap.appendChild(chordsRow);
@@ -43,14 +43,34 @@ export function renderPage(ctx) {
 }
 
 export function applyChordStyles(ctx) {
-  const { state, el } = ctx;
-  const chordEls = el.pageContent.querySelectorAll('.chord');
+  const { state } = ctx;
+  const chordEls = document.querySelectorAll('.chord');
   chordEls.forEach((c) => {
     c.style.color = state.chordColor;
     c.style.fontSize = `${state.fontSizeChord}px`;
-    c.classList.toggle('ff-mono', state.chordFontFamily === 'mono');
-    c.classList.toggle('ff-sans', state.chordFontFamily === 'sans');
+    
+    // 既存のフォントクラスを削除
+    c.classList.remove('ff-mono', 'ff-sans', 'ff-serif', 'ff-rounded', 'ff-bold');
+    
+    // 新しいフォントクラスを追加
+    c.classList.add(getFontClass(state.chordFontFamily));
   });
+}
+
+function addToHistory(ctx, chord) {
+  const { state } = ctx;
+  
+  // 既存の履歴から同じコードを削除して先頭に追加
+  state.history = [chord].concat(state.history.filter((c) => c !== chord)).slice(0, 16);
+  
+  // 履歴表示を更新
+  if (ctx.renderHistory) {
+    ctx.renderHistory();
+  }
+  // 状態を保存
+  if (ctx.persist) {
+    ctx.persist();
+  }
 }
 
 export function enableChordPlacement(ctx) {
@@ -162,6 +182,8 @@ export function enableChordPlacement(ctx) {
         chordEl.textContent = newText;
         chordEl.dataset.raw = newText;
         applyChordStyles(ctx);
+        // 編集したコードも履歴に追加
+        addToHistory(ctx, newText);
       }
       chordEl.style.visibility = '';
       input.remove();
@@ -195,6 +217,9 @@ export function enableChordPlacement(ctx) {
     const rect = chordsRow.getBoundingClientRect();
     const offsetX = Math.max(0, ev.clientX - rect.left);
     const chord = state.selectedChord;
+    
+    let chordAdded = false;
+    
     if (chord === '|') {
       const sep = document.createElement('span');
       sep.className = 'chord sep';
@@ -203,15 +228,27 @@ export function enableChordPlacement(ctx) {
       sep.style.left = `${offsetX}px`;
       chordsRow.appendChild(sep);
       applyChordStyles(ctx);
-      return;
+      chordAdded = true;
+    } else {
+      const span = document.createElement('span');
+      span.className = 'chord';
+      span.dataset.raw = chord;
+      span.textContent = chord;
+      span.style.left = `${offsetX}px`;
+      chordsRow.appendChild(span);
+      applyChordStyles(ctx);
+      chordAdded = true;
     }
-    const span = document.createElement('span');
-    span.className = 'chord';
-    span.dataset.raw = chord;
-    span.textContent = chord;
-    span.style.left = `${offsetX}px`;
-    chordsRow.appendChild(span);
-    applyChordStyles(ctx);
+    
+    // コードが実際に配置された場合のみ履歴に追加
+    if (chordAdded) {
+      if (chord !== '|' && chord !== '｜') {
+        addToHistory(ctx, chord);
+      } else {
+        addToHistory(ctx, '|');
+      }
+    }
+    
     if (hoverEl) { hoverEl.remove(); hoverEl=null; }
   });
 
@@ -232,6 +269,18 @@ export function enableChordPlacement(ctx) {
     if (pid !== e.pointerId) return;
     dragEl = null; pid = null;
   });
+}
+
+function getFontClass(fontFamily) {
+  switch (fontFamily) {
+    case 'serif': return 'ff-serif';
+    case 'sans': return 'ff-sans';
+    case 'mono': return 'ff-mono';
+    case 'rounded': return 'ff-rounded';
+    case 'mincho': return 'ff-mincho';
+    case 'bold': return 'ff-bold';
+    default: return 'ff-sans';
+  }
 }
 
 
