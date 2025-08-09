@@ -195,12 +195,24 @@ export function getPresetChords(ctx) {
     }
   }
 
+  // 裏コード（トライトーン・サブスティテューション）
+  const tritoneSubstitutes = generateTritoneSubstitutes(state, keyIdx);
+  
+  // II-V-I パッケージ
+  const twoFiveOne = generateTwoFiveOne(state, keyIdx, scale);
+  
+  // サスペンドコード（Sus4/Sus2）
+  const suspendedChords = generateSuspendedChords(state, keyIdx, scale);
+
   const base = state.presetType === 'seventh' ? diatonic7 : diatonic;
   
   return {
     diatonic: base,
     secondary: secondaries,
-    subDomMinor: subDomMinor
+    subDomMinor: subDomMinor,
+    tritone: tritoneSubstitutes,
+    twoFiveOne: twoFiveOne,
+    suspended: suspendedChords
   };
 }
 
@@ -209,42 +221,138 @@ export function updatePresetList(ctx) {
   const chordCategories = getPresetChords(ctx);
   el.presetList.innerHTML = '';
   
+  // プリセットエリア全体のスタイル設定（統一デザイン）
+  el.presetList.style.cssText = `
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: var(--space-md);
+    padding: var(--space-sm);
+    align-items: start;
+  `;
+  
   // カテゴリ別にコードを表示（ジャズ理論に基づく）
   const categories = [
     { key: 'diatonic', title: state.mode === 'minor' ? 'ダイアトニック (Aeolian/Natural Minor)' : 'ダイアトニック (Ionian/Major)', color: 'var(--primary)' },
     { key: 'secondary', title: 'セカンダリードミナント (V/x)', color: 'var(--primary-light)' },
-    { key: 'subDomMinor', title: state.mode === 'minor' ? 'サブドミナントマイナー (SD.m)' : 'サブドミナントマイナー (借用コード)', color: 'var(--primary-dark)' }
+    { key: 'subDomMinor', title: state.mode === 'minor' ? 'サブドミナントマイナー (SD.m)' : 'サブドミナントマイナー (借用コード)', color: 'var(--primary-dark)' },
+    { key: 'twoFiveOne', title: 'II-V-I パッケージ', color: 'var(--success)' },
+    { key: 'tritone', title: '裏コード (トライトーン代理)', color: 'var(--warning)' },
+    { key: 'suspended', title: 'サスペンド (Sus4/Sus2)', color: 'var(--info)' }
   ];
   
   categories.forEach(category => {
     const chords = chordCategories[category.key];
     if (!chords || chords.length === 0) return;
     
-    // カテゴリタイトル
+    // カテゴリコンテナ（統一デザイン）
+    const categoryContainer = document.createElement('div');
+    categoryContainer.className = 'category-container';
+    categoryContainer.style.cssText = `
+      background: var(--surface-secondary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: var(--space-md);
+      display: flex;
+      flex-direction: column;
+      min-height: 80px;
+      max-height: 120px;
+      box-shadow: var(--shadow);
+    `;
+    
+    // カテゴリタイトル（統一デザイン）
     const titleDiv = document.createElement('div');
     titleDiv.style.cssText = `
-      font-size: 11px;
-      color: var(--muted);
-      margin: 8px 0 4px 0;
+      font-size: var(--font-xs);
+      color: ${category.color};
+      margin: 0 0 var(--space-sm) 0;
       font-weight: 600;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.3px;
+      border-bottom: 1px solid ${category.color};
+      padding-bottom: var(--space-xs);
+      flex-shrink: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     `;
-    titleDiv.textContent = category.title;
-    el.presetList.appendChild(titleDiv);
     
-    // コードチップ（カテゴリごとに横並び、カテゴリ間で改行）
+    // タイトルを短縮
+    const shortTitles = {
+      'diatonic': 'ダイアトニック',
+      'secondary': 'セカンダリードミナント',
+      'subDomMinor': 'サブドミナントマイナー',
+      'twoFiveOne': 'II-V-I',
+      'tritone': '裏コード',
+      'suspended': 'サスペンド'
+    };
+    titleDiv.textContent = shortTitles[category.key] || category.title;
+    categoryContainer.appendChild(titleDiv);
+    
+    // コードチップ（カテゴリに応じたレイアウト）
     const chipRow = document.createElement('div');
     chipRow.className = 'chip-row';
-    chipRow.style.cssText = 'display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 12px;';
+    
+    // カテゴリごとにコンパクトなレイアウトを設定
+    let gridColumns = 'repeat(3, 1fr)';
+    if (category.key === 'twoFiveOne') {
+      gridColumns = '1fr'; // II-V-Iは縦並び
+    } else if (category.key === 'tritone') {
+      gridColumns = '1fr'; // 裏コードは1つなので全幅
+    } else if (category.key === 'suspended') {
+      gridColumns = 'repeat(2, 1fr)'; // サスペンドは2列
+    } else if (chords.length <= 3) {
+      gridColumns = 'repeat(3, 1fr)'; // 3個以下は3列
+    } else if (chords.length <= 4) {
+      gridColumns = 'repeat(2, 1fr)'; // 4個は2列
+    } else {
+      gridColumns = 'repeat(3, 1fr)'; // 5個以上は3列
+    }
+    
+    chipRow.style.cssText = `
+      display: grid;
+      grid-template-columns: ${gridColumns};
+      gap: var(--space-sm);
+      flex: 1;
+      align-content: start;
+    `;
     
     chords.forEach((name) => {
       const chip = document.createElement('button');
       chip.type = 'button';
       chip.className = 'chip';
       chip.textContent = name;
-      chip.style.borderColor = category.color;
-      chip.title = `${category.title}: ${name}`;
+      chip.style.cssText = `
+        border: 1px solid ${category.color};
+        border-radius: var(--radius-sm);
+        background: var(--surface);
+        color: var(--text);
+        padding: var(--space-xs) var(--space-sm);
+        font-size: var(--font-xs);
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--transition-fast);
+        height: 22px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        min-width: 0;
+      `;
+      chip.title = name;
+      
+      // シンプルホバー効果
+      chip.addEventListener('mouseenter', () => {
+        chip.style.background = category.color;
+        chip.style.color = 'white';
+      });
+      
+      chip.addEventListener('mouseleave', () => {
+        chip.style.background = 'var(--surface)';
+        chip.style.color = 'var(--text)';
+      });
       
       // クリックで単体選択
       chip.addEventListener('click', () => {
@@ -253,10 +361,80 @@ export function updatePresetList(ctx) {
       chipRow.appendChild(chip);
     });
     
-    el.presetList.appendChild(chipRow);
+    categoryContainer.appendChild(chipRow);
+    el.presetList.appendChild(categoryContainer);
   });
   
   if (ctx.highlightSelectedChip) ctx.highlightSelectedChip();
+}
+
+// 裏コード（トライトーン・サブスティテューション）生成
+function generateTritoneSubstitutes(state, keyIdx) {
+  // 裏コードの異名同音対応（フラット系を優先）
+  const TRITONE_ENHARMONIC = {
+    'C#': 'Db', 'D#': 'Eb', 'F#': 'Gb', 'G#': 'Ab', 'A#': 'Bb'
+  };
+  const SEMITONES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+  
+  if (state.mode === 'minor') {
+    // マイナーキー: V7の裏コード（V7 = keyIdx + 7, 裏 = keyIdx + 1）
+    let tritoneRoot = SEMITONES[(keyIdx + 1) % 12];
+    // 異名同音変換（フラット系優先）
+    if (TRITONE_ENHARMONIC[tritoneRoot]) {
+      tritoneRoot = TRITONE_ENHARMONIC[tritoneRoot];
+    }
+    return [tritoneRoot + '7']; // 例: Am → E7の裏コード = Bb7
+  } else {
+    // メジャーキー: V7の裏コード（V7 = keyIdx + 7, 裏 = keyIdx + 1）
+    let tritoneRoot = SEMITONES[(keyIdx + 1) % 12];
+    // 異名同音変換（フラット系優先）
+    if (TRITONE_ENHARMONIC[tritoneRoot]) {
+      tritoneRoot = TRITONE_ENHARMONIC[tritoneRoot];
+    }
+    return [tritoneRoot + '7']; // 例: C → G7の裏コード = Db7
+  }
+}
+
+// II-V-I パッケージ生成
+function generateTwoFiveOne(state, keyIdx, scale) {
+  const SEMITONES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+  
+  if (state.mode === 'minor') {
+    // マイナー II-V-I: IIm7(b5) - V7 - Im7
+    const ii = SEMITONES[(keyIdx + 2) % 12] + 'm7(b5)';
+    const V = SEMITONES[(keyIdx + 7) % 12] + '7';
+    const i = SEMITONES[keyIdx] + 'm7';
+    return [ii, V, i]; // 例: Am → Bm7(b5) - E7 - Am7
+  } else {
+    // メジャー II-V-I: IIm7 - V7 - IM7
+    const ii = SEMITONES[(keyIdx + 2) % 12] + 'm7';
+    const V = SEMITONES[(keyIdx + 7) % 12] + '7';
+    const I = SEMITONES[keyIdx] + '△7';
+    return [ii, V, I]; // 例: C → Dm7 - G7 - C△7
+  }
+}
+
+// サスペンドコード生成  
+function generateSuspendedChords(state, keyIdx, scale) {
+  const SEMITONES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+  
+  if (scale && scale.length >= 5) {
+    // 異名同音テーブルを使用
+    return [
+      scale[0] + 'sus4',  // I sus4
+      scale[0] + 'sus2',  // I sus2  
+      scale[4] + 'sus4',  // V sus4
+      scale[4] + 'sus2'   // V sus2
+    ];
+  } else {
+    // フォールバック
+    return [
+      SEMITONES[keyIdx] + 'sus4',
+      SEMITONES[keyIdx] + 'sus2', 
+      SEMITONES[(keyIdx + 7) % 12] + 'sus4',
+      SEMITONES[(keyIdx + 7) % 12] + 'sus2'
+    ];
+  }
 }
 
 

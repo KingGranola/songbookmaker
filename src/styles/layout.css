@@ -5,21 +5,23 @@
 /* メインコンテンツエリア - 2カラムレイアウト */
 .app-main {
   display: grid;
-  grid-template-columns: 0.7fr 1fr; /* 左パネル:右パネル = 0.7:1 (150px縮小) */
-  gap: 0px;
-  padding: 0px;
+  grid-template-columns: 0.7fr 1fr;
+  gap: var(--space-lg);
+  padding: var(--space-lg);
+  height: calc(100vh - 60px); /* ヘッダー分を除いた高さ */
 }
 
-/* 左パネル - 歌詞エディットエリア */
+/* パネル共通スタイル */
 .left-panel, 
 .right-panel {
-  background: var(--surface-2);
+  background: var(--surface-secondary);
   border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 14px;
-  font-size: 0.95em;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.25); /* 影効果 */
-  backdrop-filter: blur(8px); /* 背景ぼかし */
+  border-radius: var(--radius-xl);
+  padding: var(--space-xl);
+  font-size: var(--font-base);
+  box-shadow: var(--shadow-lg);
+  backdrop-filter: blur(8px);
+  overflow: hidden; /* 内容がはみ出さないように */
 }
 
 /* 左パネルの特別設定 */
@@ -36,21 +38,26 @@
 /* 右パネル内のコンテンツレイアウト */
 .right-content { 
   display: grid; 
-  grid-template-columns: 1fr 240px; /* プレビュー:サイドバー = 1:240px */
-  gap: 12px; 
-  align-items: start; 
+  grid-template-columns: 1fr 240px;
+  gap: var(--space-lg); 
+  align-items: start;
+  height: 100%;
 }
 
 /* プレビューエリアの最小幅確保 */
 .right-content > :first-child {
-  min-width: 600px; /* A4プレビューの最小幅 */
+  min-width: 600px;
+  overflow: auto;
 }
 
 /* 右サイドバー */
 .right-sidebar {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--space-lg);
+  height: fit-content;
+  max-height: 100%;
+  overflow-y: auto;
 }
 
 /* プレビューラッパー */
@@ -61,30 +68,30 @@
 
 /* 現在選択中のコード表示エリア */
 .current-chord-display {
-  background: rgba(255, 255, 255);
+  background: var(--surface-secondary);
   border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 12px;
-  margin-bottom: 12px;
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  margin-bottom: var(--space-lg);
   text-align: center;
 }
 
 /* 現在選択中のコードラベル */
 .current-chord-label {
-  font-size: 11px;
-  color: var(--muted);
+  font-size: var(--font-sm);
+  color: var(--text-secondary);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  margin-bottom: 6px;
+  margin-bottom: var(--space-md);
 }
 
 /* 現在選択中のコード値 */
 .current-chord-value {
-  font-size: 28px;
+  font-size: var(--font-2xl);
   font-weight: 700;
   color: var(--danger);
-  min-height: 24px;
+  min-height: var(--space-2xl);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -92,15 +99,15 @@
 
 /* 右側のコントロールパネル */
 .right-controls { 
-  position: sticky; /* スクロール時に固定 */
-  top: 12px; 
+  position: sticky;
+  top: var(--space-lg);
   display: grid; 
-  gap: 8px; 
+  gap: var(--space-md);
   align-content: start; 
-  background: rgba(17,24,39,0.5); 
+  background: var(--surface-secondary);
   border: 1px solid var(--border); 
-  border-radius: 10px; 
-  padding: 10px; 
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
 }
 
 /* コントロールタイトル */

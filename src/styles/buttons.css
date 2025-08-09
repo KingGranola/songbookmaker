@@ -6,17 +6,24 @@
 .field { 
   display: inline-flex; 
   align-items: center; 
-  gap: 6px; 
-  color: var(--muted); 
-  font-size: 12px; 
-  background: rgba(31,41,55,0.5); 
-  padding: 4px 6px; 
-  border-radius: 999px; /* 完全な円形 */
+  gap: var(--space-md); 
+  color: var(--text-secondary); 
+  font-size: var(--font-base); 
+  background: var(--surface-secondary); 
+  padding: var(--space-sm) var(--space-md); 
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border);
+  transition: var(--transition-normal);
+}
+
+.field:hover {
+  border-color: var(--primary-light);
 }
 
 /* フィールド内のスパン要素 */
 .field > span { 
-  color: var(--muted); 
+  color: var(--text-secondary); 
+  font-weight: 500;
 }
 
 /* フィールド内の入力要素 */
@@ -28,9 +35,10 @@
   background: transparent; 
   border: none; 
   color: var(--text); 
-  font-size: 12px; 
+  font-size: var(--font-base); 
   min-width: 0; 
   padding: 0;
+  outline: none;
 }
 
 /* ブロック形式のフィールド */
@@ -41,14 +49,21 @@
 
 /* 基本ボタンスタイル */
 button {
-  background: var(--surface-2);
+  background: var(--surface-secondary);
   color: var(--text);
   border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 6px 10px;
-  font-size: 12px;
+  border-radius: var(--radius-lg);
+  padding: var(--space-md) var(--space-lg);
+  font-size: var(--font-base);
+  font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s ease; /* スムーズなアニメーション */
+  transition: var(--transition-normal);
+  outline: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  min-height: 36px;
 }
 
 /* プライマリボタン - 主要なアクション用 */
