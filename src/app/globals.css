@@ -6,8 +6,10 @@
 
 /* Apple風ベーススタイル */
 @layer base {
-  * {
-    @apply border-gray-200;
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
   }
   
   body {
