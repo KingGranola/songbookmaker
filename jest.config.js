@@ -1,6 +1,6 @@
 export default {
   testEnvironment: 'jsdom',
-  roots: ['<rootDir>/modules', '<rootDir>/tests'],
+  roots: ['<rootDir>/src/modules', '<rootDir>/src/tests'],
   testMatch: [
     '**/__tests__/**/*.js',
     '**/?(*.)+(spec|test).js'
@@ -9,13 +9,13 @@ export default {
     '^.+\\.js$': 'babel-jest',
   },
   collectCoverageFrom: [
-    'modules/**/*.js',
-    '!modules/**/*.d.ts',
+    'src/modules/**/*.js',
+    '!src/modules/**/*.d.ts',
   ],
   coverageDirectory: 'coverage',
   coverageReporters: ['text', 'lcov', 'html'],
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   moduleNameMapping: {
-    '^@/(.*)$': '<rootDir>/modules/$1'
+    '^@/(.*)$': '<rootDir>/src/modules/$1'
   }
 };

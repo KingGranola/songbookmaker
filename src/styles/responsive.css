@@ -2,11 +2,37 @@
    レスポンシブデザイン・スクロールバー
    ======================================== */
 
+/* デスクトップでのA4プレビュー幅維持 */
+@media (min-width: 901px) {
+  /* ウィンドウが狭くなってもA4プレビューを優先 */
+  .app-main {
+    grid-template-columns: minmax(300px, 0.7fr) minmax(650px, 1fr);
+  }
+  
+  .preview-wrap {
+    min-width: 600px;
+    overflow-x: auto;
+  }
+  
+  .right-panel {
+    min-width: 650px; /* A4プレビュー + サイドバーの最小幅 */
+  }
+}
+
 /* スマートフォン・タブレット対応 */
 @media (max-width: 900px) {
   /* メインレイアウトを1カラムに変更 */
   .app-main { 
     grid-template-columns: 1fr; 
+  }
+  
+  /* プレビューを優先表示 */
+  .left-panel {
+    order: 2; /* エディターを下に */
+  }
+  
+  .right-panel {
+    order: 1; /* プレビューを上に */
   }
   
   /* ツールバーの間隔を調整 */
@@ -28,6 +54,12 @@
   /* 右コンテンツを1カラムに変更 */
   .right-content { 
     grid-template-columns: 1fr; 
+  }
+  
+  /* A4プレビューの最小幅を強制維持 */
+  .preview-wrap {
+    min-width: 600px !important;
+    overflow-x: auto;
   }
 }
 

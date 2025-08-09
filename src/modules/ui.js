@@ -559,6 +559,141 @@ export function setupUI(ctx) {
   ctx.renderPage = renderPage;
   ctx.persist = persist;
   ctx.renderHistory = renderHistory;
+
+  // ヘルプ機能の設定
+  setupHelpModal(ctx);
+}
+
+/**
+ * ヘルプモーダルの設定
+ */
+function setupHelpModal(_ctx) {
+  const btnHelp = document.getElementById('btn-help');
+  const helpModal = document.getElementById('help-modal');
+  const helpClose = document.getElementById('help-close');
+  const helpTabs = document.querySelectorAll('.help-tab');
+  const helpPanels = document.querySelectorAll('.help-panel');
+
+  if (!btnHelp || !helpModal) return;
+
+  // ヘルプを開く
+  function openHelp() {
+    helpModal.style.display = 'flex';
+    helpModal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    
+    // フォーカス管理
+    const firstTab = helpModal.querySelector('.help-tab');
+    if (firstTab) {
+      firstTab.focus();
+    }
+  }
+
+  // ヘルプを閉じる
+  function closeHelp() {
+    helpModal.style.display = 'none';
+    helpModal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+    
+    // フォーカスを戻す
+    btnHelp.focus();
+  }
+
+  // タブ切り替え
+  function switchTab(targetTab) {
+    // すべてのタブとパネルの状態をリセット
+    helpTabs.forEach(tab => {
+      tab.classList.remove('active');
+      tab.setAttribute('aria-selected', 'false');
+    });
+    
+    helpPanels.forEach(panel => {
+      panel.style.display = 'none';
+    });
+
+    // 選択されたタブとパネルをアクティブに
+    targetTab.classList.add('active');
+    targetTab.setAttribute('aria-selected', 'true');
+    
+    const targetPanelId = 'help-' + targetTab.dataset.tab;
+    const targetPanel = document.getElementById(targetPanelId);
+    if (targetPanel) {
+      targetPanel.style.display = 'block';
+    }
+  }
+
+  // イベントリスナーの設定
+  btnHelp.addEventListener('click', openHelp);
+  
+  if (helpClose) {
+    helpClose.addEventListener('click', closeHelp);
+  }
+
+  // オーバーレイクリックで閉じる
+  helpModal.addEventListener('click', (e) => {
+    if (e.target === helpModal) {
+      closeHelp();
+    }
+  });
+
+  // タブクリック
+  helpTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      switchTab(tab);
+    });
+  });
+
+  // キーボード操作
+  document.addEventListener('keydown', (e) => {
+    // F1キーでヘルプを開く
+    if (e.key === 'F1') {
+      e.preventDefault();
+      if (helpModal.style.display === 'none' || !helpModal.style.display) {
+        openHelp();
+      } else {
+        closeHelp();
+      }
+    }
+    
+    // Escキーでヘルプを閉じる
+    if (e.key === 'Escape' && helpModal.style.display === 'flex') {
+      e.preventDefault();
+      closeHelp();
+    }
+  });
+
+  // タブ内でのキーボードナビゲーション
+  helpModal.addEventListener('keydown', (e) => {
+    if (e.target.classList.contains('help-tab')) {
+      const currentIndex = Array.from(helpTabs).indexOf(e.target);
+      
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+        e.preventDefault();
+        const nextIndex = (currentIndex + 1) % helpTabs.length;
+        helpTabs[nextIndex].focus();
+        switchTab(helpTabs[nextIndex]);
+      } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        const prevIndex = (currentIndex - 1 + helpTabs.length) % helpTabs.length;
+        helpTabs[prevIndex].focus();
+        switchTab(helpTabs[prevIndex]);
+      } else if (e.key === 'Home') {
+        e.preventDefault();
+        helpTabs[0].focus();
+        switchTab(helpTabs[0]);
+      } else if (e.key === 'End') {
+        e.preventDefault();
+        const lastTab = helpTabs[helpTabs.length - 1];
+        lastTab.focus();
+        switchTab(lastTab);
+      }
+    }
+  });
+
+  // 初期化：最初のタブをアクティブに
+  if (helpTabs.length > 0) {
+    switchTab(helpTabs[0]);
+  }
 }
 
 

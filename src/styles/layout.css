@@ -5,7 +5,7 @@
 /* メインコンテンツエリア - 2カラムレイアウト */
 .app-main {
   display: grid;
-  grid-template-columns: 0.95fr 1fr; /* 左パネル:右パネル = 0.95:1 */
+  grid-template-columns: 0.7fr 1fr; /* 左パネル:右パネル = 0.7:1 (150px縮小) */
   gap: 0px;
   padding: 0px;
 }
@@ -41,6 +41,11 @@
   align-items: start; 
 }
 
+/* プレビューエリアの最小幅確保 */
+.right-content > :first-child {
+  min-width: 600px; /* A4プレビューの最小幅 */
+}
+
 /* 右サイドバー */
 .right-sidebar {
   display: flex;
@@ -50,7 +55,8 @@
 
 /* プレビューラッパー */
 .preview-wrap { 
-  overflow: auto; 
+  overflow: auto;
+  min-width: 600px; /* A4プレビューの最小幅を維持 */
 }
 
 /* 現在選択中のコード表示エリア */

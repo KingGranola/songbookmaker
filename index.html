@@ -15,21 +15,11 @@
     <meta name="apple-mobile-web-app-title" content="Songbook Maker" />
     
     <!-- アイコン -->
-    <link rel="icon" type="image/svg+xml" href="./icons/favicon.svg" />
-    <link rel="alternate icon" href="./icons/favicon.svg" />
-    <link rel="mask-icon" href="./icons/favicon.svg" color="#3b82f6" />
-    <!-- 分割されたCSSファイルを読み込み -->
-    <link rel="stylesheet" href="./styles/base.css" />
-    <link rel="stylesheet" href="./styles/header.css" />
-    <link rel="stylesheet" href="./styles/buttons.css" />
-    <link rel="stylesheet" href="./styles/layout.css" />
-    <link rel="stylesheet" href="./styles/editor.css" />
-    <link rel="stylesheet" href="./styles/preview.css" />
-    <link rel="stylesheet" href="./styles/dialog.css" />
-    <link rel="stylesheet" href="./styles/print.css" />
-    <link rel="stylesheet" href="./styles/responsive.css" />
-    <link rel="stylesheet" href="./styles/mobile.css" />
-    <link rel="stylesheet" href="./styles/accessibility.css" />
+    <link rel="icon" type="image/svg+xml" href="./assets/icons/favicon.svg" />
+    <link rel="alternate icon" href="./assets/icons/favicon.svg" />
+    <link rel="mask-icon" href="./assets/icons/favicon.svg" color="#3b82f6" />
+    <!-- 統合されたCSSファイルを読み込み -->
+    <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
     <header class="app-header" role="banner">
@@ -38,13 +28,16 @@
         <span class="version-badge" title="バージョン 0.5" aria-label="バージョン 0.5">v0.5</span>
       </div>
       <div class="toolbar" role="toolbar" aria-label="メインツールバー">
-        <button id="btn-print" class="primary" aria-label="PDF書き出し" title="現在の楽譜をPDFとして書き出します (Ctrl+P)">
+        <button id="btn-help" class="help-btn" aria-label="操作説明・ヘルプ">
+          <span aria-hidden="true">❓</span> ヘルプ
+        </button>
+        <button id="btn-print" class="primary" aria-label="PDF書き出し">
           <span aria-hidden="true">📄</span> PDF書き出し
         </button>
-        <button id="btn-save" class="ghost" aria-label="プロジェクトを保存" title="現在の作業をJSONファイルとして保存します (Ctrl+S)">
+        <button id="btn-save" class="ghost" aria-label="プロジェクトを保存">
           <span aria-hidden="true">💾</span> 保存
         </button>
-        <button id="btn-load" class="ghost" aria-label="プロジェクトを読み込み" title="保存されたJSONファイルを読み込みます (Ctrl+O)">
+        <button id="btn-load" class="ghost" aria-label="プロジェクトを読み込み">
           <span aria-hidden="true">📁</span> 読み込み
         </button>
         <input id="file-input" type="file" accept="application/json" style="display:none" aria-label="ファイル選択" />
@@ -245,13 +238,414 @@
             });
         });
 
-        // Service Worker の制御変更を監視
+                // Service Worker の制御変更を監視
         navigator.serviceWorker.addEventListener('controllerchange', () => {
           window.location.reload();
         });
       }
     </script>
+
+    <script>
+      // ヘルプボタンの単独実装（モジュール読み込みエラーに影響されない）
+      document.addEventListener('DOMContentLoaded', function() {
+        const helpBtn = document.getElementById('btn-help');
+        const helpModal = document.getElementById('help-modal');
+        const helpClose = document.getElementById('help-close');
+        const helpTabs = document.querySelectorAll('.help-tab');
+        const helpPanels = document.querySelectorAll('.help-panel');
+        
+        if (!helpBtn || !helpModal) return;
+        
+        // ヘルプを開く
+        function openHelp() {
+          helpModal.style.display = 'flex';
+          helpModal.setAttribute('aria-hidden', 'false');
+          document.body.style.overflow = 'hidden';
+          const firstTab = helpModal.querySelector('.help-tab');
+          if (firstTab) firstTab.focus();
+        }
+        
+        // ヘルプを閉じる
+        function closeHelp() {
+          helpModal.style.display = 'none';
+          helpModal.setAttribute('aria-hidden', 'true');
+          document.body.style.overflow = '';
+          helpBtn.focus();
+        }
+        
+        // タブ切り替え
+        function switchTab(targetTab) {
+          helpTabs.forEach(tab => {
+            tab.classList.remove('active');
+            tab.setAttribute('aria-selected', 'false');
+          });
+          helpPanels.forEach(panel => {
+            panel.style.display = 'none';
+          });
+          targetTab.classList.add('active');
+          targetTab.setAttribute('aria-selected', 'true');
+          const targetPanelId = 'help-' + targetTab.dataset.tab;
+          const targetPanel = document.getElementById(targetPanelId);
+          if (targetPanel) targetPanel.style.display = 'block';
+        }
+        
+        // イベントリスナー
+        helpBtn.addEventListener('click', openHelp);
+        if (helpClose) helpClose.addEventListener('click', closeHelp);
+        
+        // オーバーレイクリック
+        helpModal.addEventListener('click', (e) => {
+          if (e.target === helpModal) closeHelp();
+        });
+        
+        // タブクリック
+        helpTabs.forEach(tab => {
+          tab.addEventListener('click', () => switchTab(tab));
+        });
+        
+        // キーボード操作
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'F1') {
+            e.preventDefault();
+            if (helpModal.style.display === 'none' || !helpModal.style.display) {
+              openHelp();
+            } else {
+              closeHelp();
+            }
+          }
+          if (e.key === 'Escape' && helpModal.style.display === 'flex') {
+            e.preventDefault();
+            closeHelp();
+          }
+        });
+        
+        // タブキーボードナビゲーション
+        helpModal.addEventListener('keydown', (e) => {
+          if (e.target.classList.contains('help-tab')) {
+            const currentIndex = Array.from(helpTabs).indexOf(e.target);
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+              e.preventDefault();
+              const nextIndex = (currentIndex + 1) % helpTabs.length;
+              helpTabs[nextIndex].focus();
+              switchTab(helpTabs[nextIndex]);
+            } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+              e.preventDefault();
+              const prevIndex = (currentIndex - 1 + helpTabs.length) % helpTabs.length;
+              helpTabs[prevIndex].focus();
+              switchTab(helpTabs[prevIndex]);
+            }
+          }
+        });
+        
+        // 初期化
+        if (helpTabs.length > 0) {
+          switchTab(helpTabs[0]);
+        }
+        
+        console.log('✅ Help system initialized independently');
+      });
+
+      // 緊急対策: 重要なボタンの基本機能を単独実装
+      document.addEventListener('DOMContentLoaded', function() {
+        // PDF書き出しボタン
+        const printBtn = document.getElementById('btn-print');
+        if (printBtn) {
+          printBtn.addEventListener('click', function() {
+            console.log('📄 PDF書き出し - 印刷ダイアログを開きます');
+            window.print();
+          });
+        }
+
+        // 保存ボタン（基本機能）
+        const saveBtn = document.getElementById('btn-save');
+        if (saveBtn) {
+          saveBtn.addEventListener('click', function() {
+            console.log('💾 保存機能 - メインアプリが読み込まれるまで待機中');
+            alert('保存機能を使用するには、アプリが完全に読み込まれるまでお待ちください。\nブラウザのキャッシュをクリアして再読み込みをお試しください。');
+          });
+        }
+
+        // ロードボタン（基本機能）
+        const loadBtn = document.getElementById('btn-load');
+        const fileInput = document.getElementById('file-input');
+        if (loadBtn && fileInput) {
+          loadBtn.addEventListener('click', function() {
+            fileInput.click();
+          });
+        }
+
+        console.log('⚡ Emergency button handlers initialized');
+      });
+
+      // Service Worker キャッシュクリア機能
+      if ('serviceWorker' in navigator) {
+        // 古いキャッシュを強制クリア
+        caches.keys().then(cacheNames => {
+          const oldCaches = cacheNames.filter(name => 
+            name.includes('songbook') && !name.includes('v0.5.1')
+          );
+          if (oldCaches.length > 0) {
+            console.log('🧹 Clearing old caches:', oldCaches);
+            return Promise.all(oldCaches.map(name => caches.delete(name)));
+          }
+        }).then(() => {
+          console.log('✨ Cache cleanup completed');
+        });
+      }
+    </script>
+    
+    <!-- ヘルプモーダル -->
+    <div id="help-modal" class="modal-overlay" role="dialog" aria-labelledby="help-title" aria-modal="true" style="display: none;">
+      <div class="modal-content help-modal">
+        <header class="modal-header">
+          <h2 id="help-title">📖 SONGBOOK MAKER - 操作説明</h2>
+          <button id="help-close" class="modal-close" aria-label="ヘルプを閉じる">
+            <span aria-hidden="true">✕</span>
+          </button>
+        </header>
+        
+        <div class="modal-body">
+          <div class="help-tabs">
+            <button class="help-tab active" data-tab="usage" aria-selected="true" role="tab">基本操作</button>
+            <button class="help-tab" data-tab="shortcuts" aria-selected="false" role="tab">ショートカット</button>
+            <button class="help-tab" data-tab="features" aria-selected="false" role="tab">機能説明</button>
+            <button class="help-tab" data-tab="faq" aria-selected="false" role="tab">FAQ</button>
+          </div>
+          
+          <div class="help-content">
+            <!-- 基本操作タブ -->
+            <div id="help-usage" class="help-panel active" role="tabpanel">
+              <h3>🎵 基本的な使い方</h3>
+              
+              <div class="help-section">
+                <h4>1. 楽曲情報の入力</h4>
+                <p><strong>タイトル・アーティスト・作曲者</strong>を左パネルの上部で入力します。</p>
+                <ul>
+                  <li>タイトルは楽譜の上部に大きく表示されます</li>
+                  <li>アーティスト・作曲者は楽譜の下部にクレジットとして表示</li>
+                  <li>空欄でも問題ありません（後から編集可能）</li>
+                </ul>
+              </div>
+              
+              <div class="help-section">
+                <h4>2. 歌詞の入力</h4>
+                <p><strong>大きなテキストエリア</strong>に歌詞を入力してください。</p>
+                <ul>
+                  <li><strong>改行</strong>：そのまま改行で歌詞の行分けになります</li>
+                  <li><strong>空行</strong>：楽譜上で段落分けとして表示されます</li>
+                  <li><strong>リアルタイム反映</strong>：入力すると右のプレビューに即座に反映</li>
+                  <li><strong>日本語・英語</strong>：どちらも対応、混在も可能</li>
+                </ul>
+              </div>
+              
+              <div class="help-section">
+                <h4>3. キーとモードの設定</h4>
+                <p><strong>楽曲のキー</strong>を設定すると、適切なコードが自動生成されます。</p>
+                <ul>
+                  <li><strong>キー</strong>：C, D, E, F, G, A, B（♯・♭も対応）</li>
+                  <li><strong>Major</strong>：明るい響きの長調</li>
+                  <li><strong>Minor</strong>：暗い響きの短調</li>
+                  <li><strong>プリセット自動更新</strong>：設定を変更すると右側のコードが更新</li>
+                </ul>
+              </div>
+              
+              <div class="help-section">
+                <h4>4. コードの配置方法</h4>
+                <p><strong>3ステップ</strong>でコードを楽譜に配置できます：</p>
+                <ol>
+                  <li><strong>コード選択</strong>：右側のプリセットまたは履歴からコードをクリック</li>
+                  <li><strong>配置場所クリック</strong>：プレビュー画面の歌詞をクリックしてコードを配置</li>
+                  <li><strong>微調整</strong>：配置したコードをドラッグして位置を調整</li>
+                </ol>
+                <p><strong>高度な操作：</strong></p>
+                <ul>
+                  <li><strong>編集</strong>：配置済みコードをダブルクリックで編集</li>
+                  <li><strong>削除</strong>：編集時にテキストを空にして削除</li>
+                  <li><strong>カスタムコード</strong>：履歴下の入力欄で任意のコード入力</li>
+                </ul>
+              </div>
+              
+              <div class="help-section">
+                <h4>5. 表示設定のカスタマイズ</h4>
+                <p><strong>見た目を自由に調整</strong>して、読みやすい楽譜を作成：</p>
+                <ul>
+                  <li><strong>フォントサイズ</strong>：歌詞・コード別々に調整可能</li>
+                  <li><strong>フォント種類</strong>：明朝・ゴシック・丸ゴシックから選択</li>
+                  <li><strong>色設定</strong>：コードの色を変更可能</li>
+                  <li><strong>間隔調整</strong>：行間・文字間・コード位置を微調整</li>
+                </ul>
+              </div>
+              
+              <div class="help-section">
+                <h4>6. 保存と出力</h4>
+                <p><strong>作成した楽譜を保存・共有</strong>：</p>
+                <ul>
+                  <li><strong>💾 保存</strong>：JSON形式でプロジェクトファイルを保存</li>
+                  <li><strong>📁 読み込み</strong>：保存したプロジェクトを開く</li>
+                  <li><strong>📄 PDF書き出し</strong>：A4サイズで印刷・共有用PDF作成</li>
+                  <li><strong>自動保存</strong>：ブラウザに作業内容が自動保存されます</li>
+                </ul>
+              </div>
+            </div>
+            
+            <!-- ショートカットタブ -->
+            <div id="help-shortcuts" class="help-panel" role="tabpanel" style="display: none;">
+              <h3>⌨️ キーボードショートカット</h3>
+              
+              <div class="shortcuts-grid">
+                <div class="shortcut-item">
+                  <kbd>Ctrl + S</kbd> <span>プロジェクトを保存</span>
+                </div>
+                <div class="shortcut-item">
+                  <kbd>Ctrl + O</kbd> <span>プロジェクトを開く</span>
+                </div>
+                <div class="shortcut-item">
+                  <kbd>Ctrl + P</kbd> <span>PDF書き出し</span>
+                </div>
+                <div class="shortcut-item">
+                  <kbd>Ctrl + Z</kbd> <span>元に戻す</span>
+                </div>
+                <div class="shortcut-item">
+                  <kbd>Ctrl + E</kbd> <span>編集モード切り替え</span>
+                </div>
+                <div class="shortcut-item">
+                  <kbd>Ctrl + +</kbd> <span>フォントサイズを大きく</span>
+                </div>
+                <div class="shortcut-item">
+                  <kbd>Ctrl + -</kbd> <span>フォントサイズを小さく</span>
+                </div>
+                <div class="shortcut-item">
+                  <kbd>F1</kbd> <span>このヘルプを表示</span>
+                </div>
+                <div class="shortcut-item">
+                  <kbd>Esc</kbd> <span>操作をキャンセル</span>
+                </div>
+              </div>
+              
+              <h4>📱 タッチジェスチャー（モバイル）</h4>
+              <div class="shortcuts-grid">
+                <div class="shortcut-item">
+                  <span class="gesture">スワイプ左右</span> <span>プリセット/履歴ナビ</span>
+                </div>
+                <div class="shortcut-item">
+                  <span class="gesture">スワイプ上下</span> <span>フォントサイズ調整</span>
+                </div>
+                <div class="shortcut-item">
+                  <span class="gesture">ピンチ</span> <span>プレビュー拡大縮小</span>
+                </div>
+                <div class="shortcut-item">
+                  <span class="gesture">ダブルタップ</span> <span>コード編集</span>
+                </div>
+              </div>
+            </div>
+            
+            <!-- 機能説明タブ -->
+            <div id="help-features" class="help-panel" role="tabpanel" style="display: none;">
+              <h3>⭐ 主要機能</h3>
+              
+              <div class="help-section">
+                <h4>🎼 プリセットコード</h4>
+                <p><strong>ダイアトニックコード</strong>: 選択したキーに応じた基本コード<br>
+                <strong>セカンダリードミナント</strong>: より豊かなハーモニー<br>
+                <strong>サブドミナントマイナー</strong>: 感情的な響き</p>
+              </div>
+              
+              <div class="help-section">
+                <h4>📝 カスタムコード</h4>
+                <p>履歴エリア下の入力欄から任意のコードを入力可能。<br>
+                例: <code>Cadd9</code>, <code>Dm7</code>, <code>G/B</code></p>
+              </div>
+              
+              <div class="help-section">
+                <h4>🎨 表示カスタマイズ</h4>
+                <p><strong>フォント</strong>: 明朝・ゴシック・丸ゴシック<br>
+                <strong>サイズ</strong>: 歌詞・コード別々に調整<br>
+                <strong>色・間隔</strong>: 見やすさに合わせて調整</p>
+              </div>
+              
+              <div class="help-section">
+                <h4>📱 PWA機能</h4>
+                <p><strong>オフライン対応</strong>: インターネット接続不要<br>
+                <strong>インストール</strong>: アプリとしてホーム画面に追加可能</p>
+              </div>
+              
+              <div class="help-section">
+                <h4>♿ アクセシビリティ</h4>
+                <p><strong>スクリーンリーダー対応</strong><br>
+                <strong>キーボード操作</strong>: マウス不要で全操作可能<br>
+                <strong>高コントラスト</strong>: 視認性向上</p>
+              </div>
+            </div>
+            
+            <!-- FAQタブ -->
+            <div id="help-faq" class="help-panel" role="tabpanel" style="display: none;">
+              <h3>❓ よくある質問</h3>
+              
+              <div class="faq-item">
+                <h4>Q: コードが思った位置に配置されない</h4>
+                <div class="faq-answer">
+                  <p><strong>A:</strong> コード配置後、ドラッグで微調整できます。また、設定の「コード縦位置」で全体的な位置を調整可能です。</p>
+                </div>
+              </div>
+              
+              <div class="faq-item">
+                <h4>Q: PDFの見た目とプレビューが違う</h4>
+                <div class="faq-answer">
+                  <p><strong>A:</strong> ブラウザの印刷設定を確認してください。余白は「最小」、拡大率は「100%」推奨です。</p>
+                </div>
+              </div>
+              
+              <div class="faq-item">
+                <h4>Q: 保存したファイルが開けない</h4>
+                <div class="faq-answer">
+                  <p><strong>A:</strong> 「📁 読み込み」ボタンからJSONファイルを選択してください。古いバージョンのファイルは開けない場合があります。</p>
+                </div>
+              </div>
+              
+              <div class="faq-item">
+                <h4>Q: スマートフォンでも使える？</h4>
+                <div class="faq-answer">
+                  <p><strong>A:</strong> はい！タッチジェスチャーに対応し、モバイル向けに最適化されています。ブラウザから「ホーム画面に追加」でアプリ化も可能です。</p>
+                </div>
+              </div>
+              
+              <div class="faq-item">
+                <h4>Q: 移調（キー変更）はできる？</h4>
+                <div class="faq-answer">
+                  <p><strong>A:</strong> キー設定を変更すると、プリセットコードが自動で移調されます。既に配置したコードは手動で変更が必要です。</p>
+                </div>
+              </div>
+              
+              <div class="faq-item">
+                <h4>Q: コードを削除したい</h4>
+                <div class="faq-answer">
+                  <p><strong>A:</strong> 配置したコードをダブルクリックして、テキストを空にして確定すると削除されます。</p>
+                </div>
+              </div>
+              
+              <div class="faq-item">
+                <h4>Q: データはどこに保存される？</h4>
+                <div class="faq-answer">
+                  <p><strong>A:</strong> 作業内容は自動でブラウザのローカルストレージに保存されます。プロジェクト保存は手動でJSONファイルをダウンロードします。</p>
+                </div>
+              </div>
+              
+              <div class="faq-item">
+                <h4>Q: オフラインでも使える？</h4>
+                <div class="faq-answer">
+                  <p><strong>A:</strong> はい！一度読み込めば、インターネット接続なしでも全機能を使用できます（PWA機能）。</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <footer class="modal-footer">
+          <p>💡 <strong>ヒント:</strong> F1キーでいつでもこのヘルプを表示できます</p>
+        </footer>
+      </div>
+    </div>
   </body>
-  </html>
+</html>
 
 

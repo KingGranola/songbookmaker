@@ -1,34 +1,16 @@
 // Service Worker for Songbook Maker
-const STATIC_CACHE = 'songbook-static-v0.5.0';
-const DYNAMIC_CACHE = 'songbook-dynamic-v0.5.0';
+const STATIC_CACHE = 'songbook-static-v0.5.1';
+const DYNAMIC_CACHE = 'songbook-dynamic-v0.5.1';
 
-// キャッシュするリソース
+// キャッシュするリソース - 新しいファイル構造対応
 const STATIC_ASSETS = [
   '/',
   '/index.html',
   '/main.js',
-  '/modules/app.js',
-  '/modules/bootstrap.js',
-  '/modules/state.js',
-  '/modules/ui.js',
-  '/modules/placement.js',
-  '/modules/presets.js',
-  '/modules/state-manager.js',
-  '/modules/keyboard-shortcuts.js',
-  '/modules/touch-gestures.js',
-  '/modules/performance.js',
-  '/styles/base.css',
-  '/styles/header.css',
-  '/styles/buttons.css',
-  '/styles/layout.css',
-  '/styles/editor.css',
-  '/styles/preview.css',
-  '/styles/dialog.css',
-  '/styles/print.css',
-  '/styles/responsive.css',
-  '/styles/mobile.css',
-  '/styles/accessibility.css',
-  '/manifest.json'
+  '/styles.css',
+  '/manifest.json',
+  '/assets/icons/favicon.svg'
+  // 動的リソースは実行時にキャッシュする
 ];
 
 // Service Worker インストール

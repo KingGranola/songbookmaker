@@ -56,9 +56,10 @@
 /* ツールバー - ヘッダー右側のボタン群 */
 .toolbar { 
   display: flex; 
-  gap: 12px; 
+  gap: 8px; 
   align-items: center; 
-  flex-wrap: wrap; /* 画面が狭い時に折り返し */
+  flex-wrap: nowrap; /* 折り返しを無効にしてヘルプボタンを常に表示 */
+  min-width: 0; /* フレックスアイテムの最小幅制限を解除 */
 }
 
 /* 区切り線 */

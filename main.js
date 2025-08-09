@@ -1,4 +1,4 @@
-import { initApp } from './modules/app.js';
+import { initApp } from './src/modules/app.js';
 
 initApp();
 

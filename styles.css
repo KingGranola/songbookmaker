@@ -3,14 +3,17 @@
    ======================================== */
 
 /* 分割されたCSSファイルをインポート */
-@import url('./styles/base.css');
-@import url('./styles/header.css');
-@import url('./styles/buttons.css');
-@import url('./styles/layout.css');
-@import url('./styles/editor.css');
-@import url('./styles/preview.css');
-@import url('./styles/dialog.css');
-@import url('./styles/print.css');
-@import url('./styles/responsive.css');
+@import url('./src/styles/base.css');
+@import url('./src/styles/header.css');
+@import url('./src/styles/buttons.css');
+@import url('./src/styles/layout.css');
+@import url('./src/styles/editor.css');
+@import url('./src/styles/preview.css');
+@import url('./src/styles/dialog.css');
+@import url('./src/styles/help.css');
+@import url('./src/styles/accessibility.css');
+@import url('./src/styles/mobile.css');
+@import url('./src/styles/print.css');
+@import url('./src/styles/responsive.css');
 
 
