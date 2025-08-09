@@ -1,0 +1,123 @@
+/* ========================================
+   歌詞エディタ・パレット
+   ======================================== */
+
+/* 歌詞入力テキストエリア */
+#lyrics-input {
+  width: 100%;
+  min-height: 200px;
+  resize: vertical; /* 縦方向のみリサイズ可能 */
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text);
+  font-size: 0.9em;
+}
+
+/* ヘルパーボタン群 */
+.helpers { 
+  margin-top: 6px; 
+  display: flex; 
+  gap: 6px; 
+  flex-wrap: wrap;
+}
+
+/* メタ情報行 - タイトル、アーティスト、作曲者 */
+.meta-row { 
+  display: flex; 
+  flex-wrap: wrap; 
+  gap: 8px; 
+  margin-bottom: 6px; 
+}
+
+/* パレット全体 */
+.palette { 
+  margin-top: 12px; 
+  display: grid; 
+  gap: 8px; 
+}
+
+/* パレットタイトル */
+.palette-title { 
+  color: var(--muted); 
+  font-size: 12px; 
+  margin-bottom: 3px; 
+}
+
+/* チップ行 - コード選択ボタン群 */
+.chip-row { 
+  display: flex; 
+  flex-wrap: wrap; 
+  gap: 5px; 
+  justify-content: flex-start;
+  align-items: center;
+}
+
+/* 履歴行 - 右寄せで表示 */
+.chip-row.history-row {
+  justify-content: flex-end;
+  flex-direction: row-reverse; /* 最新の履歴を右端に */
+}
+
+/* チップ - コード選択ボタン */
+.chip {
+  background: var(--chip);
+  color: var(--text);
+  padding: 4px 8px;
+  border-radius: 999px; /* 完全な円形 */
+  border: 1px solid var(--border);
+  font-size: 12px;
+  cursor: pointer;
+  user-select: none; /* テキスト選択を無効化 */
+}
+
+/* チップのホバー効果 */
+.chip:hover { 
+  outline: 2px solid rgba(59, 130, 246, 0.45); 
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15) inset; 
+}
+
+/* セクションチップ - セクション選択用 */
+.chip.section-chip {
+  background: var(--surface-2);
+  color: var(--muted);
+  border-color: var(--border);
+  font-size: 11px;
+  padding: 3px 6px;
+  transition: all 0.2s ease;
+}
+
+/* セクションチップのホバー効果 */
+.chip.section-chip:hover {
+  background: var(--surface-1);
+  color: var(--text);
+  outline: 2px solid rgba(59, 130, 246, 0.35);
+}
+
+/* セクションチップのアクティブ状態 */
+.chip.section-chip.active {
+  background: #3b82f6;
+  color: white;
+  border-color: #2563eb;
+  outline: 2px solid rgba(59, 130, 246, 0.5);
+}
+
+/* 現在選択中のコード表示 */
+.current-chord { 
+  font-weight: 900; 
+  color: #60a5fa; 
+}
+
+/* 選択中コードのハイライト - PDF書き出し時に除外 */
+.chip.active { 
+  outline: 2px solid rgba(59, 130, 246, 0.9); 
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2) inset; 
+}
+
+/* 現在の行のコードハイライト - PDF書き出し時に除外 */
+.current .current-chord { 
+  background: rgba(59, 130, 246, 0.2); 
+  padding: 2px 8px; 
+  border-radius: 999px; 
+}

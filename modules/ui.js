@@ -47,9 +47,15 @@ export function setupUI(ctx) {
 
   function setCurrentChord(chordOrNull) {
     state.selectedChord = chordOrNull;
-    if (el.currentChord) el.currentChord.textContent = chordOrNull || 'なし';
-    
-
+    if (el.currentChord) {
+      if (chordOrNull === '__ERASE__') {
+        el.currentChord.textContent = '消しゴムモード';
+      } else if (window.isEditModeActive) {
+        el.currentChord.textContent = '編集モード';
+      } else {
+        el.currentChord.textContent = chordOrNull || 'なし';
+      }
+    }
     
     highlightSelectedChip();
     updateCursor();
@@ -232,6 +238,16 @@ export function setupUI(ctx) {
     persist();
   });
 
+  // 行全体右位置
+  const lineOffset = document.getElementById('line-offset');
+  lineOffset?.addEventListener('input', ()=>{
+    state.lineOffsetPx = Number(lineOffset.value);
+    el.pageContent.querySelectorAll('.lyrics-text').forEach((text)=>{
+      text.style.marginLeft = `${state.lineOffsetPx}px`;
+    });
+    persist();
+  });
+
   // バリデーション関数
   function validateRequiredFields() {
     const title = state.title?.trim() || '';
@@ -315,7 +331,173 @@ export function setupUI(ctx) {
     });
     applyChordStyles(ctx);
   });
-  el.btnEraser?.addEventListener('click', ()=> setCurrentChord('__ERASE__'));
+  el.btnEraser?.addEventListener('click', ()=> {
+    setCurrentChord('__ERASE__');
+    // ページツールボタンの状態も同期
+    if (btnEraserPage) btnEraserPage.classList.add('active');
+    if (btnEditModePage) btnEditModePage.classList.remove('active');
+    if (btnEraserControls) btnEraserControls.classList.add('active');
+    if (btnEditModeControls) btnEditModeControls.classList.remove('active');
+    
+    // プレビューエリアのクラスを切り替え
+    const pageContent = document.getElementById('page-content');
+    if (pageContent) {
+      pageContent.classList.remove('edit-mode');
+      pageContent.classList.add('eraser-mode');
+    }
+  });
+
+  // セクションチップのイベントハンドラー
+  document.addEventListener('click', (ev) => {
+    const sectionChip = ev.target.closest('.section-chip');
+    if (!sectionChip) return;
+    
+    const sectionName = sectionChip.dataset.section;
+    if (!sectionName) return;
+    
+    // セクションを選択状態にする（配置用）
+    setCurrentChord(`SECTION:${sectionName}`);
+    
+    // セクションチップのハイライト
+    document.querySelectorAll('.section-chip').forEach(chip => {
+      chip.classList.remove('active');
+    });
+    sectionChip.classList.add('active');
+  });
+
+
+  // 編集モード切り替えボタン
+  const btnEditMode = document.getElementById('btn-edit-mode');
+  let isEditModeActive = false;
+  
+  // ページツールボタン
+  // ページツールボタンの要素を取得（削除済み）
+  const btnEraserPage = null;
+  const btnEditModePage = null;
+  
+  btnEditMode?.addEventListener('click', () => {
+    isEditModeActive = !isEditModeActive;
+    btnEditMode.textContent = isEditModeActive ? '配置モード' : '編集モード';
+    btnEditMode.classList.toggle('primary', isEditModeActive);
+    btnEditMode.classList.toggle('ghost', !isEditModeActive);
+    
+    // 編集モードの状態をグローバルに公開
+    window.isEditModeActive = isEditModeActive;
+    
+    // プレビューエリアのクラスを切り替え
+    const pageContent = document.getElementById('page-content');
+    if (pageContent) {
+      pageContent.classList.toggle('edit-mode', isEditModeActive);
+      pageContent.classList.remove('eraser-mode');
+    }
+    
+    // ページツールボタンの状態を同期
+    if (btnEditModePage) {
+      btnEditModePage.classList.toggle('active', isEditModeActive);
+    }
+    if (btnEditModeControls) {
+      btnEditModeControls.classList.toggle('active', isEditModeActive);
+    }
+    
+    // 表示を更新
+    setCurrentChord(state.selectedChord);
+  });
+
+  // ページ消しゴムボタン
+  btnEraserPage?.addEventListener('click', () => {
+    setCurrentChord('__ERASE__');
+    
+    // 他のツールボタンのアクティブ状態をリセット
+    if (btnEditModePage) btnEditModePage.classList.remove('active');
+    if (btnEraserPage) btnEraserPage.classList.add('active');
+    if (btnEraserControls) btnEraserControls.classList.add('active');
+    if (btnEditModeControls) btnEditModeControls.classList.remove('active');
+    
+    // 編集モードを無効化
+    isEditModeActive = false;
+    window.isEditModeActive = false;
+    const pageContent = document.getElementById('page-content');
+    if (pageContent) {
+      pageContent.classList.remove('edit-mode');
+      pageContent.classList.add('eraser-mode');
+    }
+  });
+
+  // ページ編集モードボタン
+  btnEditModePage?.addEventListener('click', () => {
+    isEditModeActive = !isEditModeActive;
+    window.isEditModeActive = isEditModeActive;
+    
+    // ボタンの状態を切り替え
+    btnEditModePage.classList.toggle('active', isEditModeActive);
+    if (btnEraserPage) btnEraserPage.classList.remove('active');
+    if (btnEraserControls) btnEraserControls.classList.remove('active');
+    if (btnEditModeControls) btnEditModeControls.classList.toggle('active', isEditModeActive);
+    
+    // プレビューエリアのクラスを切り替え
+    const pageContent = document.getElementById('page-content');
+    if (pageContent) {
+      pageContent.classList.toggle('edit-mode', isEditModeActive);
+      pageContent.classList.remove('eraser-mode');
+    }
+    
+    // 消しゴムモードを解除
+    if (state.selectedChord === '__ERASE__') {
+      setCurrentChord(null);
+    }
+    
+    // 表示を更新
+    setCurrentChord(state.selectedChord);
+  });
+
+  // 表示設定内の消しゴムモードボタン
+  const btnEraserControls = document.getElementById('btn-eraser-controls');
+  btnEraserControls?.addEventListener('click', () => {
+    setCurrentChord('__ERASE__');
+    
+    // 他のツールボタンのアクティブ状態をリセット
+    if (btnEditModePage) btnEditModePage.classList.remove('active');
+    if (btnEraserPage) btnEraserPage.classList.add('active');
+    if (btnEditModeControls) btnEditModeControls.classList.remove('active');
+    btnEraserControls.classList.add('active');
+    
+    // 編集モードを無効化
+    isEditModeActive = false;
+    window.isEditModeActive = false;
+    const pageContent = document.getElementById('page-content');
+    if (pageContent) {
+      pageContent.classList.remove('edit-mode');
+      pageContent.classList.add('eraser-mode');
+    }
+  });
+
+  // 表示設定内の編集モードボタン
+  const btnEditModeControls = document.getElementById('btn-edit-mode-controls');
+  btnEditModeControls?.addEventListener('click', () => {
+    isEditModeActive = !isEditModeActive;
+    window.isEditModeActive = isEditModeActive;
+    
+    // ボタンの状態を切り替え
+    btnEditModeControls.classList.toggle('active', isEditModeActive);
+    if (btnEraserControls) btnEraserControls.classList.remove('active');
+    if (btnEraserPage) btnEraserPage.classList.remove('active');
+    if (btnEditModePage) btnEditModePage.classList.toggle('active', isEditModeActive);
+    
+    // プレビューエリアのクラスを切り替え
+    const pageContent = document.getElementById('page-content');
+    if (pageContent) {
+      pageContent.classList.toggle('edit-mode', isEditModeActive);
+      pageContent.classList.remove('eraser-mode');
+    }
+    
+    // 消しゴムモードを解除
+    if (state.selectedChord === '__ERASE__') {
+      setCurrentChord(null);
+    }
+    
+    // 表示を更新
+    setCurrentChord(state.selectedChord);
+  });
 
   // export/import helpers（app.jsから移植）
   function exportProject(ctx) {
@@ -367,6 +549,8 @@ export function setupUI(ctx) {
     }catch{ alert('読み込みに失敗しました。ファイル形式をご確認ください。'); }
     finally{ e.target.value=''; }
   }
+
+
 
   // 公開
   ctx.highlightSelectedChip = highlightSelectedChip;

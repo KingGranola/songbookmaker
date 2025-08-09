@@ -1,0 +1,86 @@
+/* ========================================
+   ボタン・フォーム要素
+   ======================================== */
+
+/* フィールド要素 - ラベルと入力要素の組み合わせ */
+.field { 
+  display: inline-flex; 
+  align-items: center; 
+  gap: 6px; 
+  color: var(--muted); 
+  font-size: 12px; 
+  background: rgba(31,41,55,0.5); 
+  padding: 4px 6px; 
+  border-radius: 999px; /* 完全な円形 */
+}
+
+/* フィールド内のスパン要素 */
+.field > span { 
+  color: var(--muted); 
+}
+
+/* フィールド内の入力要素 */
+.field select, 
+.field input[type="range"], 
+.field input[type="color"], 
+.field input[type="number"], 
+.field input[type="text"] {
+  background: transparent; 
+  border: none; 
+  color: var(--text); 
+  font-size: 12px; 
+  min-width: 0; 
+  padding: 0;
+}
+
+/* ブロック形式のフィールド */
+.field.block { 
+  display: grid; 
+  gap: 4px; 
+}
+
+/* 基本ボタンスタイル */
+button {
+  background: var(--surface-2);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease; /* スムーズなアニメーション */
+}
+
+/* プライマリボタン - 主要なアクション用 */
+button.primary { 
+  background: linear-gradient(180deg, var(--primary-light), var(--primary)); 
+  border-color: var(--primary); 
+}
+
+/* プライマリボタンのホバー効果 */
+button.primary:hover { 
+  filter: brightness(1.2); /* 明度を上げる */
+}
+
+/* ゴーストボタン - 控えめなアクション用 */
+button.ghost { 
+  background: transparent; 
+  border-color: var(--border); 
+}
+
+/* ゴーストボタンのホバー効果 */
+button.ghost:hover { 
+  background: rgba(148,163,184,0.08); 
+}
+
+/* 危険ボタン - 削除などの危険なアクション用 */
+button.danger { 
+  background: var(--danger); 
+  border-color: #dc2626; 
+}
+
+/* 無効化されたボタン */
+button:disabled { 
+  opacity: 0.6; 
+  cursor: not-allowed; 
+}

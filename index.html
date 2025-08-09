@@ -4,7 +4,16 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Songbook Maker</title>
-    <link rel="stylesheet" href="./styles.css" />
+    <!-- 分割されたCSSファイルを読み込み -->
+    <link rel="stylesheet" href="./styles/base.css" />
+    <link rel="stylesheet" href="./styles/header.css" />
+    <link rel="stylesheet" href="./styles/buttons.css" />
+    <link rel="stylesheet" href="./styles/layout.css" />
+    <link rel="stylesheet" href="./styles/editor.css" />
+    <link rel="stylesheet" href="./styles/preview.css" />
+    <link rel="stylesheet" href="./styles/dialog.css" />
+    <link rel="stylesheet" href="./styles/print.css" />
+    <link rel="stylesheet" href="./styles/responsive.css" />
   </head>
   <body>
     <header class="app-header">
@@ -22,7 +31,7 @@
 
     <main class="app-main">
       <section class="left-panel">
-        <h2>歌詞エディット</h2>
+        <h2>Editor</h2>
         <div class="meta-row">
           <label class="field"><span>タイトル</span><input id="title-input" type="text" placeholder="曲名" /></label>
           <label class="field"><span>アーティスト</span><input id="artist-input" type="text" placeholder="アーティスト名" /></label>
@@ -37,40 +46,39 @@
 
         <div class="palette">
           <div class="palette-row">
-            <div class="palette-title">キー・モード・プリセット</div>
+            <div class="palette-title">キー</div>
             <div class="chip-row">
-              <label class="field"><span>キー</span>
+              <label class="field"><span>ルート</span>
                 <select id="key-select" aria-label="キー選択">
                   <option value="C">C</option>
-                  <option value="G">G</option>
                   <option value="D">D</option>
-                  <option value="A">A</option>
                   <option value="E">E</option>
-                  <option value="B">B</option>
-                  <option value="F#">F#</option>
-                  <option value="C#">C#</option>
                   <option value="F">F</option>
+                  <option value="G">G</option>
+                  <option value="A">A</option>
+                  <option value="B">B</option>
                   <option value="Bb">Bb</option>
-                  <option value="Eb">Eb</option>
-                  <option value="Ab">Ab</option>
-                  <option value="Db">Db</option>
-                  <option value="Gb">Gb</option>
                   <option value="Cb">Cb</option>
+                  <option value="C#">C#</option>
+                  <option value="Db">Db</option>
+                  <option value="Eb">Eb</option>
+                  <option value="F#">F#</option>
+                  <option value="Ab">Ab</option>
+                  <option value="Gb">Gb</option>
                 </select>
               </label>
-              <label class="field"><span>モード</span>
+              <label class="field"><span>調</span>
                 <select id="mode-select" aria-label="モード選択">
                   <option value="major">メジャー</option>
                   <option value="minor">マイナー</option>
                 </select>
               </label>
-              <label class="field"><span>プリセット和音</span>
+              <label class="field"><span>和音</span>
                 <select id="preset-type" aria-label="プリセットの和音タイプ">
                   <option value="triad">3和音</option>
                   <option value="seventh">4和音</option>
                 </select>
               </label>
-              <button id="btn-manual-transpose" class="ghost">移調</button>
             </div>
           </div>
           <div class="palette-row">
@@ -85,34 +93,44 @@
             </div>
           </div>
           <div class="palette-row">
+            <div class="palette-title">セクション</div>
+            <div class="chip-row">
+              <button class="section-chip" data-section="INTRO">INTRO</button>
+              <button class="section-chip" data-section="A">A</button>
+              <button class="section-chip" data-section="B">B</button>
+              <button class="section-chip" data-section="C">C</button>
+              <button class="section-chip" data-section="CHORUS">CHORUS</button>
+              <button class="section-chip" data-section="BRIDGE">BRIDGE</button>
+              <button class="section-chip" data-section="SOLO">SOLO</button>
+              <button class="section-chip" data-section="OUTRO">OUTRO</button>
+            </div>
+          </div>
+
+          <div class="palette-row">
             <input id="custom-chord" type="text" placeholder="カスタムコード (例: G7, F#m7b5, C/E)" />
             <button id="btn-set-custom">選択中コードに設定</button>
             <button id="btn-sep" class="chip" title="区切り線">｜</button>
-            <button id="btn-eraser" class="danger ghost">消しゴム</button>
+            <button id="btn-eraser" class="danger ghost" style="display: none;">消しゴム</button>
+            <button id="btn-edit-mode" class="ghost" title="編集モード切り替え" style="display: none;">編集モード</button>
           </div>
 
         </div>
       </section>
 
       <section class="right-panel">
-        <h2>プレビュー (A4縦)</h2>
+        <h2>Preview</h2>
         <div class="right-content">
           <div class="preview-wrap">
             <div id="page" class="page a4 portrait" aria-label="A4プレビュー">
               <div id="page-content" class="page-content"></div>
             </div>
-            <div class="note">A4最適化。書き出しは「PDF書き出し」。</div>
           </div>
           <div class="right-sidebar">
             <div class="current-chord-display">
-              <div class="current-chord-label">選択中コード</div>
               <div class="current-chord-value" id="current-chord">なし</div>
             </div>
             <aside class="right-controls">
               <div class="ctrl-title">表示設定</div>
-              <label class="field"><span>歌詞サイズ</span><input id="lyrics-font" type="range" min="10" max="28" value="16" /></label>
-              <label class="field"><span>コードサイズ</span><input id="chord-font" type="range" min="10" max="28" value="14" /></label>
-              <label class="field"><span>コード色</span><input id="chord-color" type="color" value="#b00020" /></label>
               <label class="field"><span>歌詞フォント</span>
                 <select id="lyrics-ff">
                   <option value="sans" selected>ゴシック</option>
@@ -120,6 +138,11 @@
                   <option value="rounded">丸ゴシック</option>
                 </select>
               </label>
+              <label class="field"><span>歌詞サイズ</span><input id="lyrics-font" type="range" min="10" max="28" value="16" /></label>
+              <label class="field"><span>行間</span><input id="lyrics-leading" type="range" min="0" max="24" value="8" /></label>
+              <label class="field"><span>字間</span><input id="letter-spacing" type="range" min="-2" max="8" value="0" /></label>
+              <label class="field"><span>行全体右位置</span><input id="line-offset" type="range" min="0" max="100" value="0" /></label>
+              <div style="width: 100%; height: 1px; background: var(--border); margin: 8px 0;"></div>
               <label class="field"><span>コードフォント</span>
                 <select id="chord-ff">
                   <option value="sans" selected>ゴシック</option>
@@ -127,9 +150,22 @@
                   <option value="rounded">丸ゴシック</option>
                 </select>
               </label>
-              <label class="field"><span>行間</span><input id="lyrics-leading" type="range" min="0" max="24" value="8" /></label>
-              <label class="field"><span>字間</span><input id="letter-spacing" type="range" min="-2" max="8" value="0" /></label>
+              <label class="field"><span>コードサイズ</span><input id="chord-font" type="range" min="10" max="28" value="14" /></label>
+              <label class="field"><span>コード色</span><input id="chord-color" type="color" value="#b00020" /></label>
               <label class="field"><span>コード縦位置</span><input id="chord-offset" type="range" min="-40" max="0" value="-18" /></label>
+              <div style="width: 100%; height: 1px; background: var(--border); margin: 8px 0;"></div>
+              <button id="btn-eraser-controls" class="ghost" style="width: 100%; margin-bottom: 4px;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 8px;">
+                  <path d="M15.14,3C14.63,3 14.12,3.2 13.73,3.59L2.59,14.73C1.81,15.5 1.81,16.73 2.59,17.5L6.5,21.41C7.27,22.19 8.5,22.19 9.27,21.41L20.41,10.27C21.19,9.5 21.19,8.27 20.41,7.5L16.5,3.59C16.11,3.2 15.6,3 15.14,3M17,6L21,10L15,16L11,12L17,6M7,18L9,20L6,23L4,21L7,18Z"/>
+                </svg>
+                消しゴムモード
+              </button>
+              <button id="btn-edit-mode-controls" class="ghost" style="width: 100%;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 8px;">
+                  <path d="M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.87,8.87M3,17.25V21H6.75L17.81,9.93L14.06,6.18L3,17.25Z"/>
+                </svg>
+                編集モード
+              </button>
             </aside>
           </div>
         </div>
@@ -139,7 +175,7 @@
     
 
     <footer class="app-footer">
-      <div>完全ローカルで動作します。ブラウザはChrome/Safariを推奨。</div>
+      <div>2025 SONGBOOK MAKER</div>
     </footer>
 
     <script type="module" src="./main.js"></script>

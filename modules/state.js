@@ -22,6 +22,7 @@ export function setupState() {
     presetType: 'triad',
     chordOffsetPx: -18,
     letterSpacing: 0,
+    lineOffsetPx: 0, // 行全体の右オフセット
     batchQueue: [],
   };
 
@@ -41,6 +42,7 @@ export function setupState() {
     artistInput: document.getElementById('artist-input'),
     composerInput: document.getElementById('composer-input'),
     chordOffset: document.getElementById('chord-offset'),
+    lineOffset: document.getElementById('line-offset'),
     letterSpacing: document.getElementById('letter-spacing'),
     btnPrint: document.getElementById('btn-print'),
     btnSave: document.getElementById('btn-save'),
@@ -98,6 +100,7 @@ export function setupState() {
         composer: state.composer,
         presetType: state.presetType,
         chordOffsetPx: state.chordOffsetPx,
+        lineOffsetPx: state.lineOffsetPx,
         letterSpacing: state.letterSpacing,
         batchQueue: state.batchQueue,
       };
@@ -110,7 +113,10 @@ export function setupState() {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (!raw) return;
       const data = JSON.parse(raw);
-      Object.assign(state, data);
+      Object.assign(state, {
+        ...data,
+        lineOffsetPx: data.lineOffsetPx ?? 0
+      });
 
       // UI反映
       if (el.keySelect) el.keySelect.value = state.key;
@@ -129,6 +135,7 @@ export function setupState() {
       if (el.lyricsLeading) el.lyricsLeading.value = String(state.lineGap);
       if (el.letterSpacing) el.letterSpacing.value = String(state.letterSpacing);
       if (el.chordOffset) el.chordOffset.value = String(state.chordOffsetPx);
+      if (el.lineOffset) el.lineOffset.value = String(state.lineOffsetPx);
     } catch {}
   }
 

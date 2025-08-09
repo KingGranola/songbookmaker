@@ -1,0 +1,63 @@
+/* ========================================
+   ヘッダー・ナビゲーション
+   ======================================== */
+
+/* アプリヘッダー - 上部固定ナビゲーション */
+.app-header {
+  position: sticky; /* スクロール時に上部に固定 */
+  top: 0;
+  z-index: 10; /* 他の要素より前面に表示 */
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* ブランド名とツールバーを両端に配置 */
+  gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border); /* 下部にボーダー */
+  background: rgba(8, 13, 30, 0.85); /* 半透明背景 */
+  backdrop-filter: blur(10px); /* 背景をぼかし効果 */
+}
+
+/* ブランド名・ロゴ */
+.brand { 
+  font-size: 26px;
+  font-weight: 800; 
+  letter-spacing: 9px; /* 文字間隔を広げる */
+  text-transform: uppercase; /* 大文字に変換 */
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* バージョンバッジ */
+.version-badge {
+  background: linear-gradient(135deg, var(--primary-light), var(--primary)); /* グラデーション背景 */
+  color: white;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  cursor: help; /* ホバー時にヘルプカーソル */
+  transition: all 0.2s ease;
+  text-transform: none; /* 大文字変換をリセット */
+  letter-spacing: normal; /* 文字間隔をリセット */
+}
+
+
+
+/* ツールバー - ヘッダー右側のボタン群 */
+.toolbar { 
+  display: flex; 
+  gap: 12px; 
+  align-items: center; 
+  flex-wrap: wrap; /* 画面が狭い時に折り返し */
+}
+
+/* 区切り線 */
+.divider { 
+  width: 1px; 
+  height: 28px; 
+  background: var(--border); 
+  margin: 0 4px; 
+}

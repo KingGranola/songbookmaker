@@ -56,31 +56,6 @@ export function updatePresetList(ctx) {
   const chordCategories = getPresetChords(ctx);
   el.presetList.innerHTML = '';
   
-  // セクション追加ボタン
-  const sectionButtons = [
-    { text: 'イントロ', placeholder: '[Intro]' },
-    { text: '間奏', placeholder: '[Interlude]' },
-    { text: 'アウトロ', placeholder: '[Outro]' },
-    { text: 'ブリッジ', placeholder: '[Bridge]' }
-  ];
-  
-  sectionButtons.forEach(section => {
-    const chip = document.createElement('button');
-    chip.type = 'button';
-    chip.className = 'chip section-chip';
-    chip.textContent = section.text;
-    chip.title = `${section.text}セクションを歌詞に追加`;
-    chip.addEventListener('click', () => {
-      addSectionToLyrics(ctx, section.placeholder);
-    });
-    el.presetList.appendChild(chip);
-  });
-  
-  // 区切り線
-  const separator = document.createElement('div');
-  separator.style.cssText = 'width: 100%; height: 1px; background: var(--border); margin: 8px 0;';
-  el.presetList.appendChild(separator);
-  
   // カテゴリ別にコードを表示
   const categories = [
     { key: 'diatonic', title: 'ダイアトニック', color: 'var(--primary)' },
@@ -129,44 +104,6 @@ export function updatePresetList(ctx) {
   });
   
   if (ctx.highlightSelectedChip) ctx.highlightSelectedChip();
-}
-
-function addSectionToLyrics(ctx, sectionText) {
-  const { state, el } = ctx;
-  const textarea = el.lyricsInput;
-  if (!textarea) return;
-  
-  const currentLyrics = textarea.value;
-  const cursorPos = textarea.selectionStart;
-  const lines = currentLyrics.split('\n');
-  
-  // カーソル位置の行を特定
-  let currentLineIndex = 0;
-  let charCount = 0;
-  
-  for (let i = 0; i < lines.length; i++) {
-    charCount += lines[i].length + 1; // +1 for newline
-    if (charCount > cursorPos) {
-      currentLineIndex = i;
-      break;
-    }
-  }
-  
-  // セクションを挿入
-  lines.splice(currentLineIndex, 0, sectionText, '');
-  
-  const newLyrics = lines.join('\n');
-  textarea.value = newLyrics;
-  state.lyrics = newLyrics;
-  
-  // プレビューを更新
-  if (ctx.renderPage) ctx.renderPage(ctx);
-  if (ctx.persist) ctx.persist();
-  
-  // カーソル位置を調整
-  const newCursorPos = cursorPos + sectionText.length + 1; // +1 for newline
-  textarea.setSelectionRange(newCursorPos, newCursorPos);
-  textarea.focus();
 }
 
 

@@ -1,0 +1,112 @@
+/* ========================================
+   メインレイアウト・パネル
+   ======================================== */
+
+/* メインコンテンツエリア - 2カラムレイアウト */
+.app-main {
+  display: grid;
+  grid-template-columns: 0.95fr 1fr; /* 左パネル:右パネル = 0.95:1 */
+  gap: 0px;
+  padding: 0px;
+}
+
+/* 左パネル - 歌詞エディットエリア */
+.left-panel, 
+.right-panel {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+  font-size: 0.95em;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.25); /* 影効果 */
+  backdrop-filter: blur(8px); /* 背景ぼかし */
+}
+
+/* 左パネルの特別設定 */
+.left-panel {
+  max-width: none;
+  justify-self: stretch; /* グリッド内で幅を最大に */
+}
+
+/* 右パネル - プレビューエリア */
+.right-panel { 
+  overflow: auto; /* 内容が多い時にスクロール */
+}
+
+/* 右パネル内のコンテンツレイアウト */
+.right-content { 
+  display: grid; 
+  grid-template-columns: 1fr 240px; /* プレビュー:サイドバー = 1:240px */
+  gap: 12px; 
+  align-items: start; 
+}
+
+/* 右サイドバー */
+.right-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* プレビューラッパー */
+.preview-wrap { 
+  overflow: auto; 
+}
+
+/* 現在選択中のコード表示エリア */
+.current-chord-display {
+  background: rgba(255, 255, 255);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+/* 現在選択中のコードラベル */
+.current-chord-label {
+  font-size: 11px;
+  color: var(--muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+
+/* 現在選択中のコード値 */
+.current-chord-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--danger);
+  min-height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 右側のコントロールパネル */
+.right-controls { 
+  position: sticky; /* スクロール時に固定 */
+  top: 12px; 
+  display: grid; 
+  gap: 8px; 
+  align-content: start; 
+  background: rgba(17,24,39,0.5); 
+  border: 1px solid var(--border); 
+  border-radius: 10px; 
+  padding: 10px; 
+}
+
+/* コントロールタイトル */
+.ctrl-title { 
+  color: var(--muted); 
+  font-size: 12px; 
+}
+
+/* パネル内の見出し */
+.left-panel h2, 
+.right-panel h2 { 
+  margin: 0 0 8px; 
+  font-size: 14px; 
+  color: var(--muted); 
+}

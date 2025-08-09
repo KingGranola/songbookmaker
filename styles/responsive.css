@@ -1,0 +1,53 @@
+/* ========================================
+   レスポンシブデザイン・スクロールバー
+   ======================================== */
+
+/* スマートフォン・タブレット対応 */
+@media (max-width: 900px) {
+  /* メインレイアウトを1カラムに変更 */
+  .app-main { 
+    grid-template-columns: 1fr; 
+  }
+  
+  /* ツールバーの間隔を調整 */
+  .toolbar { 
+    gap: 8px; 
+  }
+  
+  /* フィールドのサイズ調整 */
+  .field { 
+    font-size: 12px; 
+    padding: 4px 6px; 
+  }
+  
+  /* プレビューページのスケール調整 */
+  .page { 
+    transform: scale(0.6); 
+  }
+  
+  /* 右コンテンツを1カラムに変更 */
+  .right-content { 
+    grid-template-columns: 1fr; 
+  }
+}
+
+/* カスタムスクロールバー */
+*::-webkit-scrollbar { 
+  height: 10px; 
+  width: 10px; 
+}
+
+*::-webkit-scrollbar-track { 
+  background: transparent; 
+}
+
+*::-webkit-scrollbar-thumb { 
+  background: rgba(148,163,184,0.25); 
+  border-radius: 10px; 
+  border: 2px solid transparent; 
+  background-clip: padding-box; 
+}
+
+*::-webkit-scrollbar-thumb:hover { 
+  background: rgba(148,163,184,0.4); 
+}
