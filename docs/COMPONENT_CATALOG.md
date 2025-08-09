@@ -17,47 +17,58 @@
 ### 🔘 基本ボタン
 
 #### プライマリボタン
+
 ```html
-<button class="primary">保存</button>
-<button class="primary">適用</button>
+<button class="primary">保存</button> <button class="primary">適用</button>
 ```
+
 **用途**: 主要なアクション（保存、適用、開始など）
 
 #### セカンダリボタン（ゴースト）
+
 ```html
 <button class="ghost">キャンセル</button>
 <button class="ghost">元に戻す</button>
 ```
+
 **用途**: 副次的なアクション（キャンセル、戻る、設定など）
 
 #### 危険ボタン
+
 ```html
 <button class="danger ghost">消しゴム</button>
 <button class="danger ghost">セクション削除</button>
 ```
+
 **用途**: 削除や危険なアクション
 
 ### 🏷️ チップボタン
 
 #### 通常チップ
+
 ```html
 <button class="chip">C</button>
 <button class="chip">Am</button>
 <button class="chip">F</button>
 ```
+
 **用途**: コード選択、カテゴリ選択
 
 #### セクションチップ
+
 ```html
 <button class="section-chip" data-section="INTRO">INTRO</button>
 <button class="section-chip" data-section="VERSE">VERSE</button>
 ```
+
 **用途**: セクション選択
 
 #### 特殊チップ
+
 ```html
 <button id="btn-sep" class="chip">｜</button>
 ```
+
 **用途**: 区切り線、特殊記号
 
 ---
@@ -67,6 +78,7 @@
 ### 📝 フィールド
 
 #### 基本フィールド
+
 ```html
 <label class="field">
   <span>ラベル</span>
@@ -75,6 +87,7 @@
 ```
 
 #### 選択フィールド
+
 ```html
 <label class="field">
   <span>キー</span>
@@ -86,6 +99,7 @@
 ```
 
 #### レンジフィールド
+
 ```html
 <label class="field">
   <span>歌詞サイズ</span>
@@ -94,6 +108,7 @@
 ```
 
 #### カラーフィールド
+
 ```html
 <label class="field">
   <span>コード色</span>
@@ -104,8 +119,8 @@
 ### 📄 テキストエリア
 
 ```html
-<textarea 
-  id="lyrics-input" 
+<textarea
+  id="lyrics-input"
   placeholder="歌詞を入力してください&#10;改行で行が分割されます"
   aria-label="歌詞テキスト"
   aria-describedby="lyrics-help"
@@ -132,8 +147,12 @@
 
 ```html
 <div class="help-tabs" role="tablist">
-  <button class="help-tab active" role="tab" data-target="basic">基本操作</button>
-  <button class="help-tab" role="tab" data-target="shortcuts">ショートカット</button>
+  <button class="help-tab active" role="tab" data-target="basic">
+    基本操作
+  </button>
+  <button class="help-tab" role="tab" data-target="shortcuts">
+    ショートカット
+  </button>
   <button class="help-tab" role="tab" data-target="features">機能説明</button>
   <button class="help-tab" role="tab" data-target="faq">FAQ</button>
 </div>
@@ -178,13 +197,15 @@
       <h2 id="help-title">操作ガイド</h2>
       <button id="help-close" class="modal-close" aria-label="閉じる">×</button>
     </div>
-    
+
     <div class="modal-body">
       <!-- タブとコンテンツ -->
     </div>
-    
+
     <footer class="modal-footer">
-      <p>💡 <strong>ヒント:</strong> F1キーでいつでもこのヘルプを表示できます</p>
+      <p>
+        💡 <strong>ヒント:</strong> F1キーでいつでもこのヘルプを表示できます
+      </p>
     </footer>
   </div>
 </div>
@@ -197,9 +218,11 @@
   <div class="reduce-lines-modal">
     <div class="modal-header">
       <h2>行削減プレビュー</h2>
-      <button id="reduce-lines-close" class="modal-close" aria-label="閉じる">×</button>
+      <button id="reduce-lines-close" class="modal-close" aria-label="閉じる">
+        ×
+      </button>
     </div>
-    
+
     <div class="modal-content">
       <div class="preview-comparison">
         <div class="preview-section">
@@ -211,10 +234,10 @@
           <div id="reduce-lines-after" class="lyrics-preview"></div>
         </div>
       </div>
-      
+
       <!-- 設定セクション -->
     </div>
-    
+
     <div class="modal-footer">
       <button id="reduce-lines-apply" class="primary">適用</button>
       <button id="reduce-lines-cancel" class="ghost">キャンセル</button>
@@ -260,12 +283,12 @@
       <!-- ツールバーコンテンツ -->
     </div>
   </header>
-  
+
   <main class="app-main">
     <section class="left-panel" role="complementary">
       <!-- 歌詞エディタ -->
     </section>
-    
+
     <section class="right-panel" role="main">
       <!-- A4プレビュー -->
     </section>
@@ -281,12 +304,12 @@
     <div class="tool-buttons">
       <!-- ページツールボタン -->
     </div>
-    
+
     <div id="page-content" class="page-content">
       <div class="page-title">
         <!-- タイトル・メタ情報 -->
       </div>
-      
+
       <div class="lyrics-container">
         <!-- 歌詞行とコード -->
       </div>
@@ -305,7 +328,7 @@
       <!-- セクションチップ -->
     </div>
   </div>
-  
+
   <div class="palette-row">
     <div class="palette-title">プリセット</div>
     <div id="preset-list" class="chip-row">
@@ -373,7 +396,7 @@
     min-width: 44px;
     padding: 8px 12px;
   }
-  
+
   .tool-btn {
     min-height: 44px;
     min-width: 44px;

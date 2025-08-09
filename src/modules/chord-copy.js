@@ -9,7 +9,7 @@ export class ChordCopyManager {
     this.selectedChords = new Set();
     this.selectionBox = null;
     this.startPoint = null;
-    
+
     this.init();
   }
 
@@ -34,7 +34,7 @@ export class ChordCopyManager {
     previewWrap.addEventListener('mousedown', (e) => {
       // CtrlキーまたはCmd（Mac）キーが押されている時のみ選択モード
       if (!e.ctrlKey && !e.metaKey) return;
-      
+
       e.preventDefault();
       this.startSelection(e);
     });
@@ -58,11 +58,15 @@ export class ChordCopyManager {
     // キーボードショートカット
     document.addEventListener('keydown', (e) => {
       // Ctrl+C または Cmd+C でコピー
-      if ((e.ctrlKey || e.metaKey) && e.key === 'c' && this.selectedChords.size > 0) {
+      if (
+        (e.ctrlKey || e.metaKey) &&
+        e.key === 'c' &&
+        this.selectedChords.size > 0
+      ) {
         e.preventDefault();
         this.copySelectedChords();
       }
-      
+
       // Escapeで選択解除
       if (e.key === 'Escape') {
         this.clearSelection();
@@ -105,14 +109,23 @@ export class ChordCopyManager {
     this.selectedChords.clear();
     this.updateButtonStates();
 
-    const rect = document.querySelector('.preview-wrap').getBoundingClientRect();
+    const rect = document
+      .querySelector('.preview-wrap')
+      .getBoundingClientRect();
     this.startPoint = {
-      x: e.clientX - rect.left + document.querySelector('.preview-wrap').scrollLeft,
-      y: e.clientY - rect.top + document.querySelector('.preview-wrap').scrollTop
+      x:
+        e.clientX -
+        rect.left +
+        document.querySelector('.preview-wrap').scrollLeft,
+      y:
+        e.clientY -
+        rect.top +
+        document.querySelector('.preview-wrap').scrollTop,
     };
 
-    this.selectionBox.style.left = (e.clientX - rect.left + window.scrollX) + 'px';
-    this.selectionBox.style.top = (e.clientY - rect.top + window.scrollY) + 'px';
+    this.selectionBox.style.left =
+      e.clientX - rect.left + window.scrollX + 'px';
+    this.selectionBox.style.top = e.clientY - rect.top + window.scrollY + 'px';
     this.selectionBox.style.width = '0px';
     this.selectionBox.style.height = '0px';
     this.selectionBox.style.display = 'block';
@@ -121,10 +134,18 @@ export class ChordCopyManager {
   updateSelection(e) {
     if (!this.isSelecting || !this.startPoint) return;
 
-    const rect = document.querySelector('.preview-wrap').getBoundingClientRect();
+    const rect = document
+      .querySelector('.preview-wrap')
+      .getBoundingClientRect();
     const currentPoint = {
-      x: e.clientX - rect.left + document.querySelector('.preview-wrap').scrollLeft,
-      y: e.clientY - rect.top + document.querySelector('.preview-wrap').scrollTop
+      x:
+        e.clientX -
+        rect.left +
+        document.querySelector('.preview-wrap').scrollLeft,
+      y:
+        e.clientY -
+        rect.top +
+        document.querySelector('.preview-wrap').scrollTop,
     };
 
     const minX = Math.min(this.startPoint.x, currentPoint.x);
@@ -133,10 +154,10 @@ export class ChordCopyManager {
     const maxY = Math.max(this.startPoint.y, currentPoint.y);
 
     // 選択ボックスの位置とサイズを更新
-    this.selectionBox.style.left = (minX + rect.left + window.scrollX) + 'px';
-    this.selectionBox.style.top = (minY + rect.top + window.scrollY) + 'px';
-    this.selectionBox.style.width = (maxX - minX) + 'px';
-    this.selectionBox.style.height = (maxY - minY) + 'px';
+    this.selectionBox.style.left = minX + rect.left + window.scrollX + 'px';
+    this.selectionBox.style.top = minY + rect.top + window.scrollY + 'px';
+    this.selectionBox.style.width = maxX - minX + 'px';
+    this.selectionBox.style.height = maxY - minY + 'px';
 
     // 選択範囲内のコードを検索
     this.findChordsInSelection(minX, minY, maxX, maxY);
@@ -144,12 +165,12 @@ export class ChordCopyManager {
 
   findChordsInSelection(minX, minY, maxX, maxY) {
     this.selectedChords.clear();
-    
+
     const chordElements = document.querySelectorAll('.chord');
     const previewWrap = document.querySelector('.preview-wrap');
     const previewRect = previewWrap.getBoundingClientRect();
 
-    chordElements.forEach(chord => {
+    chordElements.forEach((chord) => {
       const chordRect = chord.getBoundingClientRect();
       const chordX = chordRect.left - previewRect.left + previewWrap.scrollLeft;
       const chordY = chordRect.top - previewRect.top + previewWrap.scrollTop;
@@ -157,8 +178,12 @@ export class ChordCopyManager {
       const chordHeight = chordRect.height;
 
       // コード要素が選択範囲と重なっているかチェック
-      if (chordX < maxX && chordX + chordWidth > minX &&
-          chordY < maxY && chordY + chordHeight > minY) {
+      if (
+        chordX < maxX &&
+        chordX + chordWidth > minX &&
+        chordY < maxY &&
+        chordY + chordHeight > minY
+      ) {
         this.selectedChords.add(chord.textContent.trim());
         chord.classList.add('chord-selected');
       } else {
@@ -169,7 +194,7 @@ export class ChordCopyManager {
     this.updateButtonStates();
   }
 
-  endSelection(e) {
+  endSelection(_e) {
     this.isSelecting = false;
     this.selectionBox.style.display = 'none';
     this.startPoint = null;
@@ -183,7 +208,7 @@ export class ChordCopyManager {
   showSelectionInfo() {
     const count = this.selectedChords.size;
     const chordList = Array.from(this.selectedChords).join(', ');
-    
+
     // 一時的な通知を表示
     const notification = document.createElement('div');
     notification.className = 'chord-selection-notification';
@@ -192,9 +217,9 @@ export class ChordCopyManager {
       <div class="selected-chords">${chordList}</div>
       <div class="selection-hint">Ctrl+C でコピー、Esc で解除</div>
     `;
-    
+
     document.body.appendChild(notification);
-    
+
     // 3秒後に自動削除
     setTimeout(() => {
       if (notification.parentNode) {
@@ -211,12 +236,15 @@ export class ChordCopyManager {
 
     // クリップボードにコピー
     if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(chordsText).then(() => {
-        this.showCopySuccess(chordsArray.length);
-      }).catch(err => {
-        console.warn('クリップボードへのコピーに失敗:', err);
-        this.fallbackCopy(chordsText);
-      });
+      navigator.clipboard
+        .writeText(chordsText)
+        .then(() => {
+          this.showCopySuccess(chordsArray.length);
+        })
+        .catch((err) => {
+          console.warn('クリップボードへのコピーに失敗:', err);
+          this.fallbackCopy(chordsText);
+        });
     } else {
       this.fallbackCopy(chordsText);
     }
@@ -232,7 +260,7 @@ export class ChordCopyManager {
     document.body.appendChild(textArea);
     textArea.focus();
     textArea.select();
-    
+
     try {
       const successful = document.execCommand('copy');
       if (successful) {
@@ -252,9 +280,9 @@ export class ChordCopyManager {
     const notification = document.createElement('div');
     notification.className = 'copy-success-notification';
     notification.innerHTML = `✅ ${count}個のコードをコピーしました`;
-    
+
     document.body.appendChild(notification);
-    
+
     setTimeout(() => {
       if (notification.parentNode) {
         notification.parentNode.removeChild(notification);
@@ -266,9 +294,9 @@ export class ChordCopyManager {
     const notification = document.createElement('div');
     notification.className = 'copy-error-notification';
     notification.innerHTML = '❌ コピーに失敗しました';
-    
+
     document.body.appendChild(notification);
-    
+
     setTimeout(() => {
       if (notification.parentNode) {
         notification.parentNode.removeChild(notification);
@@ -280,28 +308,28 @@ export class ChordCopyManager {
     this.selectedChords.clear();
     this.isSelecting = false;
     this.selectionBox.style.display = 'none';
-    
+
     // 全てのコードのハイライトを解除
-    document.querySelectorAll('.chord-selected').forEach(chord => {
+    document.querySelectorAll('.chord-selected').forEach((chord) => {
       chord.classList.remove('chord-selected');
     });
-    
+
     this.updateButtonStates();
   }
 
   updateButtonStates() {
     const copyBtn = document.getElementById('btn-copy-chords');
     const clearBtn = document.getElementById('btn-clear-selection');
-    
+
     const hasSelection = this.selectedChords.size > 0;
-    
+
     if (copyBtn) {
       copyBtn.disabled = !hasSelection;
-      copyBtn.textContent = hasSelection ? 
-        `📋 コピー (${this.selectedChords.size})` : 
-        '📋 コピー';
+      copyBtn.textContent = hasSelection
+        ? `📋 コピー (${this.selectedChords.size})`
+        : '📋 コピー';
     }
-    
+
     if (clearBtn) {
       clearBtn.disabled = !hasSelection;
     }

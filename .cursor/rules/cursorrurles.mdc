@@ -1,0 +1,60 @@
+# Technology Stack & Official Documentation
+Refer to the official documentation and follow the latest guidelines.
+ 
+# Frontend
+- Next.js (App Router, Server Components) 
+  https://nextjs.org/docs
+- React (Concurrent Features, latest Hooks) 
+  https://react.dev/
+- TypeScript (Typed JavaScript) 
+  https://www.typescriptlang.org/docs/
+- TailwindCSS (Utility-first CSS framework) 
+  https://tailwindcss.com/docs
+- shadcn/ui (Radix UI-based component library) 
+  https://ui.shadcn.com/docs
+- Framer Motion (Animations) 
+  https://www.framer.com/motion/
+ 
+# Backend / API
+- Next.js API Routes (API development) 
+  https://nextjs.org/docs/pages/building-your-application/routing/api-routes
+- Node.js (LTS version recommended) 
+  https://nodejs.org/en/docs
+- Prisma (Type-safe ORM) 
+  https://www.prisma.io/docs/
+- Supabase (PostgreSQL-based BaaS) 
+  https://supabase.com/docs
+- PlanetScale (Serverless MySQL database) 
+  https://planetscale.com/docs
+ 
+# Authentication / Security
+- NextAuth.js (OAuth, JWT authentication) 
+  https://next-auth.js.org/getting-started/introduction
+- Clerk (Next.js authentication) 
+  https://clerk.com/docs
+- Zod (Schema validation) 
+  https://zod.dev/
+ 
+# State Management
+- React Context API (Lightweight global state management) 
+  https://react.dev/reference/react/useContext
+- Zustand (Redux alternative) 
+  https://docs.pmnd.rs/zustand/getting-started/introduction
+- Redux Toolkit (State management for large-scale applications) 
+  https://redux-toolkit.js.org/introduction/getting-started
+ 
+# DevOps / CI/CD
+- Vercel (Next.js deployment) 
+  https://vercel.com/docs
+- GitHub Actions (CI/CD automation) 
+  https://docs.github.com/en/actions
+- Docker (Containerization & environment management) 
+  https://docs.docker.com/
+ 
+# Tools
+- ESLint (Code linting tool) 
+  https://eslint.org/docs/latest/
+- Prettier (Code formatter) 
+  https://prettier.io/docs/en/
+- Husky (Git hook manager) 
+  https://typicode.github.io/husky/#/

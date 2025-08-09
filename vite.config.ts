@@ -11,18 +11,18 @@ export default defineConfig({
     target: 'es2020',
     rollupOptions: {
       input: {
-        main: './index.html'
-      }
-    }
+        main: './index.html',
+      },
+    },
   },
   server: {
     port: 3000,
-    open: true
+    open: true,
   },
   resolve: {
     alias: {
       '@': '/modules',
-      '@styles': '/styles'
-    }
-  }
+      '@styles': '/styles',
+    },
+  },
 });

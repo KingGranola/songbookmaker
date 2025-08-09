@@ -8,12 +8,12 @@
   .app-main {
     grid-template-columns: minmax(300px, 0.7fr) minmax(650px, 1fr);
   }
-  
+
   .preview-wrap {
     min-width: 600px;
     overflow-x: auto;
   }
-  
+
   .right-panel {
     min-width: 650px; /* A4プレビュー + サイドバーの最小幅 */
   }
@@ -22,40 +22,40 @@
 /* スマートフォン・タブレット対応 */
 @media (max-width: 900px) {
   /* メインレイアウトを1カラムに変更 */
-  .app-main { 
-    grid-template-columns: 1fr; 
+  .app-main {
+    grid-template-columns: 1fr;
   }
-  
+
   /* プレビューを優先表示 */
   .left-panel {
     order: 2; /* エディターを下に */
   }
-  
+
   .right-panel {
     order: 1; /* プレビューを上に */
   }
-  
+
   /* ツールバーの間隔を調整 */
-  .toolbar { 
-    gap: 8px; 
+  .toolbar {
+    gap: 8px;
   }
-  
+
   /* フィールドのサイズ調整 */
-  .field { 
-    font-size: 12px; 
-    padding: 4px 6px; 
+  .field {
+    font-size: 12px;
+    padding: 4px 6px;
   }
-  
+
   /* プレビューページのスケール調整 */
-  .page { 
-    transform: scale(0.6); 
+  .page {
+    transform: scale(0.6);
   }
-  
+
   /* 右コンテンツを1カラムに変更 */
-  .right-content { 
-    grid-template-columns: 1fr; 
+  .right-content {
+    grid-template-columns: 1fr;
   }
-  
+
   /* A4プレビューの最小幅を強制維持 */
   .preview-wrap {
     min-width: 600px !important;
@@ -64,22 +64,22 @@
 }
 
 /* カスタムスクロールバー */
-*::-webkit-scrollbar { 
-  height: 10px; 
-  width: 10px; 
+*::-webkit-scrollbar {
+  height: 10px;
+  width: 10px;
 }
 
-*::-webkit-scrollbar-track { 
-  background: transparent; 
+*::-webkit-scrollbar-track {
+  background: transparent;
 }
 
-*::-webkit-scrollbar-thumb { 
-  background: rgba(148,163,184,0.25); 
-  border-radius: 10px; 
-  border: 2px solid transparent; 
-  background-clip: padding-box; 
+*::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.25);
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
 }
 
-*::-webkit-scrollbar-thumb:hover { 
-  background: rgba(148,163,184,0.4); 
+*::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.4);
 }

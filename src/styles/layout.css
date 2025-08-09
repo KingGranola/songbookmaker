@@ -12,7 +12,7 @@
 }
 
 /* パネル共通スタイル */
-.left-panel, 
+.left-panel,
 .right-panel {
   background: var(--surface-secondary);
   border: 1px solid var(--border);
@@ -31,15 +31,15 @@
 }
 
 /* 右パネル - プレビューエリア */
-.right-panel { 
+.right-panel {
   overflow: auto; /* 内容が多い時にスクロール */
 }
 
 /* 右パネル内のコンテンツレイアウト */
-.right-content { 
-  display: grid; 
+.right-content {
+  display: grid;
   grid-template-columns: 1fr 240px;
-  gap: var(--space-lg); 
+  gap: var(--space-lg);
   align-items: start;
   height: 100%;
 }
@@ -61,7 +61,7 @@
 }
 
 /* プレビューラッパー */
-.preview-wrap { 
+.preview-wrap {
   overflow: auto;
   min-width: 600px; /* A4プレビューの最小幅を維持 */
 }
@@ -98,28 +98,28 @@
 }
 
 /* 右側のコントロールパネル */
-.right-controls { 
+.right-controls {
   position: sticky;
   top: var(--space-lg);
-  display: grid; 
+  display: grid;
   gap: var(--space-md);
-  align-content: start; 
+  align-content: start;
   background: var(--surface-secondary);
-  border: 1px solid var(--border); 
+  border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: var(--space-lg);
 }
 
 /* コントロールタイトル */
-.ctrl-title { 
-  color: var(--muted); 
-  font-size: 12px; 
+.ctrl-title {
+  color: var(--muted);
+  font-size: 12px;
 }
 
 /* パネル内の見出し */
-.left-panel h2, 
-.right-panel h2 { 
-  margin: 0 0 8px; 
-  font-size: 14px; 
-  color: var(--muted); 
+.left-panel h2,
+.right-panel h2 {
+  margin: 0 0 8px;
+  font-size: 14px;
+  color: var(--muted);
 }

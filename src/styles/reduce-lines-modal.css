@@ -93,7 +93,7 @@
   color: #64748b;
 }
 
-.reduce-lines-settings input[type="number"] {
+.reduce-lines-settings input[type='number'] {
   width: 80px;
   padding: 6px 8px;
   border: 1px solid #d1d5db;
@@ -101,7 +101,7 @@
   font-size: 14px;
 }
 
-.reduce-lines-settings input[type="checkbox"] {
+.reduce-lines-settings input[type='checkbox'] {
   width: 16px;
   height: 16px;
 }
@@ -151,18 +151,18 @@
     width: 95vw;
     max-height: 90vh;
   }
-  
+
   .preview-comparison {
     grid-template-columns: 1fr;
     gap: 16px;
   }
-  
+
   .reduce-lines-settings .field {
     flex-direction: column;
     align-items: flex-start;
     gap: 6px;
   }
-  
+
   .reduce-lines-settings .field span {
     min-width: unset;
   }

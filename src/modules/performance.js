@@ -15,7 +15,7 @@ export class PerformanceOptimizer {
    */
   debounce(func, delay, key) {
     const debounceKey = key || func.toString();
-    
+
     if (this.debouncedFunctions.has(debounceKey)) {
       return this.debouncedFunctions.get(debounceKey);
     }
@@ -39,16 +39,19 @@ export class PerformanceOptimizer {
 
     return (...args) => {
       const now = Date.now();
-      
+
       if (now - lastCall >= delay) {
         lastCall = now;
         func(...args);
       } else {
         clearTimeout(timeoutId);
-        timeoutId = setTimeout(() => {
-          lastCall = Date.now();
-          func(...args);
-        }, delay - (now - lastCall));
+        timeoutId = setTimeout(
+          () => {
+            lastCall = Date.now();
+            func(...args);
+          },
+          delay - (now - lastCall)
+        );
       }
     };
   }
@@ -64,8 +67,8 @@ export class PerformanceOptimizer {
         this.rafId = null;
         const updates = Array.from(this.pendingUpdates);
         this.pendingUpdates.clear();
-        
-        updates.forEach(update => {
+
+        updates.forEach((update) => {
           try {
             update();
           } catch (error) {
@@ -82,20 +85,20 @@ export class PerformanceOptimizer {
   memoize(fn, keyFn) {
     return (...args) => {
       const key = keyFn ? keyFn(...args) : JSON.stringify(args);
-      
+
       if (this.memoCache.has(key)) {
         return this.memoCache.get(key);
       }
-      
+
       const result = fn(...args);
       this.memoCache.set(key, result);
-      
+
       // キャッシュサイズ制限
       if (this.memoCache.size > 100) {
         const firstKey = this.memoCache.keys().next().value;
         this.memoCache.delete(firstKey);
       }
-      
+
       return result;
     };
   }
@@ -108,12 +111,12 @@ export class PerformanceOptimizer {
     const elementsWithParents = [];
 
     // 要素を一時的にフラグメントに移動
-    elements.forEach(element => {
+    elements.forEach((element) => {
       if (element.parentNode) {
         elementsWithParents.push({
           element,
           parent: element.parentNode,
-          nextSibling: element.nextSibling
+          nextSibling: element.nextSibling,
         });
         fragment.appendChild(element);
       }
@@ -134,7 +137,7 @@ export class PerformanceOptimizer {
   setupLazyLoading() {
     if ('IntersectionObserver' in window) {
       const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
+        entries.forEach((entry) => {
           if (entry.isIntersecting) {
             const img = entry.target;
             if (img.dataset.src) {
@@ -146,7 +149,7 @@ export class PerformanceOptimizer {
         });
       });
 
-      document.querySelectorAll('img[data-src]').forEach(img => {
+      document.querySelectorAll('img[data-src]').forEach((img) => {
         observer.observe(img);
       });
     }
@@ -161,7 +164,7 @@ export class PerformanceOptimizer {
       console.log('Memory usage:', {
         used: `${Math.round(memory.usedJSHeapSize / 1048576)}MB`,
         total: `${Math.round(memory.totalJSHeapSize / 1048576)}MB`,
-        limit: `${Math.round(memory.jsHeapSizeLimit / 1048576)}MB`
+        limit: `${Math.round(memory.jsHeapSizeLimit / 1048576)}MB`,
       });
     }
   }
@@ -172,12 +175,12 @@ export class PerformanceOptimizer {
   clearCache() {
     this.memoCache.clear();
     this.debouncedFunctions.clear();
-    
+
     if (this.rafId !== null) {
       cancelAnimationFrame(this.rafId);
       this.rafId = null;
     }
-    
+
     this.pendingUpdates.clear();
   }
 
@@ -196,7 +199,7 @@ export class PerformanceOptimizer {
       stats.memoryUsage = {
         used: memory.usedJSHeapSize,
         total: memory.totalJSHeapSize,
-        limit: memory.jsHeapSizeLimit
+        limit: memory.jsHeapSizeLimit,
       };
     }
 

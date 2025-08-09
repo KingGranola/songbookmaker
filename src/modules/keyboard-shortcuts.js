@@ -54,11 +54,7 @@ export class KeyboardShortcutManager {
    * キーの組み合わせを正規化
    */
   normalizeKeyCombo(combo) {
-    return combo.toLowerCase()
-      .replace(/\s+/g, '')
-      .split('+')
-      .sort()
-      .join('+');
+    return combo.toLowerCase().replace(/\s+/g, '').split('+').sort().join('+');
   }
 
   /**
@@ -75,7 +71,10 @@ export class KeyboardShortcutManager {
     if (!this.isEnabled) return;
 
     const target = event.target;
-    const isInputField = target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.contentEditable === 'true';
+    const isInputField =
+      target.tagName === 'INPUT' ||
+      target.tagName === 'TEXTAREA' ||
+      target.contentEditable === 'true';
 
     if (isInputField && !this.isGlobalShortcut(event)) {
       return;
@@ -117,10 +116,20 @@ export class KeyboardShortcutManager {
    * グローバルショートカットかどうか判定
    */
   isGlobalShortcut(event) {
-    const globalShortcuts = ['ctrl+s', 'cmd+s', 'ctrl+p', 'cmd+p', 'ctrl+o', 'cmd+o', 'escape'];
+    const globalShortcuts = [
+      'ctrl+s',
+      'cmd+s',
+      'ctrl+p',
+      'cmd+p',
+      'ctrl+o',
+      'cmd+o',
+      'escape',
+    ];
     const combo = this.getKeyComboFromEvent(event);
     const normalizedCombo = this.normalizeKeyCombo(combo);
-    return globalShortcuts.some(shortcut => this.normalizeKeyCombo(shortcut) === normalizedCombo);
+    return globalShortcuts.some(
+      (shortcut) => this.normalizeKeyCombo(shortcut) === normalizedCombo
+    );
   }
 
   // ========== ショートカット実装 ==========
@@ -175,11 +184,11 @@ export class KeyboardShortcutManager {
   cancelCurrentAction() {
     // 編集モード・消しゴムモードを解除
     this.exitEditAndEraserModes();
-    
+
     if (this.ctx.setCurrentChord) {
       this.ctx.setCurrentChord(null);
     }
-    
+
     const activeElement = document.activeElement;
     if (activeElement && activeElement.blur) {
       activeElement.blur();
@@ -195,7 +204,7 @@ export class KeyboardShortcutManager {
 
     // 編集モード・消しゴムモードのクラスを削除（明るさを元に戻す）
     pageContent.classList.remove('edit-mode', 'eraser-mode');
-    
+
     // 編集モードボタンの状態をリセット
     const btnEditMode = document.getElementById('btn-edit-mode');
     if (btnEditMode) {
@@ -203,14 +212,16 @@ export class KeyboardShortcutManager {
       btnEditMode.classList.remove('primary');
       btnEditMode.classList.add('ghost');
     }
-    
+
     // 編集モード状態をリセット
     window.isEditModeActive = false;
-    
+
     // コントロールボタンの状態もリセット
-    const btnEditModeControls = document.getElementById('btn-edit-mode-controls');
+    const btnEditModeControls = document.getElementById(
+      'btn-edit-mode-controls'
+    );
     const btnEraserControls = document.getElementById('btn-eraser-controls');
-    
+
     if (btnEditModeControls) btnEditModeControls.classList.remove('active');
     if (btnEraserControls) btnEraserControls.classList.remove('active');
   }

@@ -18,9 +18,9 @@
 }
 
 /* ブランド名・ロゴ */
-.brand { 
+.brand {
   font-size: 18px;
-  font-weight: 700; 
+  font-weight: 700;
   letter-spacing: 4px; /* 文字間隔を縮小 */
   text-transform: uppercase; /* 大文字に変換 */
   display: flex;
@@ -37,7 +37,11 @@
 
 /* バージョンバッジ */
 .version-badge {
-  background: linear-gradient(135deg, var(--primary-light), var(--primary)); /* グラデーション背景 */
+  background: linear-gradient(
+    135deg,
+    var(--primary-light),
+    var(--primary)
+  ); /* グラデーション背景 */
   color: white;
   font-size: 10px;
   font-weight: 600;
@@ -51,21 +55,19 @@
   letter-spacing: normal; /* 文字間隔をリセット */
 }
 
-
-
 /* ツールバー - ヘッダー右側のボタン群 */
-.toolbar { 
-  display: flex; 
-  gap: 8px; 
-  align-items: center; 
+.toolbar {
+  display: flex;
+  gap: 8px;
+  align-items: center;
   flex-wrap: nowrap; /* 折り返しを無効にしてヘルプボタンを常に表示 */
   min-width: 0; /* フレックスアイテムの最小幅制限を解除 */
 }
 
 /* 区切り線 */
-.divider { 
-  width: 1px; 
-  height: 28px; 
-  background: var(--border); 
-  margin: 0 4px; 
+.divider {
+  width: 1px;
+  height: 28px;
+  background: var(--border);
+  margin: 0 4px;
 }

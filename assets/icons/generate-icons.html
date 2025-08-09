@@ -1,102 +1,107 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
+  <head>
     <title>Icon Generator</title>
-</head>
-<body>
-    <canvas id="canvas" width="512" height="512" style="border: 1px solid #ccc;"></canvas>
-    <br>
+  </head>
+  <body>
+    <canvas
+      id="canvas"
+      width="512"
+      height="512"
+      style="border: 1px solid #ccc"
+    ></canvas>
+    <br />
     <button onclick="generateIcons()">Generate Icons</button>
     <div id="downloads"></div>
 
     <script>
-        function drawIcon(canvas, size) {
-            const ctx = canvas.getContext('2d');
-            
-            // 背景
-            ctx.fillStyle = '#3b82f6';
-            ctx.fillRect(0, 0, size, size);
-            
-            // 楽譜の線
-            ctx.strokeStyle = 'white';
-            ctx.lineWidth = Math.max(1, size / 32);
-            
-            const margin = size / 8;
-            const lineSpacing = size / 8;
-            
-            for (let i = 0; i < 3; i++) {
-                const y = margin + (i + 1) * lineSpacing;
-                ctx.beginPath();
-                ctx.moveTo(margin, y);
-                ctx.lineTo(size - margin, y);
-                ctx.stroke();
-            }
-            
-            // 音符の点
-            ctx.fillStyle = 'white';
-            for (let i = 0; i < 3; i++) {
-                const x = margin + (i + 1) * (size / 4);
-                const y = margin / 2;
-                const radius = Math.max(2, size / 16);
-                
-                ctx.beginPath();
-                ctx.arc(x, y, radius, 0, 2 * Math.PI);
-                ctx.fill();
-            }
+      function drawIcon(canvas, size) {
+        const ctx = canvas.getContext('2d');
+
+        // 背景
+        ctx.fillStyle = '#3b82f6';
+        ctx.fillRect(0, 0, size, size);
+
+        // 楽譜の線
+        ctx.strokeStyle = 'white';
+        ctx.lineWidth = Math.max(1, size / 32);
+
+        const margin = size / 8;
+        const lineSpacing = size / 8;
+
+        for (let i = 0; i < 3; i++) {
+          const y = margin + (i + 1) * lineSpacing;
+          ctx.beginPath();
+          ctx.moveTo(margin, y);
+          ctx.lineTo(size - margin, y);
+          ctx.stroke();
         }
 
-        function generateIcons() {
-            const sizes = [16, 32, 72, 96, 128, 144, 152, 192, 384, 512];
-            const downloads = document.getElementById('downloads');
-            downloads.innerHTML = '';
-            
-            sizes.forEach(size => {
-                const canvas = document.createElement('canvas');
-                canvas.width = size;
-                canvas.height = size;
-                
-                drawIcon(canvas, size);
-                
-                canvas.toBlob(blob => {
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = `icon-${size}x${size}.png`;
-                    a.textContent = `Download ${size}x${size}`;
-                    a.style.display = 'block';
-                    a.style.margin = '5px 0';
-                    downloads.appendChild(a);
-                });
-            });
-            
-            // 特別なサイズ
-            [
-                { size: 180, name: 'apple-touch-icon.png' },
-                { size: 32, name: 'favicon-32x32.png' },
-                { size: 16, name: 'favicon-16x16.png' }
-            ].forEach(({size, name}) => {
-                const canvas = document.createElement('canvas');
-                canvas.width = size;
-                canvas.height = size;
-                
-                drawIcon(canvas, size);
-                
-                canvas.toBlob(blob => {
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = name;
-                    a.textContent = `Download ${name}`;
-                    a.style.display = 'block';
-                    a.style.margin = '5px 0';
-                    downloads.appendChild(a);
-                });
-            });
-        }
+        // 音符の点
+        ctx.fillStyle = 'white';
+        for (let i = 0; i < 3; i++) {
+          const x = margin + (i + 1) * (size / 4);
+          const y = margin / 2;
+          const radius = Math.max(2, size / 16);
 
-        // 初期描画
-        const canvas = document.getElementById('canvas');
-        drawIcon(canvas, 512);
+          ctx.beginPath();
+          ctx.arc(x, y, radius, 0, 2 * Math.PI);
+          ctx.fill();
+        }
+      }
+
+      function generateIcons() {
+        const sizes = [16, 32, 72, 96, 128, 144, 152, 192, 384, 512];
+        const downloads = document.getElementById('downloads');
+        downloads.innerHTML = '';
+
+        sizes.forEach((size) => {
+          const canvas = document.createElement('canvas');
+          canvas.width = size;
+          canvas.height = size;
+
+          drawIcon(canvas, size);
+
+          canvas.toBlob((blob) => {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `icon-${size}x${size}.png`;
+            a.textContent = `Download ${size}x${size}`;
+            a.style.display = 'block';
+            a.style.margin = '5px 0';
+            downloads.appendChild(a);
+          });
+        });
+
+        // 特別なサイズ
+        [
+          { size: 180, name: 'apple-touch-icon.png' },
+          { size: 32, name: 'favicon-32x32.png' },
+          { size: 16, name: 'favicon-16x16.png' },
+        ].forEach(({ size, name }) => {
+          const canvas = document.createElement('canvas');
+          canvas.width = size;
+          canvas.height = size;
+
+          drawIcon(canvas, size);
+
+          canvas.toBlob((blob) => {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = name;
+            a.textContent = `Download ${name}`;
+            a.style.display = 'block';
+            a.style.margin = '5px 0';
+            downloads.appendChild(a);
+          });
+        });
+      }
+
+      // 初期描画
+      const canvas = document.getElementById('canvas');
+      drawIcon(canvas, 512);
     </script>
-</body>
+  </body>
 </html>

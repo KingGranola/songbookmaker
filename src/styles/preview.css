@@ -9,7 +9,7 @@
   background: white;
   color: #111827;
   border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.35); /* 影効果 */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35); /* 影効果 */
   overflow: hidden;
   border: 1px solid #e5e7eb;
   transform: scale(0.8); /* 80%に縮小してプレビュー */
@@ -76,7 +76,7 @@
 }
 
 /* ページコンテンツ */
-.page-content { 
+.page-content {
   padding: 15mm; /* A4用の余白 */
   position: relative; /* セクション配置のため */
   background: white;
@@ -114,22 +114,22 @@
 }
 
 /* 歌詞行 */
-.song-line { 
-  position: relative; 
-  padding: 6px 0; 
-  line-height: 1.35; 
+.song-line {
+  position: relative;
+  padding: 6px 0;
+  line-height: 1.35;
 }
 
 /* 歌詞テキスト */
-.lyrics-text { 
-  font-size: 16px; 
-  color: #111827; 
+.lyrics-text {
+  font-size: 16px;
+  color: #111827;
   white-space: pre-wrap; /* 改行を保持 */
 }
 
 /* コード行 - 歌詞の上に配置 */
-.chords-row { 
-  position: absolute; 
+.chords-row {
+  position: absolute;
   inset: 0 0 auto 0; /* 上部に配置 */
   transform: translateY(-1.1em); /* 歌詞の上に移動 */
   will-change: transform; /* パフォーマンス最適化 */
@@ -137,20 +137,20 @@
 }
 
 /* 個別のコード */
-.chord { 
-  position: absolute; 
-  top: 0; 
-  transform: translateY(0); 
-  font-weight: 700; 
-  color: #b00020; 
-  font-size: 14px; 
+.chord {
+  position: absolute;
+  top: 0;
+  transform: translateY(0);
+  font-weight: 700;
+  color: #b00020;
+  font-size: 14px;
   cursor: grab; /* ドラッグ可能 */
   transition: all 0.2s ease; /* スムーズな変化 */
 }
 
 /* コードのドラッグ中 */
-.chord:active { 
-  cursor: grabbing; 
+.chord:active {
+  cursor: grabbing;
 }
 
 /* コードのホバー効果 */
@@ -160,64 +160,72 @@
 }
 
 /* ゴーストプレビュー - ドラッグ中の表示 */
-.ghost-preview { 
-  pointer-events: none; 
-  opacity: 0.6; 
-  filter: drop-shadow(0 0 6px rgba(239, 68, 68, 0.6)); 
+.ghost-preview {
+  pointer-events: none;
+  opacity: 0.6;
+  filter: drop-shadow(0 0 6px rgba(239, 68, 68, 0.6));
 }
 
 /* 区切り線 */
-.chord.sep { 
-  color: #6b7280; 
-  font-weight: 400; 
+.chord.sep {
+  color: #6b7280;
+  font-weight: 400;
 }
-
-
 
 /* ページタイトル・メタ情報 */
-.page-title { 
-  text-align: center; 
-  margin-bottom: 8mm; 
+.page-title {
+  text-align: center;
+  margin-bottom: 8mm;
 }
 
-.page-title .title { 
-  font-size: 20px; 
-  font-weight: 800; 
+.page-title .title {
+  font-size: 20px;
+  font-weight: 800;
 }
 
-.page-title .meta { 
-  margin-top: 4px; 
-  color: #4b5563; 
-  font-size: 12px; 
+.page-title .meta {
+  margin-top: 4px;
+  color: #4b5563;
+  font-size: 12px;
 }
 
 /* 注意書き */
-.note { 
-  margin-top: 8px; 
-  color: var(--muted); 
-  font-size: 12px; 
+.note {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 12px;
 }
 
 /* フォントファミリー設定 */
-.ff-serif { 
-  font-family: ui-serif, "Hiragino Mincho ProN", "Noto Serif JP", serif; 
+.ff-serif {
+  font-family: ui-serif, 'Hiragino Mincho ProN', 'Noto Serif JP', serif;
 }
 
-.ff-sans { 
-  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans JP", Helvetica, Arial; 
+.ff-sans {
+  font-family:
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    Segoe UI,
+    Roboto,
+    'Noto Sans JP',
+    Helvetica,
+    Arial;
 }
 
-.ff-rounded { 
-  font-family: "Hiragino Maru Gothic ProN", "Rounded Mplus 1c", "Yu Gothic UI", "Meiryo UI", sans-serif; 
+.ff-rounded {
+  font-family:
+    'Hiragino Maru Gothic ProN', 'Rounded Mplus 1c', 'Yu Gothic UI',
+    'Meiryo UI', sans-serif;
 }
 
 /* カーソルアイコン - 通常のカーソルを使用 */
-.cursor-pencil { 
-  cursor: default; 
+.cursor-pencil {
+  cursor: default;
 }
 
-.cursor-eraser { 
-  cursor: default; 
+.cursor-eraser {
+  cursor: default;
 }
 
 /* ========================================
@@ -272,7 +280,7 @@
 .chord-edit-input {
   outline: none;
   border: 2px solid #3b82f6 !important;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   transition: all 0.2s ease;
 }
 
@@ -281,5 +289,3 @@
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
   transform: scale(1.02);
 }
-
-

@@ -6,10 +6,7 @@
     "node": true,
     "jest": true
   },
-  "extends": [
-    "eslint:recommended",
-    "prettier"
-  ],
+  "extends": ["eslint:recommended", "prettier"],
   "ignorePatterns": ["dist", "node_modules", "coverage"],
   "parserOptions": {
     "ecmaVersion": 2020,

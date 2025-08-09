@@ -1,16 +1,26 @@
 // ui.js: イベントバインド、ボタン/入力のハンドリング、ハイライトなど
 import { renderPage, applyChordStyles } from './placement.js';
 import { updatePresetList } from './presets.js';
+import { getFontClass } from './utils.js';
 
 export function setupUI(ctx) {
-  const { state, el, persist, computeInterval, transposeChord, normalizeChordName } = ctx;
+  const {
+    state,
+    el,
+    persist,
+    computeInterval,
+    transposeChord,
+    normalizeChordName,
+  } = ctx;
 
   function highlightSelectedChip() {
-    const presetChips = el.presetList?.querySelectorAll('.chip:not(.section-chip)') || [];
+    const presetChips =
+      el.presetList?.querySelectorAll('.chip:not(.section-chip)') || [];
     const historyChips = el.historyList?.querySelectorAll('.chip') || [];
     const sepBtn = el.btnSep;
-    const isSepSelected = state.selectedChord === '|' || state.selectedChord === '｜';
-    
+    const isSepSelected =
+      state.selectedChord === '|' || state.selectedChord === '｜';
+
     // プリセットチップのハイライト
     presetChips.forEach((chip) => {
       if (chip.textContent === state.selectedChord) {
@@ -21,7 +31,7 @@ export function setupUI(ctx) {
         chip.style.boxShadow = '';
       }
     });
-    
+
     // 履歴チップのハイライト
     historyChips.forEach((chip) => {
       if (chip.textContent === state.selectedChord) {
@@ -32,7 +42,7 @@ export function setupUI(ctx) {
         chip.style.boxShadow = '';
       }
     });
-    
+
     // 区切り線ボタンのハイライト
     if (sepBtn) {
       if (isSepSelected) {
@@ -56,7 +66,7 @@ export function setupUI(ctx) {
         el.currentChord.textContent = chordOrNull || 'なし';
       }
     }
-    
+
     highlightSelectedChip();
     updateCursor();
   }
@@ -67,17 +77,17 @@ export function setupUI(ctx) {
     // 履歴追加は削除 - 実際に配置した時のみ履歴に追加
   }
 
-
-
   function renderHistory() {
     if (!el.historyList) return;
     el.historyList.innerHTML = '';
     el.historyList.className = 'chip-row';
     // 左→右で表示。state.historyの末尾が最新（右端）
-    state.history.forEach((c)=>{
+    state.history.forEach((c) => {
       const chip = document.createElement('button');
-      chip.type = 'button'; chip.className='chip'; chip.textContent=c;
-      chip.addEventListener('click', ()=> setCurrentChord(c));
+      chip.type = 'button';
+      chip.className = 'chip';
+      chip.textContent = c;
+      chip.addEventListener('click', () => setCurrentChord(c));
       el.historyList.appendChild(chip);
     });
     highlightSelectedChip();
@@ -85,7 +95,7 @@ export function setupUI(ctx) {
 
   function refreshChordTexts() {
     const chordEls = el.pageContent.querySelectorAll('.chord');
-    chordEls.forEach((n)=>{
+    chordEls.forEach((n) => {
       const raw = n.dataset.raw || n.textContent;
       n.dataset.raw = raw;
       if (raw === '|') n.textContent = '｜';
@@ -98,11 +108,12 @@ export function setupUI(ctx) {
     const interval = computeInterval(fromKey, toKey);
     if (!interval) return;
     const chordEls = el.pageContent.querySelectorAll('.chord');
-    chordEls.forEach((n)=>{
+    chordEls.forEach((n) => {
       const raw = n.dataset.raw || n.textContent;
       if (raw === '|' || raw === '｜') return;
       const next = transposeChord(raw, interval);
-      n.dataset.raw = next; n.textContent = next;
+      n.dataset.raw = next;
+      n.textContent = next;
     });
     applyChordStyles(ctx);
   }
@@ -110,11 +121,11 @@ export function setupUI(ctx) {
   // 文字列が英語中心かどうかを判定（80％以上が英語文字）
   function isEnglishPrimary(text) {
     if (!text || text.length === 0) return false;
-    
+
     // 英語文字（ASCII 文字、空白、句読点）をカウント
     const englishChars = text.match(/[a-zA-Z0-9\s.,!?'"();:-]/g) || [];
     const englishRatio = englishChars.length / text.length;
-    
+
     return englishRatio >= 0.8;
   }
 
@@ -122,16 +133,16 @@ export function setupUI(ctx) {
     const {
       japaneseCharLimit = 25,
       englishCharLimit = 50,
-      preserveEmptyLines = true
+      preserveEmptyLines = true,
     } = options;
-    
+
     const lines = lyrics.split('\n');
     const result = [];
     let currentLine = '';
-    
+
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i].trim();
-      
+
       // 空行の場合
       if (!line) {
         // 現在蓄積している行があれば出力
@@ -139,14 +150,14 @@ export function setupUI(ctx) {
           result.push(currentLine);
           currentLine = '';
         }
-        
+
         // 空行保持設定がONなら空行を保持（段落区切りとして）
         if (preserveEmptyLines) {
           result.push('');
         }
         continue;
       }
-      
+
       // セクション記号（[Intro]など）の場合は独立行として出力
       if (line.startsWith('[') && line.endsWith(']')) {
         if (currentLine) {
@@ -156,15 +167,17 @@ export function setupUI(ctx) {
         result.push(line);
         continue;
       }
-      
+
       // 通常の歌詞行の場合
       if (currentLine) {
         // 常にスペースで結合（日本語・英語問わず）
         const combinedLine = currentLine + '　' + line;
-        
+
         // 文字数制限を決定
-        const charLimit = isEnglishPrimary(combinedLine) ? englishCharLimit : japaneseCharLimit;
-        
+        const charLimit = isEnglishPrimary(combinedLine)
+          ? englishCharLimit
+          : japaneseCharLimit;
+
         if (combinedLine.length <= charLimit) {
           // 制限内なら結合
           currentLine = combinedLine;
@@ -178,69 +191,89 @@ export function setupUI(ctx) {
         currentLine = line;
       }
     }
-    
+
     // 最後の蓄積行を出力
     if (currentLine) {
       result.push(currentLine);
     }
-    
+
     return result.join('\n');
   }
 
   function updateCursor() {
     const isErase = state.selectedChord === '__ERASE__';
     el.pageContent.classList.toggle('cursor-eraser', isErase);
-    el.pageContent.classList.toggle('cursor-pencil', !isErase && !!state.selectedChord);
+    el.pageContent.classList.toggle(
+      'cursor-pencil',
+      !isErase && !!state.selectedChord
+    );
   }
 
   // バインド
-  el.keySelect?.addEventListener('change', ()=>{
-    const prevKey = state.key; state.key = el.keySelect.value;
+  el.keySelect?.addEventListener('change', () => {
+    const prevKey = state.key;
+    state.key = el.keySelect.value;
     updatePresetList(ctx);
     if (state.transposeAll) transposeAllExistingChords(prevKey, state.key);
     else refreshChordTexts();
     persist();
   });
-  el.modeSelect?.addEventListener('change', ()=>{ state.mode = el.modeSelect.value; updatePresetList(ctx); persist(); });
-  el.presetType?.addEventListener('change', ()=>{ state.presetType = el.presetType.value; updatePresetList(ctx); persist(); });
+  el.modeSelect?.addEventListener('change', () => {
+    state.mode = el.modeSelect.value;
+    updatePresetList(ctx);
+    persist();
+  });
+  el.presetType?.addEventListener('change', () => {
+    state.presetType = el.presetType.value;
+    updatePresetList(ctx);
+    persist();
+  });
   // 全コード移調は廃止
 
-  el.lyricsInput?.addEventListener('input', ()=>{ state.lyrics = el.lyricsInput.value; renderPage(ctx); persist(); });
-  el.titleInput?.addEventListener('input', ()=>{ state.title = el.titleInput.value; renderPage(ctx); persist(); });
-  el.artistInput?.addEventListener('input', ()=>{ state.artist = el.artistInput.value; renderPage(ctx); persist(); });
+  el.lyricsInput?.addEventListener('input', () => {
+    state.lyrics = el.lyricsInput.value;
+    renderPage(ctx);
+    persist();
+  });
+  el.titleInput?.addEventListener('input', () => {
+    state.title = el.titleInput.value;
+    renderPage(ctx);
+    persist();
+  });
+  el.artistInput?.addEventListener('input', () => {
+    state.artist = el.artistInput.value;
+    renderPage(ctx);
+    persist();
+  });
 
-
-  el.lyricsFont?.addEventListener('input', ()=>{
+  el.lyricsFont?.addEventListener('input', () => {
     state.fontSizeLyrics = Number(el.lyricsFont.value);
-    el.pageContent.querySelectorAll('.lyrics-text').forEach((n)=> {
+    el.pageContent.querySelectorAll('.lyrics-text').forEach((n) => {
       n.style.fontSize = `${state.fontSizeLyrics}px`;
       // フォントファミリーも再適用
       n.classList.remove('ff-serif', 'ff-sans', 'ff-rounded', 'ff-mincho');
       n.classList.add(getFontClass(state.lyricsFontFamily));
     });
   });
-  el.lyricsLeading?.addEventListener('input', ()=>{
+  el.lyricsLeading?.addEventListener('input', () => {
     state.lineGap = Number(el.lyricsLeading.value);
-    el.pageContent.querySelectorAll('.lyrics-text').forEach((n)=> n.style.marginBottom = `${state.lineGap}px`);
+    el.pageContent
+      .querySelectorAll('.lyrics-text')
+      .forEach((n) => (n.style.marginBottom = `${state.lineGap}px`));
     persist();
   });
-  el.letterSpacing?.addEventListener('input', ()=>{
+  el.letterSpacing?.addEventListener('input', () => {
     state.letterSpacing = Number(el.letterSpacing.value);
-    el.pageContent.querySelectorAll('.lyrics-text').forEach((n)=> n.style.letterSpacing = `${state.letterSpacing}px`);
+    el.pageContent
+      .querySelectorAll('.lyrics-text')
+      .forEach((n) => (n.style.letterSpacing = `${state.letterSpacing}px`));
     persist();
   });
-  // フォントクラス取得関数
-  function getFontClass(fontFamily) {
-    switch (fontFamily) {
-      case 'serif': return 'ff-serif';
-      case 'rounded': return 'ff-rounded';
-      default: return 'ff-sans';
-    }
-  }
 
-  el.lyricsFF?.addEventListener('change', ()=>{
+
+  el.lyricsFF?.addEventListener('change', () => {
     state.lyricsFontFamily = el.lyricsFF.value;
-    el.pageContent.querySelectorAll('.lyrics-text').forEach((n)=>{
+    el.pageContent.querySelectorAll('.lyrics-text').forEach((n) => {
       // 既存のフォントクラスを削除
       n.classList.remove('ff-serif', 'ff-sans', 'ff-rounded');
       // 新しいフォントクラスを追加
@@ -248,18 +281,26 @@ export function setupUI(ctx) {
     });
     persist();
   });
-  el.chordFF?.addEventListener('change', ()=>{ 
-    state.chordFontFamily = el.chordFF.value; 
-    applyChordStyles(ctx); 
-    persist(); 
+  el.chordFF?.addEventListener('change', () => {
+    state.chordFontFamily = el.chordFF.value;
+    applyChordStyles(ctx);
+    persist();
   });
-  el.chordFont?.addEventListener('input', ()=>{ state.fontSizeChord = Number(el.chordFont.value); applyChordStyles(ctx); persist(); });
-  el.chordColor?.addEventListener('input', ()=>{ state.chordColor = el.chordColor.value; applyChordStyles(ctx); persist(); });
+  el.chordFont?.addEventListener('input', () => {
+    state.fontSizeChord = Number(el.chordFont.value);
+    applyChordStyles(ctx);
+    persist();
+  });
+  el.chordColor?.addEventListener('input', () => {
+    state.chordColor = el.chordColor.value;
+    applyChordStyles(ctx);
+    persist();
+  });
   // コード縦位置
   const chordOffset = document.getElementById('chord-offset');
-  chordOffset?.addEventListener('input', ()=>{
+  chordOffset?.addEventListener('input', () => {
     state.chordOffsetPx = Number(chordOffset.value);
-    el.pageContent.querySelectorAll('.chords-row').forEach((row)=>{
+    el.pageContent.querySelectorAll('.chords-row').forEach((row) => {
       row.style.transform = `translateY(${state.chordOffsetPx}px)`;
     });
     persist();
@@ -267,9 +308,9 @@ export function setupUI(ctx) {
 
   // 行全体右位置
   const lineOffset = document.getElementById('line-offset');
-  lineOffset?.addEventListener('input', ()=>{
+  lineOffset?.addEventListener('input', () => {
     state.lineOffsetPx = Number(lineOffset.value);
-    el.pageContent.querySelectorAll('.lyrics-text').forEach((text)=>{
+    el.pageContent.querySelectorAll('.lyrics-text').forEach((text) => {
       text.style.marginLeft = `${state.lineOffsetPx}px`;
     });
     persist();
@@ -279,45 +320,56 @@ export function setupUI(ctx) {
   function validateRequiredFields() {
     const title = state.title?.trim() || '';
     const artist = state.artist?.trim() || '';
-    
+
     if (!title || !artist) {
       const missingFields = [];
       if (!title) missingFields.push('曲タイトル');
       if (!artist) missingFields.push('アーティスト名');
-      
+
       alert(`以下の項目を入力してください：\n${missingFields.join('\n')}`);
       return false;
     }
     return true;
   }
 
-  el.btnPrint?.addEventListener('click', ()=> {
+  el.btnPrint?.addEventListener('click', () => {
     if (validateRequiredFields()) {
       window.print();
     }
   });
-  el.btnSave?.addEventListener('click', ()=> {
+  el.btnSave?.addEventListener('click', () => {
     if (validateRequiredFields()) {
       exportProject(ctx);
     }
   });
-  el.btnLoad?.addEventListener('click', ()=> el.fileInput.click());
-  el.fileInput?.addEventListener('change', (e)=> onImportFile(ctx, e));
-  el.btnClear?.addEventListener('click', ()=>{ if (!el.lyricsInput) return; el.lyricsInput.value=''; state.lyrics=''; renderPage(ctx); persist(); });
+  el.btnLoad?.addEventListener('click', () => el.fileInput.click());
+  el.fileInput?.addEventListener('change', (e) => onImportFile(ctx, e));
+  el.btnClear?.addEventListener('click', () => {
+    if (!el.lyricsInput) return;
+    el.lyricsInput.value = '';
+    state.lyrics = '';
+    renderPage(ctx);
+    persist();
+  });
 
   el.btnReduceLines?.addEventListener('click', () => {
     if (!el.lyricsInput) return;
     const lyrics = el.lyricsInput.value;
     if (!lyrics.trim()) return;
-    
+
     // プレビューモーダルを表示
     showReduceLinesModal(lyrics);
   });
 
   // Undoボタンのイベントハンドラー
   el.btnUndo?.addEventListener('click', () => {
-    if (!el.lyricsInput || !state.lyricsHistory || state.lyricsHistory.length === 0) return;
-    
+    if (
+      !el.lyricsInput ||
+      !state.lyricsHistory ||
+      state.lyricsHistory.length === 0
+    )
+      return;
+
     const previousLyrics = state.lyricsHistory.pop();
     el.lyricsInput.value = previousLyrics;
     state.lyrics = previousLyrics;
@@ -325,34 +377,38 @@ export function setupUI(ctx) {
     persist();
   });
 
-  el.btnSetCustom?.addEventListener('click', ()=>{ 
-    const v=(el.customChord.value||'').trim(); 
-    if(!v) return; 
-    applySelectedChord(v); 
-    el.customChord.value=''; 
+  el.btnSetCustom?.addEventListener('click', () => {
+    const v = (el.customChord.value || '').trim();
+    if (!v) return;
+    applySelectedChord(v);
+    el.customChord.value = '';
     // 履歴追加は削除 - 実際に配置した時のみ履歴に追加
   });
-  el.btnSep?.addEventListener('click', ()=>{ 
-    setCurrentChord('|'); 
+  el.btnSep?.addEventListener('click', () => {
+    setCurrentChord('|');
     // 履歴追加は削除 - 実際に配置した時のみ履歴に追加
   });
   // 手動移調ボタン（入力済みのみ）
   const btnManualTranspose = document.getElementById('btn-manual-transpose');
-  btnManualTranspose?.addEventListener('click', ()=>{
+  btnManualTranspose?.addEventListener('click', () => {
     const from = prompt('現在のキーを入力 (例: C) ', state.key) || state.key;
     const to = prompt('移調先キーを入力 (例: D) ', state.key) || state.key;
     const interval = computeInterval(from, to);
     const chordEls = el.pageContent.querySelectorAll('.chord');
-    chordEls.forEach((n)=>{
-      const raw = n.dataset.raw || n.textContent; if (raw==='|'||raw==='｜') return;
-      const next = transposeChord(raw, interval); n.dataset.raw = next; n.textContent = next;
+    chordEls.forEach((n) => {
+      const raw = n.dataset.raw || n.textContent;
+      if (raw === '|' || raw === '｜') return;
+      const next = transposeChord(raw, interval);
+      n.dataset.raw = next;
+      n.textContent = next;
     });
     applyChordStyles(ctx);
   });
-  el.btnEraser?.addEventListener('click', ()=> {
+  el.btnEraser?.addEventListener('click', () => {
     const pageContent = document.getElementById('page-content');
-    const isCurrentlyEraserMode = pageContent?.classList.contains('eraser-mode');
-    
+    const isCurrentlyEraserMode =
+      pageContent?.classList.contains('eraser-mode');
+
     if (isCurrentlyEraserMode) {
       // 消しゴムモード解除
       setCurrentChord(null);
@@ -369,7 +425,7 @@ export function setupUI(ctx) {
       if (btnEditModePage) btnEditModePage.classList.remove('active');
       if (btnEraserControls) btnEraserControls.classList.add('active');
       if (btnEditModeControls) btnEditModeControls.classList.remove('active');
-      
+
       // プレビューエリアのクラスを切り替え
       if (pageContent) {
         pageContent.classList.remove('edit-mode');
@@ -379,10 +435,12 @@ export function setupUI(ctx) {
   });
 
   // セクション専用消しゴムボタン
-  el.btnSectionEraser?.addEventListener('click', ()=> {
+  el.btnSectionEraser?.addEventListener('click', () => {
     const pageContent = document.getElementById('page-content');
-    const isCurrentlySectionEraserMode = pageContent?.classList.contains('section-eraser-mode');
-    
+    const isCurrentlySectionEraserMode = pageContent?.classList.contains(
+      'section-eraser-mode'
+    );
+
     if (isCurrentlySectionEraserMode) {
       // セクション消しゴムモード解除
       setCurrentChord(null);
@@ -393,13 +451,13 @@ export function setupUI(ctx) {
     } else {
       // セクション消しゴムモード開始
       setCurrentChord('__SECTION_ERASE__');
-      
+
       // 他のモードを解除
       if (pageContent) {
         pageContent.classList.remove('eraser-mode', 'edit-mode');
         pageContent.classList.add('section-eraser-mode');
       }
-      
+
       // ボタン状態を更新
       if (btnEraserPage) btnEraserPage.classList.remove('active');
       if (btnEditModePage) btnEditModePage.classList.remove('active');
@@ -413,39 +471,38 @@ export function setupUI(ctx) {
   document.addEventListener('click', (ev) => {
     const sectionChip = ev.target.closest('.section-chip');
     if (!sectionChip) return;
-    
+
     const sectionName = sectionChip.dataset.section;
     if (!sectionName) return;
-    
+
     // セクションを選択状態にする（配置用）
     setCurrentChord(`SECTION:${sectionName}`);
-    
+
     // セクションチップのハイライト
-    document.querySelectorAll('.section-chip').forEach(chip => {
+    document.querySelectorAll('.section-chip').forEach((chip) => {
       chip.classList.remove('active');
     });
     sectionChip.classList.add('active');
   });
 
-
   // 編集モード切り替えボタン
   const btnEditMode = document.getElementById('btn-edit-mode');
   let isEditModeActive = false;
-  
+
   // ページツールボタン
   // ページツールボタンの要素を取得（削除済み）
   const btnEraserPage = null;
   const btnEditModePage = null;
-  
+
   btnEditMode?.addEventListener('click', () => {
     isEditModeActive = !isEditModeActive;
     btnEditMode.textContent = isEditModeActive ? '配置モード' : '編集モード';
     btnEditMode.classList.toggle('primary', isEditModeActive);
     btnEditMode.classList.toggle('ghost', !isEditModeActive);
-    
+
     // 編集モードの状態をグローバルに公開
     window.isEditModeActive = isEditModeActive;
-    
+
     // プレビューエリアのクラスを切り替え
     const pageContent = document.getElementById('page-content');
     if (pageContent) {
@@ -457,7 +514,7 @@ export function setupUI(ctx) {
         pageContent.classList.remove('edit-mode', 'eraser-mode');
       }
     }
-    
+
     // ページツールボタンの状態を同期
     if (btnEditModePage) {
       btnEditModePage.classList.toggle('active', isEditModeActive);
@@ -465,7 +522,7 @@ export function setupUI(ctx) {
     if (btnEditModeControls) {
       btnEditModeControls.classList.toggle('active', isEditModeActive);
     }
-    
+
     // 表示を更新
     setCurrentChord(state.selectedChord);
   });
@@ -473,13 +530,13 @@ export function setupUI(ctx) {
   // ページ消しゴムボタン
   btnEraserPage?.addEventListener('click', () => {
     setCurrentChord('__ERASE__');
-    
+
     // 他のツールボタンのアクティブ状態をリセット
     if (btnEditModePage) btnEditModePage.classList.remove('active');
     if (btnEraserPage) btnEraserPage.classList.add('active');
     if (btnEraserControls) btnEraserControls.classList.add('active');
     if (btnEditModeControls) btnEditModeControls.classList.remove('active');
-    
+
     // 編集モードを無効化
     isEditModeActive = false;
     window.isEditModeActive = false;
@@ -494,25 +551,26 @@ export function setupUI(ctx) {
   btnEditModePage?.addEventListener('click', () => {
     isEditModeActive = !isEditModeActive;
     window.isEditModeActive = isEditModeActive;
-    
+
     // ボタンの状態を切り替え
     btnEditModePage.classList.toggle('active', isEditModeActive);
     if (btnEraserPage) btnEraserPage.classList.remove('active');
     if (btnEraserControls) btnEraserControls.classList.remove('active');
-    if (btnEditModeControls) btnEditModeControls.classList.toggle('active', isEditModeActive);
-    
+    if (btnEditModeControls)
+      btnEditModeControls.classList.toggle('active', isEditModeActive);
+
     // プレビューエリアのクラスを切り替え
     const pageContent = document.getElementById('page-content');
     if (pageContent) {
       pageContent.classList.toggle('edit-mode', isEditModeActive);
       pageContent.classList.remove('eraser-mode');
     }
-    
+
     // 消しゴムモードを解除
     if (state.selectedChord === '__ERASE__') {
       setCurrentChord(null);
     }
-    
+
     // 表示を更新
     setCurrentChord(state.selectedChord);
   });
@@ -521,13 +579,13 @@ export function setupUI(ctx) {
   const btnEraserControls = document.getElementById('btn-eraser-controls');
   btnEraserControls?.addEventListener('click', () => {
     setCurrentChord('__ERASE__');
-    
+
     // 他のツールボタンのアクティブ状態をリセット
     if (btnEditModePage) btnEditModePage.classList.remove('active');
     if (btnEraserPage) btnEraserPage.classList.add('active');
     if (btnEditModeControls) btnEditModeControls.classList.remove('active');
     btnEraserControls.classList.add('active');
-    
+
     // 編集モードを無効化
     isEditModeActive = false;
     window.isEditModeActive = false;
@@ -543,25 +601,26 @@ export function setupUI(ctx) {
   btnEditModeControls?.addEventListener('click', () => {
     isEditModeActive = !isEditModeActive;
     window.isEditModeActive = isEditModeActive;
-    
+
     // ボタンの状態を切り替え
     btnEditModeControls.classList.toggle('active', isEditModeActive);
     if (btnEraserControls) btnEraserControls.classList.remove('active');
     if (btnEraserPage) btnEraserPage.classList.remove('active');
-    if (btnEditModePage) btnEditModePage.classList.toggle('active', isEditModeActive);
-    
+    if (btnEditModePage)
+      btnEditModePage.classList.toggle('active', isEditModeActive);
+
     // プレビューエリアのクラスを切り替え
     const pageContent = document.getElementById('page-content');
     if (pageContent) {
       pageContent.classList.toggle('edit-mode', isEditModeActive);
       pageContent.classList.remove('eraser-mode');
     }
-    
+
     // 消しゴムモードを解除
     if (state.selectedChord === '__ERASE__') {
       setCurrentChord(null);
     }
-    
+
     // 表示を更新
     setCurrentChord(state.selectedChord);
   });
@@ -569,55 +628,132 @@ export function setupUI(ctx) {
   // export/import helpers（app.jsから移植）
   function exportProject(ctx) {
     const { state, el } = ctx;
-    const blob = new Blob([ JSON.stringify({ version:1, project: {
-      key: state.key, mode: state.mode, presetType: state.presetType,
-      lyrics: state.lyrics, lineGap: state.lineGap, letterSpacing: state.letterSpacing,
-      fontSizeLyrics: state.fontSizeLyrics, fontSizeChord: state.fontSizeChord,
-      chordColor: state.chordColor, lyricsFontFamily: state.lyricsFontFamily, chordFontFamily: state.chordFontFamily,
-      marginMm: state.marginMm, history: state.history,
-      title: state.title, artist: state.artist,
-      chords: Array.from(el.pageContent.querySelectorAll('.song-line')).map((line)=>
-        Array.from(line.querySelectorAll('.chords-row .chord')).map((n)=>({ raw: n.dataset.raw || n.textContent, x: parseFloat(n.style.left||'0') }))
-      ),
-    }}, null, 2) ], { type:'application/json' });
-    const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='songbook.json'; document.body.appendChild(a); a.click(); a.remove();
+    const blob = new Blob(
+      [
+        JSON.stringify(
+          {
+            version: 1,
+            project: {
+              key: state.key,
+              mode: state.mode,
+              presetType: state.presetType,
+              lyrics: state.lyrics,
+              lineGap: state.lineGap,
+              letterSpacing: state.letterSpacing,
+              fontSizeLyrics: state.fontSizeLyrics,
+              fontSizeChord: state.fontSizeChord,
+              chordColor: state.chordColor,
+              lyricsFontFamily: state.lyricsFontFamily,
+              chordFontFamily: state.chordFontFamily,
+              marginMm: state.marginMm,
+              history: state.history,
+              title: state.title,
+              artist: state.artist,
+              chords: Array.from(
+                el.pageContent.querySelectorAll('.song-line')
+              ).map((line) =>
+                Array.from(line.querySelectorAll('.chords-row .chord')).map(
+                  (n) => ({
+                    raw: n.dataset.raw || n.textContent,
+                    x: parseFloat(n.style.left || '0'),
+                  })
+                )
+              ),
+            },
+          },
+          null,
+          2
+        ),
+      ],
+      { type: 'application/json' }
+    );
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'songbook.json';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
   }
-  async function onImportFile(ctx, e){
-    const file = e.target.files && e.target.files[0]; if(!file) return; const text = await file.text();
-    try{
-      const data = JSON.parse(text); const p = data.project||data; Object.assign(state, {
-        key:p.key||state.key, mode:p.mode||state.mode, presetType:p.presetType||state.presetType,
-        lyrics:p.lyrics||'', lineGap:p.lineGap??state.lineGap, letterSpacing:p.letterSpacing??state.letterSpacing,
-        fontSizeLyrics:p.fontSizeLyrics??state.fontSizeLyrics, fontSizeChord:p.fontSizeChord??state.fontSizeChord,
-        chordColor:p.chordColor||state.chordColor, lyricsFontFamily:p.lyricsFontFamily||state.lyricsFontFamily,
-        chordFontFamily:p.chordFontFamily||state.chordFontFamily, marginMm:p.marginMm??state.marginMm,
-        history:Array.isArray(p.history)?p.history:[], title:p.title||'', artist:p.artist||'',
+  async function onImportFile(ctx, e) {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    const text = await file.text();
+    try {
+      const data = JSON.parse(text);
+      const p = data.project || data;
+      Object.assign(state, {
+        key: p.key || state.key,
+        mode: p.mode || state.mode,
+        presetType: p.presetType || state.presetType,
+        lyrics: p.lyrics || '',
+        lineGap: p.lineGap ?? state.lineGap,
+        letterSpacing: p.letterSpacing ?? state.letterSpacing,
+        fontSizeLyrics: p.fontSizeLyrics ?? state.fontSizeLyrics,
+        fontSizeChord: p.fontSizeChord ?? state.fontSizeChord,
+        chordColor: p.chordColor || state.chordColor,
+        lyricsFontFamily: p.lyricsFontFamily || state.lyricsFontFamily,
+        chordFontFamily: p.chordFontFamily || state.chordFontFamily,
+        marginMm: p.marginMm ?? state.marginMm,
+        history: Array.isArray(p.history) ? p.history : [],
+        title: p.title || '',
+        artist: p.artist || '',
       });
       // UI反映
-      el.keySelect.value=state.key; el.modeSelect.value=state.mode; el.presetType.value=state.presetType;
-      el.lyricsInput.value=state.lyrics; el.lyricsFont.value=String(state.fontSizeLyrics); el.chordFont.value=String(state.fontSizeChord);
-      el.chordColor.value=state.chordColor; el.lyricsFF.value=state.lyricsFontFamily; el.chordFF.value=state.chordFontFamily;
-      el.lyricsLeading.value=String(state.lineGap); if(el.letterSpacing) el.letterSpacing.value=String(state.letterSpacing); if(el.titleInput) el.titleInput.value=state.title; if(el.artistInput) el.artistInput.value=state.artist;
+      el.keySelect.value = state.key;
+      el.modeSelect.value = state.mode;
+      el.presetType.value = state.presetType;
+      el.lyricsInput.value = state.lyrics;
+      el.lyricsFont.value = String(state.fontSizeLyrics);
+      el.chordFont.value = String(state.fontSizeChord);
+      el.chordColor.value = state.chordColor;
+      el.lyricsFF.value = state.lyricsFontFamily;
+      el.chordFF.value = state.chordFontFamily;
+      el.lyricsLeading.value = String(state.lineGap);
+      if (el.letterSpacing)
+        el.letterSpacing.value = String(state.letterSpacing);
+      if (el.titleInput) el.titleInput.value = state.title;
+      if (el.artistInput) el.artistInput.value = state.artist;
       // 再描画
       renderPage(ctx);
-      if(Array.isArray(p.chords)){
+      if (Array.isArray(p.chords)) {
         const lines = el.pageContent.querySelectorAll('.song-line');
-        p.chords.forEach((arr,i)=>{
-          const line = lines[i]; if(!line) return; const row=line.querySelector('.chords-row'); if(!row) return; row.innerHTML='';
-          arr.forEach((item)=>{
-            const raw = typeof item==='string'? item: item.raw; const x = typeof item==='object'? Number(item.x||0):0;
-            if(raw==='|'||raw==='｜'){ const sep=document.createElement('span'); sep.className='chord sep'; sep.dataset.raw='|'; sep.textContent='｜'; sep.style.left=`${x}px`; row.appendChild(sep); }
-            else { const span=document.createElement('span'); span.className='chord'; span.dataset.raw=raw; span.textContent=raw; span.style.left=`${x}px`; row.appendChild(span); }
+        p.chords.forEach((arr, i) => {
+          const line = lines[i];
+          if (!line) return;
+          const row = line.querySelector('.chords-row');
+          if (!row) return;
+          row.innerHTML = '';
+          arr.forEach((item) => {
+            const raw = typeof item === 'string' ? item : item.raw;
+            const x = typeof item === 'object' ? Number(item.x || 0) : 0;
+            if (raw === '|' || raw === '｜') {
+              const sep = document.createElement('span');
+              sep.className = 'chord sep';
+              sep.dataset.raw = '|';
+              sep.textContent = '｜';
+              sep.style.left = `${x}px`;
+              row.appendChild(sep);
+            } else {
+              const span = document.createElement('span');
+              span.className = 'chord';
+              span.dataset.raw = raw;
+              span.textContent = raw;
+              span.style.left = `${x}px`;
+              row.appendChild(span);
+            }
           });
         });
         applyChordStyles(ctx);
       }
-      renderHistory(); updatePresetList(ctx); persist();
-    }catch{ alert('読み込みに失敗しました。ファイル形式をご確認ください。'); }
-    finally{ e.target.value=''; }
+      renderHistory();
+      updatePresetList(ctx);
+      persist();
+    } catch {
+      alert('読み込みに失敗しました。ファイル形式をご確認ください。');
+    } finally {
+      e.target.value = '';
+    }
   }
-
-
 
   // 公開
   ctx.highlightSelectedChip = highlightSelectedChip;
@@ -634,49 +770,51 @@ export function setupUI(ctx) {
     const afterEl = document.getElementById('reduce-lines-after');
     const japaneseCharLimitEl = document.getElementById('japanese-char-limit');
     const englishCharLimitEl = document.getElementById('english-char-limit');
-    const preserveEmptyLinesEl = document.getElementById('preserve-empty-lines');
+    const preserveEmptyLinesEl = document.getElementById(
+      'preserve-empty-lines'
+    );
     const applyBtn = document.getElementById('reduce-lines-apply');
     const cancelBtn = document.getElementById('reduce-lines-cancel');
     const closeBtn = document.getElementById('reduce-lines-close');
-    
+
     if (!modal || !beforeEl || !afterEl) return;
-    
+
     // 元の歌詞を表示
     beforeEl.textContent = originalLyrics;
-    
+
     // プレビューを更新する関数
     function updatePreview() {
       const options = {
         japaneseCharLimit: parseInt(japaneseCharLimitEl.value) || 25,
         englishCharLimit: parseInt(englishCharLimitEl.value) || 50,
-        preserveEmptyLines: preserveEmptyLinesEl.checked
+        preserveEmptyLines: preserveEmptyLinesEl.checked,
       };
-      
+
       const reducedLyrics = reduceLines(originalLyrics, options);
       afterEl.textContent = reducedLyrics;
     }
-    
+
     // 初期プレビューを表示
     updatePreview();
-    
+
     // 設定変更時にプレビューを更新
     japaneseCharLimitEl?.addEventListener('input', updatePreview);
     englishCharLimitEl?.addEventListener('input', updatePreview);
     preserveEmptyLinesEl?.addEventListener('change', updatePreview);
-    
+
     // 適用ボタンのクリックイベント
     function applyChanges() {
       const options = {
         japaneseCharLimit: parseInt(japaneseCharLimitEl.value) || 25,
         englishCharLimit: parseInt(englishCharLimitEl.value) || 50,
-        preserveEmptyLines: preserveEmptyLinesEl.checked
+        preserveEmptyLines: preserveEmptyLinesEl.checked,
       };
-      
+
       // Undo履歴に保存
       if (!state.lyricsHistory) state.lyricsHistory = [];
       state.lyricsHistory.push(originalLyrics);
       if (state.lyricsHistory.length > 10) state.lyricsHistory.shift();
-      
+
       // 歌詞を更新
       const reducedLyrics = reduceLines(originalLyrics, options);
       const lyricsInput = document.getElementById('lyrics-input');
@@ -684,19 +822,19 @@ export function setupUI(ctx) {
         lyricsInput.value = reducedLyrics;
         state.lyrics = reducedLyrics;
       }
-      
+
       // ページを再描画
       renderPage(ctx);
       persist();
-      
+
       // モーダルを閉じる
       closeModal();
     }
-    
+
     // モーダルを閉じる関数
     function closeModal() {
       modal.style.display = 'none';
-      
+
       // イベントリスナーを削除
       japaneseCharLimitEl?.removeEventListener('input', updatePreview);
       englishCharLimitEl?.removeEventListener('input', updatePreview);
@@ -705,12 +843,12 @@ export function setupUI(ctx) {
       cancelBtn?.removeEventListener('click', closeModal);
       closeBtn?.removeEventListener('click', closeModal);
     }
-    
+
     // イベントリスナーを設定
     applyBtn?.addEventListener('click', applyChanges);
     cancelBtn?.addEventListener('click', closeModal);
     closeBtn?.addEventListener('click', closeModal);
-    
+
     // Escキーで閉じる
     function handleKeydown(e) {
       if (e.key === 'Escape') {
@@ -720,10 +858,10 @@ export function setupUI(ctx) {
       }
     }
     document.addEventListener('keydown', handleKeydown);
-    
+
     // モーダルを表示
     modal.style.display = 'flex';
-    
+
     // フォーカスを適用ボタンに設定
     setTimeout(() => applyBtn?.focus(), 100);
   }
@@ -749,7 +887,7 @@ function setupHelpModal(_ctx) {
     helpModal.style.display = 'flex';
     helpModal.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
-    
+
     // フォーカス管理
     const firstTab = helpModal.querySelector('.help-tab');
     if (firstTab) {
@@ -762,7 +900,7 @@ function setupHelpModal(_ctx) {
     helpModal.style.display = 'none';
     helpModal.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = '';
-    
+
     // フォーカスを戻す
     btnHelp.focus();
   }
@@ -770,19 +908,19 @@ function setupHelpModal(_ctx) {
   // タブ切り替え
   function switchTab(targetTab) {
     // すべてのタブとパネルの状態をリセット
-    helpTabs.forEach(tab => {
+    helpTabs.forEach((tab) => {
       tab.classList.remove('active');
       tab.setAttribute('aria-selected', 'false');
     });
-    
-    helpPanels.forEach(panel => {
+
+    helpPanels.forEach((panel) => {
       panel.style.display = 'none';
     });
 
     // 選択されたタブとパネルをアクティブに
     targetTab.classList.add('active');
     targetTab.setAttribute('aria-selected', 'true');
-    
+
     const targetPanelId = 'help-' + targetTab.dataset.tab;
     const targetPanel = document.getElementById(targetPanelId);
     if (targetPanel) {
@@ -792,7 +930,7 @@ function setupHelpModal(_ctx) {
 
   // イベントリスナーの設定
   btnHelp.addEventListener('click', openHelp);
-  
+
   if (helpClose) {
     helpClose.addEventListener('click', closeHelp);
   }
@@ -805,7 +943,7 @@ function setupHelpModal(_ctx) {
   });
 
   // タブクリック
-  helpTabs.forEach(tab => {
+  helpTabs.forEach((tab) => {
     tab.addEventListener('click', () => {
       switchTab(tab);
     });
@@ -822,7 +960,7 @@ function setupHelpModal(_ctx) {
         closeHelp();
       }
     }
-    
+
     // Escキーでヘルプを閉じる
     if (e.key === 'Escape' && helpModal.style.display === 'flex') {
       e.preventDefault();
@@ -834,7 +972,7 @@ function setupHelpModal(_ctx) {
   helpModal.addEventListener('keydown', (e) => {
     if (e.target.classList.contains('help-tab')) {
       const currentIndex = Array.from(helpTabs).indexOf(e.target);
-      
+
       if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
         e.preventDefault();
         const nextIndex = (currentIndex + 1) % helpTabs.length;
@@ -842,7 +980,8 @@ function setupHelpModal(_ctx) {
         switchTab(helpTabs[nextIndex]);
       } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
         e.preventDefault();
-        const prevIndex = (currentIndex - 1 + helpTabs.length) % helpTabs.length;
+        const prevIndex =
+          (currentIndex - 1 + helpTabs.length) % helpTabs.length;
         helpTabs[prevIndex].focus();
         switchTab(helpTabs[prevIndex]);
       } else if (e.key === 'Home') {

@@ -1,4 +1,5 @@
 // state.js: アプリ全体の状態、定数、保存/復元、共通ユーティリティ
+import { MusicUtils } from './utils.js';
 // import { StateManager } from './state-manager.js'; // 将来の使用のため
 
 export function setupState() {
@@ -60,23 +61,34 @@ export function setupState() {
     btnSectionEraser: document.getElementById('btn-section-eraser'),
     currentChord: document.getElementById('current-chord'),
     presetType: document.getElementById('preset-type'),
-
   };
 
-  const SEMITONES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
-  const FLAT_EQ = { 'Db':'C#','Eb':'D#','Gb':'F#','Ab':'G#','Bb':'A#','Cb':'B','Fb':'E','E#':'F','B#':'C' };
+
+
 
   const CHORD_CONFIG = {
     // ルールの書き方: コメントは README/SPEC にも記載
     normalizeRules: [
       // ハーフディミニッシュ：C-7-5, C-7b5, Cmin7b5, Cm7b5, Ch7 → Cm7(b5)
-      { pattern: /^([A-G][#b]?)(?:-7-5|-7b5|min7b5|m7b5|h7)$/i, replace: (m, r) => r.toUpperCase() + 'm7(b5)' },
+      {
+        pattern: /^([A-G][#b]?)(?:-7-5|-7b5|min7b5|m7b5|h7)$/i,
+        replace: (m, r) => r.toUpperCase() + 'm7(b5)',
+      },
       // マイナー：C-7, Cmin7 → Cm7
-      { pattern: /^([A-G][#b]?)(?:-7|min7)$/i, replace: (m, r) => r.toUpperCase() + 'm7' },
+      {
+        pattern: /^([A-G][#b]?)(?:-7|min7)$/i,
+        replace: (m, r) => r.toUpperCase() + 'm7',
+      },
       // オーギュメント：C+, C#5 → Caug
-      { pattern: /^([A-G][#b]?)(?:\+|#5)$/i, replace: (m, r) => r.toUpperCase() + 'aug' },
+      {
+        pattern: /^([A-G][#b]?)(?:\+|#5)$/i,
+        replace: (m, r) => r.toUpperCase() + 'aug',
+      },
       // メジャー：CM7, C^7, Cmaj7 → C△7 (大文字小文字を区別！)
-      { pattern: /^([A-G][#b]?)(?:M7|maj7|\^7)$/, replace: (m, r) => r.toUpperCase() + '△7' },
+      {
+        pattern: /^([A-G][#b]?)(?:M7|maj7|\^7)$/,
+        replace: (m, r) => r.toUpperCase() + '△7',
+      },
     ],
   };
 
@@ -117,7 +129,7 @@ export function setupState() {
       const data = JSON.parse(raw);
       Object.assign(state, {
         ...data,
-        lineOffsetPx: data.lineOffsetPx ?? 0
+        lineOffsetPx: data.lineOffsetPx ?? 0,
       });
 
       // UI反映
@@ -134,7 +146,8 @@ export function setupState() {
       if (el.artistInput) el.artistInput.value = state.artist;
       if (el.presetType) el.presetType.value = state.presetType;
       if (el.lyricsLeading) el.lyricsLeading.value = String(state.lineGap);
-      if (el.letterSpacing) el.letterSpacing.value = String(state.letterSpacing);
+      if (el.letterSpacing)
+        el.letterSpacing.value = String(state.letterSpacing);
       if (el.chordOffset) el.chordOffset.value = String(state.chordOffsetPx);
       if (el.lineOffset) el.lineOffset.value = String(state.lineOffsetPx);
     } catch {
@@ -143,10 +156,7 @@ export function setupState() {
   }
 
   function normalizeRoot(root) {
-    const up = root.toUpperCase();
-    if (SEMITONES.includes(up)) return up;
-    if (FLAT_EQ[up]) return FLAT_EQ[up];
-    return up;
+    return MusicUtils.normalizeRoot(root);
   }
   function parseChordSymbol(symbol) {
     const [base, bass] = symbol.split('/');
@@ -157,11 +167,7 @@ export function setupState() {
     return { root, quality, bass: bass ? normalizeRoot(bass) : null };
   }
   function transposeRoot(root, interval) {
-    const n = normalizeRoot(root);
-    const idx = SEMITONES.indexOf(n);
-    if (idx < 0) return root;
-    const next = (idx + interval + 120) % 12;
-    return SEMITONES[next];
+    return MusicUtils.transposeRoot(root, interval);
   }
   function transposeChord(symbol, interval) {
     if (!interval) return symbol;
@@ -171,29 +177,35 @@ export function setupState() {
     return tr + quality + (tb ? '/' + tb : '');
   }
   function computeInterval(fromKey, toKey) {
-    const a = SEMITONES.indexOf(normalizeRoot(fromKey));
-    const b = SEMITONES.indexOf(normalizeRoot(toKey));
-    if (a < 0 || b < 0) return 0;
-    return (b - a + 120) % 12;
+    return MusicUtils.computeInterval(fromKey, toKey);
   }
 
   function normalizeChordName(inputSymbol) {
     let symbol = inputSymbol.trim();
-    
+
     for (const rule of CHORD_CONFIG.normalizeRules) {
       const m = symbol.match(rule.pattern);
       if (m) {
         const root = m[1];
-        symbol = typeof rule.replace === 'function' ? rule.replace(m[0], root) : symbol.replace(rule.pattern, rule.replace);
+        symbol =
+          typeof rule.replace === 'function'
+            ? rule.replace(m[0], root)
+            : symbol.replace(rule.pattern, rule.replace);
         break;
       }
     }
-    
+
     return symbol;
   }
 
   restore();
-  return { state, el, persist, restore, computeInterval, transposeChord, normalizeChordName };
+  return {
+    state,
+    el,
+    persist,
+    restore,
+    computeInterval,
+    transposeChord,
+    normalizeChordName,
+  };
 }
-
-

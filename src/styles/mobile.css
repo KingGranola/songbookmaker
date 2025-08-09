@@ -109,7 +109,7 @@
 
   /* キー選択エリア */
   .field select,
-  .field input[type="range"] {
+  .field input[type='range'] {
     min-height: 44px;
     font-size: 16px;
   }
@@ -170,7 +170,7 @@
     min-height: 44px;
   }
 
-  .right-controls input[type="range"] {
+  .right-controls input[type='range'] {
     width: 120px;
     min-height: 44px;
   }
@@ -180,7 +180,7 @@
     min-height: 44px;
   }
 
-  .right-controls input[type="color"] {
+  .right-controls input[type='color'] {
     width: 60px;
     height: 44px;
     border-radius: 8px;
@@ -219,7 +219,7 @@
     margin-bottom: -180px;
   }
 
-  .right-controls input[type="range"] {
+  .right-controls input[type='range'] {
     width: 100px;
   }
 }
@@ -380,7 +380,9 @@
 
   .left-panel,
   .right-panel {
-    transition: width 0.3s ease, order 0.3s ease;
+    transition:
+      width 0.3s ease,
+      order 0.3s ease;
   }
 }
 

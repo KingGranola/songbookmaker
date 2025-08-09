@@ -5,83 +5,83 @@
 /* 印刷時の設定 */
 @media print {
   /* ページサイズ設定 */
-  @page { 
-    size: A4 portrait; 
-    margin: 0; 
+  @page {
+    size: A4 portrait;
+    margin: 0;
   }
-  
+
   /* 印刷時の背景 */
-  body { 
-    background: white; 
+  body {
+    background: white;
   }
-  
+
   /* 印刷時に非表示にする要素 */
-  .app-header, 
-  .left-panel, 
-  .note, 
-  .app-footer, 
+  .app-header,
+  .left-panel,
+  .note,
+  .app-footer,
   .version-badge,
-  .page-tools { 
-    display: none !important; 
+  .page-tools {
+    display: none !important;
   }
-  
-  .right-panel > h2 { 
-    display: none !important; 
+
+  .right-panel > h2 {
+    display: none !important;
   }
-  
-  .right-controls { 
-    display: none !important; 
+
+  .right-controls {
+    display: none !important;
   }
 
   /* メインレイアウト調整 */
-  .app-main { 
-    display: block; 
-    padding: 0; 
+  .app-main {
+    display: block;
+    padding: 0;
   }
-  
-  .right-panel { 
-    border: none; 
-    padding: 0; 
+
+  .right-panel {
+    border: none;
+    padding: 0;
   }
-  
-  .right-content { 
-    display: block !important; 
+
+  .right-content {
+    display: block !important;
   }
-  
-  .preview-wrap { 
-    overflow: visible !important; 
+
+  .preview-wrap {
+    overflow: visible !important;
   }
-  
+
   /* A4ページ設定 */
-  .page { 
-    box-shadow: none; 
-    border-radius: 0; 
-    border: none; 
+  .page {
+    box-shadow: none;
+    border-radius: 0;
+    border: none;
     transform: none !important; /* スケールをリセット */
     width: 210mm !important;
     height: 297mm !important;
     margin: 0 !important;
     padding: 0 !important;
   }
-  
-  .page-content { 
-    padding: 15mm !important; 
+
+  .page-content {
+    padding: 15mm !important;
     transform: none !important;
     margin: 0 !important;
   }
-  
+
   /* 歌詞行設定 */
-  .song-line { 
-    position: relative !important; 
-    padding: 6px 0 !important; 
-    line-height: 1.35 !important; 
+  .song-line {
+    position: relative !important;
+    padding: 6px 0 !important;
+    line-height: 1.35 !important;
   }
-  
-  .lyrics-text { 
-    white-space: pre-wrap !important; 
-    color: #111827 !important; 
+
+  .lyrics-text {
+    white-space: pre-wrap !important;
+    color: #111827 !important;
   }
-  
+
   /* コード行設定 */
   .chords-row {
     position: absolute !important;
@@ -89,7 +89,7 @@
     will-change: auto !important;
     touch-action: auto !important;
   }
-  
+
   .chord {
     position: absolute !important;
     top: 0 !important;
@@ -98,24 +98,24 @@
     color: #b00020 !important;
     cursor: auto !important;
   }
-  
+
   /* ページタイトル設定 */
   .page-title {
     text-align: center !important;
     margin-bottom: 8mm !important;
   }
-  
+
   .page-title .title {
     font-size: 20px !important;
     font-weight: 800 !important;
   }
-  
+
   .page-title .meta {
     margin-top: 4px !important;
     color: #4b5563 !important;
     font-size: 12px !important;
   }
-  
+
   /* 選択中コードのハイライトを印刷時に除外 */
   .chip.active,
   .current .current-chord {

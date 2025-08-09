@@ -20,9 +20,17 @@ export class TouchGestureManager {
     const pageContent = this.ctx.el.pageContent;
     if (!pageContent) return;
 
-    pageContent.addEventListener('touchstart', this.handleTouchStart.bind(this), { passive: true });
-    pageContent.addEventListener('touchend', this.handleTouchEnd.bind(this), { passive: true });
-    pageContent.addEventListener('touchmove', this.handleTouchMove.bind(this), { passive: false });
+    pageContent.addEventListener(
+      'touchstart',
+      this.handleTouchStart.bind(this),
+      { passive: true }
+    );
+    pageContent.addEventListener('touchend', this.handleTouchEnd.bind(this), {
+      passive: true,
+    });
+    pageContent.addEventListener('touchmove', this.handleTouchMove.bind(this), {
+      passive: false,
+    });
   }
 
   /**
@@ -58,9 +66,9 @@ export class TouchGestureManager {
     // スワイプ検出
     if (deltaTime < this.timeThreshold) {
       const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-      
+
       if (distance > this.threshold) {
-        const angle = Math.atan2(deltaY, deltaX) * 180 / Math.PI;
+        const angle = (Math.atan2(deltaY, deltaX) * 180) / Math.PI;
         this.handleSwipe(angle, distance, touch.target);
       } else {
         // タップ検出
@@ -86,7 +94,7 @@ export class TouchGestureManager {
       if (target.closest('.chord')) {
         return;
       }
-      
+
       // スクロール防止（特定の場合のみ）
       if (this.shouldPreventScroll(target)) {
         event.preventDefault();
@@ -99,7 +107,7 @@ export class TouchGestureManager {
    */
   handleSwipe(angle, distance, target) {
     const direction = this.getSwipeDirection(angle);
-    
+
     switch (direction) {
       case 'left':
         this.handleSwipeLeft(target);
@@ -180,7 +188,7 @@ export class TouchGestureManager {
 
     const currentSize = parseInt(lyricsFont.value);
     const newSize = Math.max(10, Math.min(28, currentSize + delta));
-    
+
     lyricsFont.value = newSize.toString();
     lyricsFont.dispatchEvent(new Event('input'));
   }
@@ -194,13 +202,14 @@ export class TouchGestureManager {
 
     const scrollAmount = 200;
     const currentScroll = presetList.scrollLeft;
-    const newScroll = direction === 'next' 
-      ? currentScroll + scrollAmount 
-      : currentScroll - scrollAmount;
-    
+    const newScroll =
+      direction === 'next'
+        ? currentScroll + scrollAmount
+        : currentScroll - scrollAmount;
+
     presetList.scrollTo({
       left: newScroll,
-      behavior: 'smooth'
+      behavior: 'smooth',
     });
   }
 
@@ -208,9 +217,11 @@ export class TouchGestureManager {
    * スクロール防止の判定
    */
   shouldPreventScroll(target) {
-    return target.closest('.chords-row') !== null ||
-           target.closest('.chord') !== null ||
-           target.closest('.section-inline') !== null;
+    return (
+      target.closest('.chords-row') !== null ||
+      target.closest('.chord') !== null ||
+      target.closest('.section-inline') !== null
+    );
   }
 
   /**

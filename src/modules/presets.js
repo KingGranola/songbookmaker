@@ -2,115 +2,142 @@
 
 export function getPresetChords(ctx) {
   const { state } = ctx;
-  const SEMITONES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
-  
+  const SEMITONES = [
+    'C',
+    'C#',
+    'D',
+    'D#',
+    'E',
+    'F',
+    'F#',
+    'G',
+    'G#',
+    'A',
+    'A#',
+    'B',
+  ];
+
   // 異名同音の使い分けテーブル（弾き語りすとLABOのルールに基づく）
   const ENHARMONIC_SCALES = {
     // メジャーキー（頭文字重複回避）
-    'C': ['C','D','E','F','G','A','B'],
-    'C#': ['C#','D#','E#','F#','G#','A#','B#'],
-    'Db': ['Db','Eb','F','Gb','Ab','Bb','C'],
-    'D': ['D','E','F#','G','A','B','C#'],
-    'D#': ['D#','E#','F##','G#','A#','B#','C##'],
-    'Eb': ['Eb','F','G','Ab','Bb','C','D'],
-    'E': ['E','F#','G#','A','B','C#','D#'],
-    'F': ['F','G','A','Bb','C','D','E'],
-    'F#': ['F#','G#','A#','B','C#','D#','E#'],
-    'Gb': ['Gb','Ab','Bb','Cb','Db','Eb','F'],
-    'G': ['G','A','B','C','D','E','F#'],
-    'G#': ['G#','A#','B#','C#','D#','E#','F##'],
-    'Ab': ['Ab','Bb','C','Db','Eb','F','G'],
-    'A': ['A','B','C#','D','E','F#','G#'],
-    'A#': ['A#','B#','C##','D#','E#','F##','G##'],
-    'Bb': ['Bb','C','D','Eb','F','G','A'],
-    'B': ['B','C#','D#','E','F#','G#','A#']
+    C: ['C', 'D', 'E', 'F', 'G', 'A', 'B'],
+    'C#': ['C#', 'D#', 'E#', 'F#', 'G#', 'A#', 'B#'],
+    Db: ['Db', 'Eb', 'F', 'Gb', 'Ab', 'Bb', 'C'],
+    D: ['D', 'E', 'F#', 'G', 'A', 'B', 'C#'],
+    'D#': ['D#', 'E#', 'F##', 'G#', 'A#', 'B#', 'C##'],
+    Eb: ['Eb', 'F', 'G', 'Ab', 'Bb', 'C', 'D'],
+    E: ['E', 'F#', 'G#', 'A', 'B', 'C#', 'D#'],
+    F: ['F', 'G', 'A', 'Bb', 'C', 'D', 'E'],
+    'F#': ['F#', 'G#', 'A#', 'B', 'C#', 'D#', 'E#'],
+    Gb: ['Gb', 'Ab', 'Bb', 'Cb', 'Db', 'Eb', 'F'],
+    G: ['G', 'A', 'B', 'C', 'D', 'E', 'F#'],
+    'G#': ['G#', 'A#', 'B#', 'C#', 'D#', 'E#', 'F##'],
+    Ab: ['Ab', 'Bb', 'C', 'Db', 'Eb', 'F', 'G'],
+    A: ['A', 'B', 'C#', 'D', 'E', 'F#', 'G#'],
+    'A#': ['A#', 'B#', 'C##', 'D#', 'E#', 'F##', 'G##'],
+    Bb: ['Bb', 'C', 'D', 'Eb', 'F', 'G', 'A'],
+    B: ['B', 'C#', 'D#', 'E', 'F#', 'G#', 'A#'],
   };
-  
+
   // マイナーキー用の異名同音テーブル（同主短調から借用コード用）
   const MINOR_ENHARMONIC_SCALES = {
-    'C': ['C','D','Eb','F','G','Ab','Bb'],
-    'C#': ['C#','D#','E','F#','G#','A','B'],
-    'Db': ['Db','Eb','E','Gb','Ab','A','Bb'],
-    'D': ['D','E','F','G','A','Bb','C'],
-    'D#': ['D#','E#','F#','G#','A#','B','C#'],
-    'Eb': ['Eb','F','Gb','Ab','Bb','Cb','Db'],
-    'E': ['E','F#','G','A','B','C','D'],
-    'F': ['F','G','Ab','Bb','C','Db','Eb'],
-    'F#': ['F#','G#','A','B','C#','D','E'],
-    'Gb': ['Gb','Ab','A','Cb','Db','D','Eb'],
-    'G': ['G','A','Bb','C','D','Eb','F'],
-    'G#': ['G#','A#','B','C#','D#','E','F#'],
-    'Ab': ['Ab','Bb','Cb','Db','Eb','Fb','Gb'],
-    'A': ['A','B','C','D','E','F','G'],
-    'A#': ['A#','B#','C#','D#','E#','F#','G#'],
-    'Bb': ['Bb','C','Db','Eb','F','Gb','Ab'],
-    'B': ['B','C#','D','E','F#','G','A']
+    C: ['C', 'D', 'Eb', 'F', 'G', 'Ab', 'Bb'],
+    'C#': ['C#', 'D#', 'E', 'F#', 'G#', 'A', 'B'],
+    Db: ['Db', 'Eb', 'E', 'Gb', 'Ab', 'A', 'Bb'],
+    D: ['D', 'E', 'F', 'G', 'A', 'Bb', 'C'],
+    'D#': ['D#', 'E#', 'F#', 'G#', 'A#', 'B', 'C#'],
+    Eb: ['Eb', 'F', 'Gb', 'Ab', 'Bb', 'Cb', 'Db'],
+    E: ['E', 'F#', 'G', 'A', 'B', 'C', 'D'],
+    F: ['F', 'G', 'Ab', 'Bb', 'C', 'Db', 'Eb'],
+    'F#': ['F#', 'G#', 'A', 'B', 'C#', 'D', 'E'],
+    Gb: ['Gb', 'Ab', 'A', 'Cb', 'Db', 'D', 'Eb'],
+    G: ['G', 'A', 'Bb', 'C', 'D', 'Eb', 'F'],
+    'G#': ['G#', 'A#', 'B', 'C#', 'D#', 'E', 'F#'],
+    Ab: ['Ab', 'Bb', 'Cb', 'Db', 'Eb', 'Fb', 'Gb'],
+    A: ['A', 'B', 'C', 'D', 'E', 'F', 'G'],
+    'A#': ['A#', 'B#', 'C#', 'D#', 'E#', 'F#', 'G#'],
+    Bb: ['Bb', 'C', 'Db', 'Eb', 'F', 'Gb', 'Ab'],
+    B: ['B', 'C#', 'D', 'E', 'F#', 'G', 'A'],
   };
-  
+
   // 相対長調キーを取得するヘルパー関数
   function getRelativeMajorKey(minorKey) {
     const minorToMajor = {
-      'A': 'C', 'A#': 'C#', 'Bb': 'Db', 'B': 'D',
-      'C': 'Eb', 'C#': 'E', 'Db': 'E', 'D': 'F',
-      'D#': 'F#', 'Eb': 'Gb', 'E': 'G', 'F': 'Ab',
-      'F#': 'A', 'Gb': 'A', 'G': 'Bb', 'G#': 'B'
+      A: 'C',
+      'A#': 'C#',
+      Bb: 'Db',
+      B: 'D',
+      C: 'Eb',
+      'C#': 'E',
+      Db: 'E',
+      D: 'F',
+      'D#': 'F#',
+      Eb: 'Gb',
+      E: 'G',
+      F: 'Ab',
+      'F#': 'A',
+      Gb: 'A',
+      G: 'Bb',
+      'G#': 'B',
     };
     return minorToMajor[minorKey] || 'C';
   }
-  
-  // 同主短調キーを取得するヘルパー関数
-  function getParallelMinorKey(majorKey) {
-    const majorToMinor = {
-      'C': 'C', 'C#': 'C#', 'Db': 'Db', 'D': 'D',
-      'D#': 'D#', 'Eb': 'Eb', 'E': 'E', 'F': 'F',
-      'F#': 'F#', 'Gb': 'Gb', 'G': 'G', 'G#': 'G#',
-      'Ab': 'Ab', 'A': 'A', 'A#': 'A#', 'Bb': 'Bb', 'B': 'B'
-    };
-    return majorToMinor[majorKey] || 'C';
-  }
-  
+
+  // 同主短調キーを取得するヘルパー関数（将来の機能拡張用）
+  // function getParallelMinorKey(majorKey) {
+  //   const majorToMinor = {
+  //     'C': 'C', 'C#': 'C#', 'Db': 'Db', 'D': 'D',
+  //     'D#': 'D#', 'Eb': 'Eb', 'E': 'E', 'F': 'F',
+  //     'F#': 'F#', 'Gb': 'Gb', 'G': 'G', 'G#': 'G#',
+  //     'Ab': 'Ab', 'A': 'A', 'A#': 'A#', 'Bb': 'Bb', 'B': 'B'
+  //   };
+  //   return majorToMinor[majorKey] || 'C';
+  // }
+
   const keyIdx = SEMITONES.indexOf(state.key);
   if (keyIdx < 0) return {};
 
   let diatonic, diatonic7;
-  
+
   /**
    * ダイアトニックコード生成ロジック
-   * 
+   *
    * 【長調（メジャーキー）】
    * - 基準: イオニアンモード（自然長音階）
    * - 構成: I, ii, iii, IV, V, vi, vii°
    * - 例: Cメジャー → C, Dm, Em, F, G, Am, Bdim
-   * 
+   *
    * 【短調（マイナーキー）】
    * - 基準: エオリアンモード（自然短音階）
    * - 構成: Im, II°, bIII, IVm, Vm, bVI, bVII
    * - 例: Aマイナー → Am, Bdim, C, Dm, Em, F, G
    * - 関係調: Aマイナー ↔ Cメジャー（相対調）
    */
-  
+
   // 正しい異名同音を使用した音階取得
   const scale = ENHARMONIC_SCALES[state.key];
   if (!scale) {
     // フォールバック：従来の半音ステップ方式
-    const steps = state.mode === 'minor' ? [0,2,3,5,7,8,10] : [0,2,4,5,7,9,11];
-    const qualities = state.mode === 'minor' ? 
-      ['m','dim','','m','m','',''] : 
-      ['','m','m','','','m','dim'];
-    const sevenths = state.mode === 'minor' ? 
-      ['m7','m7(b5)','△7','m7','m7','△7','7'] : 
-      ['△7','m7','m7','△7','7','m7','m7(b5)'];
-    
+    const steps =
+      state.mode === 'minor' ? [0, 2, 3, 5, 7, 8, 10] : [0, 2, 4, 5, 7, 9, 11];
+    const qualities =
+      state.mode === 'minor'
+        ? ['m', 'dim', '', 'm', 'm', '', '']
+        : ['', 'm', 'm', '', '', 'm', 'dim'];
+    const sevenths =
+      state.mode === 'minor'
+        ? ['m7', 'm7(b5)', '△7', 'm7', 'm7', '△7', '7']
+        : ['△7', 'm7', 'm7', '△7', '7', 'm7', 'm7(b5)'];
+
     diatonic = steps.map((step, i) => {
       const root = SEMITONES[(keyIdx + step) % 12];
       return root + qualities[i];
     });
-    
+
     diatonic7 = steps.map((step, i) => {
       const root = SEMITONES[(keyIdx + step) % 12];
       return root + sevenths[i];
     });
-    
   } else {
     // 異名同音テーブルを使用した正しいコード生成
     if (state.mode === 'minor') {
@@ -118,18 +145,21 @@ export function getPresetChords(ctx) {
       const relativeScale = ENHARMONIC_SCALES[getRelativeMajorKey(state.key)];
       if (relativeScale) {
         // 相対長調から6番目を起点とした音階
-        const minorScale = [...relativeScale.slice(5), ...relativeScale.slice(0, 5)];
-        const triadQualities = ['m','dim','','m','m','',''];
-        const seventhQualities = ['m7','m7(b5)','△7','m7','m7','△7','7'];
-        
+        const minorScale = [
+          ...relativeScale.slice(5),
+          ...relativeScale.slice(0, 5),
+        ];
+        const triadQualities = ['m', 'dim', '', 'm', 'm', '', ''];
+        const seventhQualities = ['m7', 'm7(b5)', '△7', 'm7', 'm7', '△7', '7'];
+
         diatonic = minorScale.map((root, i) => root + triadQualities[i]);
         diatonic7 = minorScale.map((root, i) => root + seventhQualities[i]);
       }
     } else {
       // メジャーキーのダイアトニックコード
-      const triadQualities = ['','m','m','','','m','dim'];
-      const seventhQualities = ['△7','m7','m7','△7','7','m7','m7(b5)'];
-      
+      const triadQualities = ['', 'm', 'm', '', '', 'm', 'dim'];
+      const seventhQualities = ['△7', 'm7', 'm7', '△7', '7', 'm7', 'm7(b5)'];
+
       diatonic = scale.map((root, i) => root + triadQualities[i]);
       diatonic7 = scale.map((root, i) => root + seventhQualities[i]);
     }
@@ -139,14 +169,14 @@ export function getPresetChords(ctx) {
   let secondaries = [];
   if (state.mode === 'minor') {
     // マイナーキーのセカンダリードミナント: V/i, V/iv, V/v, V/♭III, V/♭VI
-    const minorTargets = [0,5,7,3,8]; // i, iv, v, ♭III, ♭VI
+    const minorTargets = [0, 5, 7, 3, 8]; // i, iv, v, ♭III, ♭VI
     secondaries = minorTargets.map((target) => {
       const root = SEMITONES[(keyIdx + target + 7) % 12];
       return root + '7';
     });
   } else {
     // メジャーキーのセカンダリードミナント: V/ii, V/iii, V/IV, V/V, V/vi
-    const majorTargets = [2,4,5,7,9]; // ii, iii, IV, V, vi
+    const majorTargets = [2, 4, 5, 7, 9]; // ii, iii, IV, V, vi
     secondaries = majorTargets.map((target) => {
       const root = SEMITONES[(keyIdx + target + 7) % 12];
       return root + '7';
@@ -160,11 +190,14 @@ export function getPresetChords(ctx) {
       // 異名同音テーブルを使用した正しいサブドミナントマイナー生成
       const relativeScale = ENHARMONIC_SCALES[getRelativeMajorKey(state.key)];
       if (relativeScale) {
-        const minorScale = [...relativeScale.slice(5), ...relativeScale.slice(0, 5)];
-        const IVm7 = minorScale[3] + 'm7';     // iv
+        const minorScale = [
+          ...relativeScale.slice(5),
+          ...relativeScale.slice(0, 5),
+        ];
+        const IVm7 = minorScale[3] + 'm7'; // iv
         const IIm7b5 = minorScale[1] + 'm7(b5)'; // ii°
-        const bVImaj7 = minorScale[5] + '△7';  // bVI
-        const bVII7 = minorScale[6] + '7';    // bVII
+        const bVImaj7 = minorScale[5] + '△7'; // bVI
+        const bVII7 = minorScale[6] + '7'; // bVII
         subDomMinor = [IVm7, IIm7b5, bVImaj7, bVII7];
       }
     } else {
@@ -180,10 +213,10 @@ export function getPresetChords(ctx) {
     // CHORD_RULES.mdに基づく4つのコード: IVm7, IIm7(♭5), ♭VImaj7, ♭VII7
     const parallelMinorScale = MINOR_ENHARMONIC_SCALES[state.key];
     if (parallelMinorScale) {
-      const IVm7 = parallelMinorScale[3] + 'm7';     // IVm7 (同主短調のiv)
+      const IVm7 = parallelMinorScale[3] + 'm7'; // IVm7 (同主短調のiv)
       const IIm7b5 = parallelMinorScale[1] + 'm7(b5)'; // IIm7(♭5) (同主短調のii)
-      const bVImaj7 = parallelMinorScale[5] + '△7';   // ♭VImaj7 (同主短調のvi)
-      const bVII7 = parallelMinorScale[6] + '7';      // ♭VII7 (同主短調のbVII)
+      const bVImaj7 = parallelMinorScale[5] + '△7'; // ♭VImaj7 (同主短調のvi)
+      const bVII7 = parallelMinorScale[6] + '7'; // ♭VII7 (同主短調のbVII)
       subDomMinor = [IVm7, IIm7b5, bVImaj7, bVII7];
     } else {
       // フォールバック
@@ -197,22 +230,22 @@ export function getPresetChords(ctx) {
 
   // 裏コード（トライトーン・サブスティテューション）
   const tritoneSubstitutes = generateTritoneSubstitutes(state, keyIdx);
-  
+
   // II-V-I パッケージ
   const twoFiveOne = generateTwoFiveOne(state, keyIdx, scale);
-  
+
   // サスペンドコード（Sus4/Sus2）
   const suspendedChords = generateSuspendedChords(state, keyIdx, scale);
 
   const base = state.presetType === 'seventh' ? diatonic7 : diatonic;
-  
+
   return {
     diatonic: base,
     secondary: secondaries,
     subDomMinor: subDomMinor,
     tritone: tritoneSubstitutes,
     twoFiveOne: twoFiveOne,
-    suspended: suspendedChords
+    suspended: suspendedChords,
   };
 }
 
@@ -220,7 +253,7 @@ export function updatePresetList(ctx) {
   const { el, state } = ctx;
   const chordCategories = getPresetChords(ctx);
   el.presetList.innerHTML = '';
-  
+
   // プリセットエリア全体のスタイル設定（統一デザイン）
   el.presetList.style.cssText = `
     display: grid;
@@ -229,21 +262,43 @@ export function updatePresetList(ctx) {
     padding: var(--space-sm);
     align-items: start;
   `;
-  
+
   // カテゴリ別にコードを表示（ジャズ理論に基づく）
   const categories = [
-    { key: 'diatonic', title: state.mode === 'minor' ? 'ダイアトニック (Aeolian/Natural Minor)' : 'ダイアトニック (Ionian/Major)', color: 'var(--primary)' },
-    { key: 'secondary', title: 'セカンダリードミナント (V/x)', color: 'var(--primary-light)' },
-    { key: 'subDomMinor', title: state.mode === 'minor' ? 'サブドミナントマイナー (SD.m)' : 'サブドミナントマイナー (借用コード)', color: 'var(--primary-dark)' },
+    {
+      key: 'diatonic',
+      title:
+        state.mode === 'minor'
+          ? 'ダイアトニック (Aeolian/Natural Minor)'
+          : 'ダイアトニック (Ionian/Major)',
+      color: 'var(--primary)',
+    },
+    {
+      key: 'secondary',
+      title: 'セカンダリードミナント (V/x)',
+      color: 'var(--primary-light)',
+    },
+    {
+      key: 'subDomMinor',
+      title:
+        state.mode === 'minor'
+          ? 'サブドミナントマイナー (SD.m)'
+          : 'サブドミナントマイナー (借用コード)',
+      color: 'var(--primary-dark)',
+    },
     { key: 'twoFiveOne', title: 'II-V-I パッケージ', color: 'var(--success)' },
-    { key: 'tritone', title: '裏コード (トライトーン代理)', color: 'var(--warning)' },
-    { key: 'suspended', title: 'サスペンド (Sus4/Sus2)', color: 'var(--info)' }
+    {
+      key: 'tritone',
+      title: '裏コード (トライトーン代理)',
+      color: 'var(--warning)',
+    },
+    { key: 'suspended', title: 'サスペンド (Sus4/Sus2)', color: 'var(--info)' },
   ];
-  
-  categories.forEach(category => {
+
+  categories.forEach((category) => {
     const chords = chordCategories[category.key];
     if (!chords || chords.length === 0) return;
-    
+
     // カテゴリコンテナ（統一デザイン）
     const categoryContainer = document.createElement('div');
     categoryContainer.className = 'category-container';
@@ -258,7 +313,7 @@ export function updatePresetList(ctx) {
       max-height: 120px;
       box-shadow: var(--shadow);
     `;
-    
+
     // カテゴリタイトル（統一デザイン）
     const titleDiv = document.createElement('div');
     titleDiv.style.cssText = `
@@ -275,23 +330,23 @@ export function updatePresetList(ctx) {
       overflow: hidden;
       text-overflow: ellipsis;
     `;
-    
+
     // タイトルを短縮
     const shortTitles = {
-      'diatonic': 'ダイアトニック',
-      'secondary': 'セカンダリードミナント',
-      'subDomMinor': 'サブドミナントマイナー',
-      'twoFiveOne': 'II-V-I',
-      'tritone': '裏コード',
-      'suspended': 'サスペンド'
+      diatonic: 'ダイアトニック',
+      secondary: 'セカンダリードミナント',
+      subDomMinor: 'サブドミナントマイナー',
+      twoFiveOne: 'II-V-I',
+      tritone: '裏コード',
+      suspended: 'サスペンド',
     };
     titleDiv.textContent = shortTitles[category.key] || category.title;
     categoryContainer.appendChild(titleDiv);
-    
+
     // コードチップ（カテゴリに応じたレイアウト）
     const chipRow = document.createElement('div');
     chipRow.className = 'chip-row';
-    
+
     // カテゴリごとにコンパクトなレイアウトを設定
     let gridColumns = 'repeat(3, 1fr)';
     if (category.key === 'twoFiveOne') {
@@ -307,7 +362,7 @@ export function updatePresetList(ctx) {
     } else {
       gridColumns = 'repeat(3, 1fr)'; // 5個以上は3列
     }
-    
+
     chipRow.style.cssText = `
       display: grid;
       grid-template-columns: ${gridColumns};
@@ -315,7 +370,7 @@ export function updatePresetList(ctx) {
       flex: 1;
       align-content: start;
     `;
-    
+
     chords.forEach((name) => {
       const chip = document.createElement('button');
       chip.type = 'button';
@@ -342,29 +397,29 @@ export function updatePresetList(ctx) {
         min-width: 0;
       `;
       chip.title = name;
-      
+
       // シンプルホバー効果
       chip.addEventListener('mouseenter', () => {
         chip.style.background = category.color;
         chip.style.color = 'white';
       });
-      
+
       chip.addEventListener('mouseleave', () => {
         chip.style.background = 'var(--surface)';
         chip.style.color = 'var(--text)';
       });
-      
+
       // クリックで単体選択
       chip.addEventListener('click', () => {
         if (ctx.applySelectedChord) ctx.applySelectedChord(name);
       });
       chipRow.appendChild(chip);
     });
-    
+
     categoryContainer.appendChild(chipRow);
     el.presetList.appendChild(categoryContainer);
   });
-  
+
   if (ctx.highlightSelectedChip) ctx.highlightSelectedChip();
 }
 
@@ -372,10 +427,27 @@ export function updatePresetList(ctx) {
 function generateTritoneSubstitutes(state, keyIdx) {
   // 裏コードの異名同音対応（フラット系を優先）
   const TRITONE_ENHARMONIC = {
-    'C#': 'Db', 'D#': 'Eb', 'F#': 'Gb', 'G#': 'Ab', 'A#': 'Bb'
+    'C#': 'Db',
+    'D#': 'Eb',
+    'F#': 'Gb',
+    'G#': 'Ab',
+    'A#': 'Bb',
   };
-  const SEMITONES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
-  
+  const SEMITONES = [
+    'C',
+    'C#',
+    'D',
+    'D#',
+    'E',
+    'F',
+    'F#',
+    'G',
+    'G#',
+    'A',
+    'A#',
+    'B',
+  ];
+
   if (state.mode === 'minor') {
     // マイナーキー: V7の裏コード（V7 = keyIdx + 7, 裏 = keyIdx + 1）
     let tritoneRoot = SEMITONES[(keyIdx + 1) % 12];
@@ -396,9 +468,22 @@ function generateTritoneSubstitutes(state, keyIdx) {
 }
 
 // II-V-I パッケージ生成
-function generateTwoFiveOne(state, keyIdx, scale) {
-  const SEMITONES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
-  
+function generateTwoFiveOne(state, keyIdx, _scale) {
+  const SEMITONES = [
+    'C',
+    'C#',
+    'D',
+    'D#',
+    'E',
+    'F',
+    'F#',
+    'G',
+    'G#',
+    'A',
+    'A#',
+    'B',
+  ];
+
   if (state.mode === 'minor') {
     // マイナー II-V-I: IIm7(b5) - V7 - Im7
     const ii = SEMITONES[(keyIdx + 2) % 12] + 'm7(b5)';
@@ -414,27 +499,38 @@ function generateTwoFiveOne(state, keyIdx, scale) {
   }
 }
 
-// サスペンドコード生成  
+// サスペンドコード生成
 function generateSuspendedChords(state, keyIdx, scale) {
-  const SEMITONES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
-  
+  const SEMITONES = [
+    'C',
+    'C#',
+    'D',
+    'D#',
+    'E',
+    'F',
+    'F#',
+    'G',
+    'G#',
+    'A',
+    'A#',
+    'B',
+  ];
+
   if (scale && scale.length >= 5) {
     // 異名同音テーブルを使用
     return [
-      scale[0] + 'sus4',  // I sus4
-      scale[0] + 'sus2',  // I sus2  
-      scale[4] + 'sus4',  // V sus4
-      scale[4] + 'sus2'   // V sus2
+      scale[0] + 'sus4', // I sus4
+      scale[0] + 'sus2', // I sus2
+      scale[4] + 'sus4', // V sus4
+      scale[4] + 'sus2', // V sus2
     ];
   } else {
     // フォールバック
     return [
       SEMITONES[keyIdx] + 'sus4',
-      SEMITONES[keyIdx] + 'sus2', 
+      SEMITONES[keyIdx] + 'sus2',
       SEMITONES[(keyIdx + 7) % 12] + 'sus4',
-      SEMITONES[(keyIdx + 7) % 12] + 'sus2'
+      SEMITONES[(keyIdx + 7) % 12] + 'sus2',
     ];
   }
 }
-
-

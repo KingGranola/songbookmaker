@@ -40,11 +40,11 @@ textarea:focus {
     --border: #333333;
     --muted: #666666;
   }
-  
+
   .chip {
     border: 2px solid var(--primary) !important;
   }
-  
+
   .chord {
     color: #000000 !important;
     background: rgba(255, 255, 255, 0.9) !important;
@@ -70,7 +70,7 @@ textarea:focus {
     font-size: 18px;
     line-height: 1.6;
   }
-  
+
   .chord {
     font-size: 16px !important;
   }
@@ -185,7 +185,7 @@ textarea:focus {
   font-size: 14px;
 }
 
-.error-message[role="alert"] {
+.error-message[role='alert'] {
   /* スクリーンリーダーに即座に読み上げてもらう */
   position: relative;
 }
@@ -223,8 +223,12 @@ textarea:focus {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .loading-spinner[aria-label] {
@@ -283,24 +287,24 @@ textarea:focus {
     --muted: #9ca3af;
     --muted-bg: #374151;
   }
-  
+
   .help-dialog {
     background: #2d2d2d;
     border-color: #4a4a4a;
   }
-  
+
   .error-message {
     background: #2d1b1b;
     border-color: #4a2c2c;
     color: #ff6b6b;
   }
-  
+
   .success-message {
     background: #1b2d1b;
     border-color: #2c4a2c;
     color: #51cf66;
   }
-  
+
   .warning-message {
     background: #2d2d1b;
     border-color: #4a4a2c;

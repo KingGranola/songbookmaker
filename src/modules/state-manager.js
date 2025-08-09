@@ -18,25 +18,25 @@ export class StateManager {
       set: (target, property, value) => {
         const prevState = { ...target };
         const oldValue = target[property];
-        
+
         // 値が変更された場合のみ処理
         if (oldValue !== value) {
           target[property] = value;
-          
+
           // パス固有のリスナーに通知
           this.notifyPathListeners(property, value);
-          
+
           // 全体リスナーに通知
           this.notifyListeners(target, prevState);
-          
+
           // 永続化
           if (this.persistCallback) {
             this.persistCallback();
           }
         }
-        
+
         return true;
-      }
+      },
     });
   }
 
@@ -56,7 +56,7 @@ export class StateManager {
       this.pathListeners.set(path, new Set());
     }
     this.pathListeners.get(path).add(listener);
-    
+
     return () => {
       const listeners = this.pathListeners.get(path);
       if (listeners) {
@@ -100,7 +100,7 @@ export class StateManager {
    * 全体リスナーに通知
    */
   notifyListeners(newState, prevState) {
-    this.listeners.forEach(listener => {
+    this.listeners.forEach((listener) => {
       try {
         listener(newState, prevState);
       } catch (error) {
@@ -115,7 +115,7 @@ export class StateManager {
   notifyPathListeners(path, value) {
     const listeners = this.pathListeners.get(path);
     if (listeners) {
-      listeners.forEach(listener => {
+      listeners.forEach((listener) => {
         try {
           listener(value, path);
         } catch (error) {
@@ -148,7 +148,7 @@ export class EventBus {
   emit(event, ...args) {
     const listeners = this.events.get(event);
     if (listeners) {
-      listeners.forEach(listener => {
+      listeners.forEach((listener) => {
         try {
           listener(...args);
         } catch (error) {
@@ -166,7 +166,7 @@ export class EventBus {
       this.events.set(event, new Set());
     }
     this.events.get(event).add(listener);
-    
+
     return () => {
       const listeners = this.events.get(event);
       if (listeners) {

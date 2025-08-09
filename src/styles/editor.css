@@ -24,41 +24,41 @@
 }
 
 /* ヘルパーボタン群 */
-.helpers { 
-  margin-top: var(--space-md); 
-  display: flex; 
-  gap: var(--space-md); 
+.helpers {
+  margin-top: var(--space-md);
+  display: flex;
+  gap: var(--space-md);
   flex-wrap: wrap;
 }
 
 /* メタ情報行 - タイトル、アーティスト */
-.meta-row { 
-  display: flex; 
-  flex-wrap: wrap; 
-  gap: var(--space-md); 
-  margin-bottom: var(--space-md); 
+.meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-md);
+  margin-bottom: var(--space-md);
 }
 
 /* パレット全体 */
-.palette { 
-  margin-top: var(--space-lg); 
-  display: grid; 
-  gap: var(--space-md); 
+.palette {
+  margin-top: var(--space-lg);
+  display: grid;
+  gap: var(--space-md);
 }
 
 /* パレットタイトル */
-.palette-title { 
-  color: var(--text-secondary); 
-  font-size: var(--font-base); 
+.palette-title {
+  color: var(--text-secondary);
+  font-size: var(--font-base);
   font-weight: 600;
-  margin-bottom: var(--space-sm); 
+  margin-bottom: var(--space-sm);
 }
 
 /* チップ行 - コード選択ボタン群 */
-.chip-row { 
-  display: flex; 
-  flex-wrap: wrap; 
-  gap: var(--space-sm); 
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
   justify-content: flex-start;
   align-items: center;
 }
@@ -88,9 +88,9 @@
 }
 
 /* チップのホバー効果 */
-.chip:hover { 
-  outline: 2px solid rgba(59, 130, 246, 0.45); 
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15) inset; 
+.chip:hover {
+  outline: 2px solid rgba(59, 130, 246, 0.45);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15) inset;
 }
 
 /* セクションチップ - セクション選択用 */
@@ -119,20 +119,20 @@
 }
 
 /* 現在選択中のコード表示 */
-.current-chord { 
-  font-weight: 900; 
-  color: #60a5fa; 
+.current-chord {
+  font-weight: 900;
+  color: #60a5fa;
 }
 
 /* 選択中コードのハイライト - PDF書き出し時に除外 */
-.chip.active { 
-  outline: 2px solid rgba(59, 130, 246, 0.9); 
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2) inset; 
+.chip.active {
+  outline: 2px solid rgba(59, 130, 246, 0.9);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2) inset;
 }
 
 /* 現在の行のコードハイライト - PDF書き出し時に除外 */
-.current .current-chord { 
-  background: rgba(59, 130, 246, 0.2); 
-  padding: 2px 8px; 
-  border-radius: 999px; 
+.current .current-chord {
+  background: rgba(59, 130, 246, 0.2);
+  padding: 2px 8px;
+  border-radius: 999px;
 }
