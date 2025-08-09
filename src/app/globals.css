@@ -2,9 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* TailwindCSSの標準クラスを使用するため、カスタムCSS変数は削除 */
-
-/* Apple風ベーススタイル */
+/* ベーススタイル */
 @layer base {
   *,
   *::before,
@@ -13,52 +11,41 @@
   }
   
   body {
-    @apply bg-white text-gray-900;
-    /* スムーズなフォント */
+    margin: 0;
+    font-family: system-ui, -apple-system, sans-serif;
+    background-color: white;
+    color: rgb(17 24 39); /* gray-900 */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    text-rendering: optimizeLegibility;
   }
   
-  /* Apple風の8pxベース余白システム */
-  .container {
-    @apply max-w-4xl w-full mx-auto px-4 sm:px-6 lg:px-8;
+  html {
+    scroll-behavior: smooth;
   }
   
-  /* アクセシビリティ - フォーカスリング（3:1コントラスト確保） */
+  /* アクセシビリティ - フォーカスリング */
   *:focus-visible {
-    @apply outline-none ring-2 ring-blue-500 ring-offset-2;
+    outline: 2px solid rgb(59 130 246); /* blue-500 */
+    outline-offset: 2px;
   }
 }
 
-/* Apple風コンポーネントスタイル */
+/* コンポーネントスタイル */
 @layer components {
   /* プライマリボタン */
   .btn-primary {
     @apply bg-blue-500 text-white font-semibold px-6 py-3 rounded-xl shadow-md;
-    @apply hover:bg-blue-600 hover:shadow-lg hover:scale-105;
+    @apply hover:bg-blue-600 hover:shadow-lg;
     @apply focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
-    @apply active:scale-95;
     @apply transition-all duration-200 ease-in-out;
-    min-height: 48px; /* 44px以上のタッチターゲット */
+    min-height: 48px;
   }
   
   /* セカンダリボタン */
   .btn-secondary {
     @apply bg-white text-blue-700 border-2 border-blue-700 font-semibold px-6 py-3 rounded-xl shadow-sm;
-    @apply hover:bg-blue-50 hover:shadow-md hover:scale-105;
+    @apply hover:bg-blue-50 hover:shadow-md;
     @apply focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
-    @apply active:scale-95;
-    @apply transition-all duration-200 ease-in-out;
-    min-height: 48px;
-  }
-  
-  /* 危険ボタン */
-  .btn-danger {
-    @apply bg-red-600 text-white font-semibold px-6 py-3 rounded-xl shadow-md;
-    @apply hover:bg-red-700 hover:shadow-lg hover:scale-105;
-    @apply focus:ring-2 focus:ring-red-500 focus:ring-offset-2;
-    @apply active:scale-95;
     @apply transition-all duration-200 ease-in-out;
     min-height: 48px;
   }
@@ -77,11 +64,6 @@
     @apply placeholder-gray-500 text-gray-900;
     @apply transition-all duration-150 ease-in-out;
     min-height: 48px;
-  }
-  
-  /* エラー状態 */
-  .input-error {
-    @apply border-red-500 ring-2 ring-red-500 ring-opacity-20;
   }
   
   /* 左パネル - 音楽専用色 */
@@ -104,30 +86,14 @@
   .chord {
     @apply inline-block px-2 py-1 bg-white text-blue-700 font-semibold text-sm;
     @apply border border-blue-300 rounded-lg shadow-sm;
-    @apply hover:bg-blue-50 hover:shadow-md hover:scale-105;
+    @apply hover:bg-blue-50 hover:shadow-md;
     @apply transition-all duration-150 ease-in-out;
     @apply cursor-pointer select-none;
-  }
-  
-  /* コード削除時のスタイル */
-  .chord-delete {
-    @apply bg-red-50 border-red-300 text-red-700;
-    @apply hover:bg-red-100 hover:border-red-400;
-  }
-  
-  /* アニメーション制御（アクセシビリティ配慮） */
-  @media (prefers-reduced-motion: reduce) {
-    * {
-      animation-duration: 0.01ms !important;
-      animation-iteration-count: 1 !important;
-      transition-duration: 0.01ms !important;
-    }
   }
 }
 
 /* 印刷スタイル（A4最適化） */
 @media print {
-  /* 印刷時に非表示にする要素 */
   .no-print {
     display: none !important;
   }
@@ -136,7 +102,6 @@
     display: block !important;
   }
   
-  /* A4サイズ設定 */
   @page {
     size: A4;
     margin: 15mm;
@@ -149,73 +114,20 @@
     background: white !important;
   }
   
-  /* 印刷時のレイアウト調整 */
-  main {
-    display: block !important;
-  }
-  
-  .preview-area {
-    width: 100% !important;
-    max-width: none !important;
-    padding: 0 !important;
-  }
-  
-  .print-container {
-    width: 100% !important;
-    max-width: none !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    box-shadow: none !important;
-    background: white !important;
-    border: none !important;
-  }
-  
-  /* コード印刷スタイル */
   .chord {
-    color: #1D4ED8 !important; /* blue-700 */
+    color: #1D4ED8 !important;
     background: white !important;
-    border: 1px solid #93C5FD !important; /* blue-300 */
+    border: 1px solid #93C5FD !important;
     box-shadow: none !important;
     font-weight: 600 !important;
   }
-  
-  /* ページ分割制御 */
-  .avoid-break {
-    page-break-inside: avoid;
-  }
-  
-  .force-break {
-    page-break-before: always;
-  }
-  
-  /* 印刷時の色 */
+}
+
+/* アニメーション制御（アクセシビリティ配慮） */
+@media (prefers-reduced-motion: reduce) {
   * {
-    color: black !important;
-    background: transparent !important;
-  }
-  
-  h1, h2, h3 {
-    color: black !important;
-    font-weight: bold !important;
-  }
-}
-
-/* アクセシビリティ強化 */
-@media (forced-colors: active) {
-  .chord {
-    forced-color-adjust: none;
-    background: Canvas;
-    color: CanvasText;
-    border: 1px solid CanvasText;
-  }
-}
-
-/* ダークモード対応（将来用） */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: var(--gray-900);
-    --foreground: var(--gray-50);
-    --card: var(--gray-800);
-    --card-foreground: var(--gray-50);
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }

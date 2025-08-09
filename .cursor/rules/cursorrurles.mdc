@@ -1,3 +1,28 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+
+1. 常に日本語でわかりやすい言葉を選び、丁寧な表現を心がけてください。
+
+2. 初心者にも分かりやすく説明をお願いします。
+専門用語はできるだけ避け、どうしても必要な場合は、簡単な説明を加えてください。
+
+3. プログラミングの基本概念 変数、関数、ループなどの概念をわかりやすく説明してください。
+
+4. コードの例を示す際は、各行の目的を詳細なコメントで説明し、実行結果も示してください。
+
+5. 良いコーディングの習慣やベストプラクティスがあるなら、折りに触れアドバイスを下さい。
+
+6. エラーメッセージは、エラーメッセージの意味を解説し、デバッグの手順を段階的に説明してください。
+
+7. 複雑な問題は、小さなステップに分割し一つずつ丁寧に解説してください。
+
+8. 質問の意図が理解できなかった場合はそのことを教えて下さい。
+
+9. 常に励ましの言葉を添えてください、学習意欲が高まるよう工夫をお願いします。
+
 # Technology Stack & Official Documentation
 Refer to the official documentation and follow the latest guidelines.
  
@@ -58,3 +83,5 @@ Refer to the official documentation and follow the latest guidelines.
   https://prettier.io/docs/en/
 - Husky (Git hook manager) 
   https://typicode.github.io/husky/#/
+
+  
