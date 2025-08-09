@@ -75,8 +75,8 @@ export function setupState() {
       { pattern: /^([A-G][#b]?)(?:-7|min7)$/i, replace: (m, r) => r.toUpperCase() + 'm7' },
       // オーギュメント：C+, C#5 → Caug
       { pattern: /^([A-G][#b]?)(?:\+|#5)$/i, replace: (m, r) => r.toUpperCase() + 'aug' },
-      // メジャー：CM7, C^7, Cmaj7 → C△7
-      { pattern: /^([A-G][#b]?)(?:M7|maj7|\^7)$/i, replace: (m, r) => r.toUpperCase() + '△7' },
+      // メジャー：CM7, C^7, Cmaj7 → C△7 (大文字小文字を区別！)
+      { pattern: /^([A-G][#b]?)(?:M7|maj7|\^7)$/, replace: (m, r) => r.toUpperCase() + '△7' },
     ],
   };
 
@@ -181,6 +181,7 @@ export function setupState() {
 
   function normalizeChordName(inputSymbol) {
     let symbol = inputSymbol.trim();
+    
     for (const rule of CHORD_CONFIG.normalizeRules) {
       const m = symbol.match(rule.pattern);
       if (m) {
@@ -189,6 +190,7 @@ export function setupState() {
         break;
       }
     }
+    
     return symbol;
   }
 

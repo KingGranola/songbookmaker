@@ -151,6 +151,7 @@ songbookmaker/
 ├── 📚 docs/ （ドキュメント）
 │   ├── README.md           # プロジェクト概要
 │   ├── SPECIFICATION.md    # 技術仕様書
+│   ├── CHORD_RULES.md      # コード理論ルール
 │   ├── USER_GUIDE.md       # カスタマイズガイド
 │   └── CHANGELOG.md        # 変更履歴
 │

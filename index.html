@@ -379,17 +379,29 @@
 
       // Service Worker キャッシュクリア機能
       if ('serviceWorker' in navigator) {
-        // 古いキャッシュを強制クリア
+        // 全てのキャッシュを強制クリア
         caches.keys().then(cacheNames => {
-          const oldCaches = cacheNames.filter(name => 
-            name.includes('songbook') && !name.includes('v0.5.1')
-          );
-          if (oldCaches.length > 0) {
-            console.log('🧹 Clearing old caches:', oldCaches);
-            return Promise.all(oldCaches.map(name => caches.delete(name)));
+          console.log('🔍 Found caches:', cacheNames);
+          if (cacheNames.length > 0) {
+            console.log('🧹 Clearing ALL caches for fresh start');
+            return Promise.all(cacheNames.map(name => {
+              console.log('🗑️ Deleting:', name);
+              return caches.delete(name);
+            }));
           }
         }).then(() => {
-          console.log('✨ Cache cleanup completed');
+          console.log('✨ All caches cleared');
+        }).catch(err => {
+          console.error('❌ Cache clear error:', err);
+        });
+        
+        // Service Worker も再登録
+        navigator.serviceWorker.getRegistrations().then(registrations => {
+          console.log('🔍 Found SW registrations:', registrations.length);
+          registrations.forEach(registration => {
+            console.log('🔄 Unregistering SW:', registration.scope);
+            registration.unregister();
+          });
         });
       }
     </script>
