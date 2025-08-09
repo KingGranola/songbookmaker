@@ -170,6 +170,67 @@ function editChord(chordEl, ctx) {
   });
 }
 
+// セクション編集機能
+function editSection(sectionEl, ctx) {
+  const { state } = ctx; // eslint-disable-line no-unused-vars
+  const originalText = sectionEl.textContent;
+  
+  // 編集用の入力フィールドを作成
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.value = originalText;
+  input.className = 'section-edit-input';
+  input.style.cssText = `
+    position: absolute;
+    left: ${sectionEl.style.left};
+    top: ${sectionEl.style.top || '0'};
+    width: ${Math.max(80, originalText.length * 10)}px;
+    height: 24px;
+    border: 2px solid #3b82f6;
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #6b7280;
+    background: white;
+    z-index: 1001;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  `;
+  
+  // 元のセクションを一時的に非表示
+  sectionEl.style.visibility = 'hidden';
+  sectionEl.parentNode.appendChild(input);
+  input.focus();
+  input.select();
+  
+  const finishEdit = () => {
+    const newText = input.value.trim().toUpperCase();
+    if (newText && newText !== originalText) {
+      sectionEl.textContent = newText;
+      
+      // 編集完了の視覚的フィードバック
+      sectionEl.style.animation = 'chord-edit-complete 0.3s ease';
+      setTimeout(() => {
+        sectionEl.style.animation = '';
+      }, 300);
+    }
+    sectionEl.style.visibility = '';
+    input.remove();
+  };
+  
+  input.addEventListener('blur', finishEdit);
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      finishEdit();
+    } else if (e.key === 'Escape') {
+      sectionEl.style.visibility = '';
+      input.remove();
+    }
+  });
+}
+
 // コード配置後の即座編集機能
 function placeChordAndEdit(chordsRow, offsetX, chord, ctx) {
   const { state } = ctx; // eslint-disable-line no-unused-vars
@@ -283,10 +344,20 @@ function placeSection(chordsRow, offsetX, sectionName, ctx) {
 function placeSectionOnPage(pageContent, offsetX, offsetY, sectionName, ctx) {
   const { state } = ctx; // eslint-disable-line no-unused-vars
   
+  // 既存のセクションを検索して左端揃えの基準座標を取得
+  const existingSections = pageContent.querySelectorAll('.section-inline');
+  let alignedX = offsetX;
+  
+  if (existingSections.length > 0) {
+    // 最初に配置されたセクションのX座標に揃える
+    const firstSection = existingSections[0];
+    alignedX = parseFloat(firstSection.style.left) || 0;
+  }
+  
   const sectionEl = document.createElement('span');
   sectionEl.className = 'section-inline';
   sectionEl.textContent = sectionName;
-  sectionEl.style.left = `${offsetX}px`;
+  sectionEl.style.left = `${alignedX}px`;
   sectionEl.style.top = `${offsetY}px`;
   sectionEl.style.position = 'absolute';
   sectionEl.style.fontSize = '12px';
@@ -457,18 +528,31 @@ export function enableChordPlacement(ctx) {
   // コード編集機能（ダブルクリック）
   el.pageContent.addEventListener('dblclick', (ev) => {
     const chordEl = ev.target.closest('.chord');
-    if (!chordEl || chordEl.classList.contains('sep')) return;
+    const sectionEl = ev.target.closest('.section-inline');
     
-    ev.preventDefault();
-    ev.stopPropagation();
-    
-    isEditMode = true;
-    editChord(chordEl, ctx);
-    
-    // 編集完了後に編集モードを解除
-    setTimeout(() => {
-      isEditMode = false;
-    }, 100);
+    if (chordEl && !chordEl.classList.contains('sep')) {
+      ev.preventDefault();
+      ev.stopPropagation();
+      
+      isEditMode = true;
+      editChord(chordEl, ctx);
+      
+      // 編集完了後に編集モードを解除
+      setTimeout(() => {
+        isEditMode = false;
+      }, 100);
+    } else if (sectionEl) {
+      ev.preventDefault();
+      ev.stopPropagation();
+      
+      isEditMode = true;
+      editSection(sectionEl, ctx);
+      
+      // 編集完了後に編集モードを解除
+      setTimeout(() => {
+        isEditMode = false;
+      }, 100);
+    }
   });
 
   // 編集モード時のシングルクリック編集
@@ -476,12 +560,17 @@ export function enableChordPlacement(ctx) {
     if (!window.isEditModeActive) return; // 編集モードが有効でない場合は無視
     
     const chordEl = ev.target.closest('.chord');
-    if (!chordEl || chordEl.classList.contains('sep')) return;
+    const sectionEl = ev.target.closest('.section-inline');
     
-    ev.preventDefault();
-    ev.stopPropagation();
-    
-    editChord(chordEl, ctx);
+    if (chordEl && !chordEl.classList.contains('sep')) {
+      ev.preventDefault();
+      ev.stopPropagation();
+      editChord(chordEl, ctx);
+    } else if (sectionEl) {
+      ev.preventDefault();
+      ev.stopPropagation();
+      editSection(sectionEl, ctx);
+    }
   });
   
   el.pageContent.addEventListener('click', (ev) => {

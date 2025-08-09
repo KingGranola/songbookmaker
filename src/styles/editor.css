@@ -5,14 +5,14 @@
 /* 歌詞入力テキストエリア */
 #lyrics-input {
   width: 100%;
-  min-height: 200px;
+  min-height: 350px;
   resize: vertical; /* 縦方向のみリサイズ可能 */
   padding: 8px 10px;
   border-radius: 8px;
   border: 1px solid var(--border);
   background: var(--surface-2);
   color: var(--text);
-  font-size: 0.9em;
+  font-size: 1.2em;
 }
 
 /* ヘルパーボタン群 */

@@ -1,0 +1,169 @@
+/* 行削減プレビューモーダル */
+.reduce-lines-modal {
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+  border: 2px solid #e2e8f0;
+  max-width: 80vw;
+  max-height: 80vh;
+  width: 800px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  color: #1e293b;
+}
+
+.reduce-lines-modal .modal-header {
+  background: #f8fafc;
+  color: #1e293b;
+  padding: 16px 24px;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.reduce-lines-modal .modal-header h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.reduce-lines-modal .modal-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.preview-comparison {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  min-height: 200px;
+}
+
+.preview-section h3 {
+  margin: 0 0 12px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #475569;
+}
+
+.lyrics-preview {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 16px;
+  font-family: monospace;
+  font-size: 14px;
+  line-height: 1.6;
+  min-height: 150px;
+  white-space: pre-wrap;
+  color: #1e293b;
+  overflow-y: auto;
+  max-height: 300px;
+}
+
+.reduce-lines-settings {
+  border-top: 1px solid #e2e8f0;
+  padding-top: 20px;
+}
+
+.reduce-lines-settings h3 {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #475569;
+}
+
+.reduce-lines-settings .field {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.reduce-lines-settings .field span {
+  min-width: 150px;
+  font-size: 14px;
+  color: #64748b;
+}
+
+.reduce-lines-settings input[type="number"] {
+  width: 80px;
+  padding: 6px 8px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.reduce-lines-settings input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+}
+
+.reduce-lines-modal .modal-footer {
+  background: #f8fafc;
+  border-top: 1px solid #e2e8f0;
+  padding: 16px 24px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.reduce-lines-modal .modal-footer button {
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.reduce-lines-modal .modal-footer button.primary {
+  background: #3b82f6;
+  color: white;
+  border: none;
+}
+
+.reduce-lines-modal .modal-footer button.primary:hover {
+  background: #2563eb;
+}
+
+.reduce-lines-modal .modal-footer button.ghost {
+  background: transparent;
+  color: #64748b;
+  border: 1px solid #d1d5db;
+}
+
+.reduce-lines-modal .modal-footer button.ghost:hover {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 900px) {
+  .reduce-lines-modal {
+    width: 95vw;
+    max-height: 90vh;
+  }
+  
+  .preview-comparison {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .reduce-lines-settings .field {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+  
+  .reduce-lines-settings .field span {
+    min-width: unset;
+  }
+}

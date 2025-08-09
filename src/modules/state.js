@@ -19,7 +19,6 @@ export function setupState() {
     chordFontFamily: 'sans', // デフォルトをゴシックに変更
     title: '',
     artist: '',
-    composer: '',
     presetType: 'triad',
     chordOffsetPx: -18,
     letterSpacing: 0,
@@ -41,7 +40,7 @@ export function setupState() {
     lyricsLeading: document.getElementById('lyrics-leading'),
     titleInput: document.getElementById('title-input'),
     artistInput: document.getElementById('artist-input'),
-    composerInput: document.getElementById('composer-input'),
+
     chordOffset: document.getElementById('chord-offset'),
     lineOffset: document.getElementById('line-offset'),
     letterSpacing: document.getElementById('letter-spacing'),
@@ -58,6 +57,7 @@ export function setupState() {
     btnSetCustom: document.getElementById('btn-set-custom'),
     btnSep: document.getElementById('btn-sep'),
     btnEraser: document.getElementById('btn-eraser'),
+    btnSectionEraser: document.getElementById('btn-section-eraser'),
     currentChord: document.getElementById('current-chord'),
     presetType: document.getElementById('preset-type'),
 
@@ -98,7 +98,6 @@ export function setupState() {
         chordFontFamily: state.chordFontFamily,
         title: state.title,
         artist: state.artist,
-        composer: state.composer,
         presetType: state.presetType,
         chordOffsetPx: state.chordOffsetPx,
         lineOffsetPx: state.lineOffsetPx,
@@ -133,7 +132,6 @@ export function setupState() {
       if (el.chordFF) el.chordFF.value = state.chordFontFamily;
       if (el.titleInput) el.titleInput.value = state.title;
       if (el.artistInput) el.artistInput.value = state.artist;
-      if (el.composerInput) el.composerInput.value = state.composer;
       if (el.presetType) el.presetType.value = state.presetType;
       if (el.lyricsLeading) el.lyricsLeading.value = String(state.lineGap);
       if (el.letterSpacing) el.letterSpacing.value = String(state.letterSpacing);

@@ -107,7 +107,24 @@ export function setupUI(ctx) {
     applyChordStyles(ctx);
   }
 
-  function reduceLines(lyrics) {
+  // 文字列が英語中心かどうかを判定（80％以上が英語文字）
+  function isEnglishPrimary(text) {
+    if (!text || text.length === 0) return false;
+    
+    // 英語文字（ASCII 文字、空白、句読点）をカウント
+    const englishChars = text.match(/[a-zA-Z0-9\s.,!?'"();:-]/g) || [];
+    const englishRatio = englishChars.length / text.length;
+    
+    return englishRatio >= 0.8;
+  }
+
+  function reduceLines(lyrics, options = {}) {
+    const {
+      japaneseCharLimit = 25,
+      englishCharLimit = 50,
+      preserveEmptyLines = true
+    } = options;
+    
     const lines = lyrics.split('\n');
     const result = [];
     let currentLine = '';
@@ -115,16 +132,22 @@ export function setupUI(ctx) {
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i].trim();
       
-      // 空行の場合は新しい行を開始
+      // 空行の場合
       if (!line) {
+        // 現在蓄積している行があれば出力
         if (currentLine) {
           result.push(currentLine);
           currentLine = '';
         }
+        
+        // 空行保持設定がONなら空行を保持（段落区切りとして）
+        if (preserveEmptyLines) {
+          result.push('');
+        }
         continue;
       }
       
-      // セクション記号（[Intro]など）の場合は新しい行を開始
+      // セクション記号（[Intro]など）の場合は独立行として出力
       if (line.startsWith('[') && line.endsWith(']')) {
         if (currentLine) {
           result.push(currentLine);
@@ -136,13 +159,17 @@ export function setupUI(ctx) {
       
       // 通常の歌詞行の場合
       if (currentLine) {
-        // 既存の行がある場合、結合後の文字数をチェック
-        const combinedLine = currentLine + ' ' + line;
-        if (combinedLine.length <= 25) {
-          // 25文字以下なら結合
+        // 常にスペースで結合（日本語・英語問わず）
+        const combinedLine = currentLine + '　' + line;
+        
+        // 文字数制限を決定
+        const charLimit = isEnglishPrimary(combinedLine) ? englishCharLimit : japaneseCharLimit;
+        
+        if (combinedLine.length <= charLimit) {
+          // 制限内なら結合
           currentLine = combinedLine;
         } else {
-          // 25文字を超える場合は改行しない
+          // 制限を超える場合は現在行を出力し、新行を開始
           result.push(currentLine);
           currentLine = line;
         }
@@ -152,7 +179,7 @@ export function setupUI(ctx) {
       }
     }
     
-    // 最後の行を追加
+    // 最後の蓄積行を出力
     if (currentLine) {
       result.push(currentLine);
     }
@@ -181,7 +208,7 @@ export function setupUI(ctx) {
   el.lyricsInput?.addEventListener('input', ()=>{ state.lyrics = el.lyricsInput.value; renderPage(ctx); persist(); });
   el.titleInput?.addEventListener('input', ()=>{ state.title = el.titleInput.value; renderPage(ctx); persist(); });
   el.artistInput?.addEventListener('input', ()=>{ state.artist = el.artistInput.value; renderPage(ctx); persist(); });
-  el.composerInput?.addEventListener('input', ()=>{ state.composer = el.composerInput.value; renderPage(ctx); persist(); });
+
 
   el.lyricsFont?.addEventListener('input', ()=>{
     state.fontSizeLyrics = Number(el.lyricsFont.value);
@@ -283,17 +310,8 @@ export function setupUI(ctx) {
     const lyrics = el.lyricsInput.value;
     if (!lyrics.trim()) return;
     
-    // 現在の歌詞をundo履歴に保存
-    if (!state.lyricsHistory) state.lyricsHistory = [];
-    state.lyricsHistory.push(lyrics);
-    if (state.lyricsHistory.length > 10) state.lyricsHistory.shift(); // 最大10個まで
-    
-    // 行を減らす処理
-    const reducedLyrics = reduceLines(lyrics);
-    el.lyricsInput.value = reducedLyrics;
-    state.lyrics = reducedLyrics;
-    renderPage(ctx);
-    persist();
+    // プレビューモーダルを表示
+    showReduceLinesModal(lyrics);
   });
 
   // Undoボタンのイベントハンドラー
@@ -332,18 +350,31 @@ export function setupUI(ctx) {
     applyChordStyles(ctx);
   });
   el.btnEraser?.addEventListener('click', ()=> {
-    setCurrentChord('__ERASE__');
-    // ページツールボタンの状態も同期
-    if (btnEraserPage) btnEraserPage.classList.add('active');
-    if (btnEditModePage) btnEditModePage.classList.remove('active');
-    if (btnEraserControls) btnEraserControls.classList.add('active');
-    if (btnEditModeControls) btnEditModeControls.classList.remove('active');
-    
-    // プレビューエリアのクラスを切り替え
     const pageContent = document.getElementById('page-content');
-    if (pageContent) {
-      pageContent.classList.remove('edit-mode');
-      pageContent.classList.add('eraser-mode');
+    const isCurrentlyEraserMode = pageContent?.classList.contains('eraser-mode');
+    
+    if (isCurrentlyEraserMode) {
+      // 消しゴムモード解除
+      setCurrentChord(null);
+      if (btnEraserPage) btnEraserPage.classList.remove('active');
+      if (btnEraserControls) btnEraserControls.classList.remove('active');
+      if (pageContent) {
+        pageContent.classList.remove('eraser-mode', 'edit-mode');
+      }
+    } else {
+      // 消しゴムモード開始
+      setCurrentChord('__ERASE__');
+      // ページツールボタンの状態も同期
+      if (btnEraserPage) btnEraserPage.classList.add('active');
+      if (btnEditModePage) btnEditModePage.classList.remove('active');
+      if (btnEraserControls) btnEraserControls.classList.add('active');
+      if (btnEditModeControls) btnEditModeControls.classList.remove('active');
+      
+      // プレビューエリアのクラスを切り替え
+      if (pageContent) {
+        pageContent.classList.remove('edit-mode');
+        pageContent.classList.add('eraser-mode');
+      }
     }
   });
 
@@ -387,8 +418,13 @@ export function setupUI(ctx) {
     // プレビューエリアのクラスを切り替え
     const pageContent = document.getElementById('page-content');
     if (pageContent) {
-      pageContent.classList.toggle('edit-mode', isEditModeActive);
-      pageContent.classList.remove('eraser-mode');
+      if (isEditModeActive) {
+        pageContent.classList.add('edit-mode');
+        pageContent.classList.remove('eraser-mode');
+      } else {
+        // 編集モード解除時は明るさを元に戻す
+        pageContent.classList.remove('edit-mode', 'eraser-mode');
+      }
     }
     
     // ページツールボタンの状態を同期
@@ -508,7 +544,7 @@ export function setupUI(ctx) {
       fontSizeLyrics: state.fontSizeLyrics, fontSizeChord: state.fontSizeChord,
       chordColor: state.chordColor, lyricsFontFamily: state.lyricsFontFamily, chordFontFamily: state.chordFontFamily,
       marginMm: state.marginMm, history: state.history,
-      title: state.title, artist: state.artist, composer: state.composer,
+      title: state.title, artist: state.artist,
       chords: Array.from(el.pageContent.querySelectorAll('.song-line')).map((line)=>
         Array.from(line.querySelectorAll('.chords-row .chord')).map((n)=>({ raw: n.dataset.raw || n.textContent, x: parseFloat(n.style.left||'0') }))
       ),
@@ -524,13 +560,13 @@ export function setupUI(ctx) {
         fontSizeLyrics:p.fontSizeLyrics??state.fontSizeLyrics, fontSizeChord:p.fontSizeChord??state.fontSizeChord,
         chordColor:p.chordColor||state.chordColor, lyricsFontFamily:p.lyricsFontFamily||state.lyricsFontFamily,
         chordFontFamily:p.chordFontFamily||state.chordFontFamily, marginMm:p.marginMm??state.marginMm,
-        history:Array.isArray(p.history)?p.history:[], title:p.title||'', artist:p.artist||'', composer:p.composer||'',
+        history:Array.isArray(p.history)?p.history:[], title:p.title||'', artist:p.artist||'',
       });
       // UI反映
       el.keySelect.value=state.key; el.modeSelect.value=state.mode; el.presetType.value=state.presetType;
       el.lyricsInput.value=state.lyrics; el.lyricsFont.value=String(state.fontSizeLyrics); el.chordFont.value=String(state.fontSizeChord);
       el.chordColor.value=state.chordColor; el.lyricsFF.value=state.lyricsFontFamily; el.chordFF.value=state.chordFontFamily;
-      el.lyricsLeading.value=String(state.lineGap); if(el.letterSpacing) el.letterSpacing.value=String(state.letterSpacing); if(el.titleInput) el.titleInput.value=state.title; if(el.artistInput) el.artistInput.value=state.artist; if(el.composerInput) el.composerInput.value=state.composer;
+      el.lyricsLeading.value=String(state.lineGap); if(el.letterSpacing) el.letterSpacing.value=String(state.letterSpacing); if(el.titleInput) el.titleInput.value=state.title; if(el.artistInput) el.artistInput.value=state.artist;
       // 再描画
       renderPage(ctx);
       if(Array.isArray(p.chords)){
@@ -559,6 +595,107 @@ export function setupUI(ctx) {
   ctx.renderPage = renderPage;
   ctx.persist = persist;
   ctx.renderHistory = renderHistory;
+
+  // 行削減プレビューモーダル管理
+  function showReduceLinesModal(originalLyrics) {
+    const modal = document.getElementById('reduce-lines-modal');
+    const beforeEl = document.getElementById('reduce-lines-before');
+    const afterEl = document.getElementById('reduce-lines-after');
+    const japaneseCharLimitEl = document.getElementById('japanese-char-limit');
+    const englishCharLimitEl = document.getElementById('english-char-limit');
+    const preserveEmptyLinesEl = document.getElementById('preserve-empty-lines');
+    const applyBtn = document.getElementById('reduce-lines-apply');
+    const cancelBtn = document.getElementById('reduce-lines-cancel');
+    const closeBtn = document.getElementById('reduce-lines-close');
+    
+    if (!modal || !beforeEl || !afterEl) return;
+    
+    // 元の歌詞を表示
+    beforeEl.textContent = originalLyrics;
+    
+    // プレビューを更新する関数
+    function updatePreview() {
+      const options = {
+        japaneseCharLimit: parseInt(japaneseCharLimitEl.value) || 25,
+        englishCharLimit: parseInt(englishCharLimitEl.value) || 50,
+        preserveEmptyLines: preserveEmptyLinesEl.checked
+      };
+      
+      const reducedLyrics = reduceLines(originalLyrics, options);
+      afterEl.textContent = reducedLyrics;
+    }
+    
+    // 初期プレビューを表示
+    updatePreview();
+    
+    // 設定変更時にプレビューを更新
+    japaneseCharLimitEl?.addEventListener('input', updatePreview);
+    englishCharLimitEl?.addEventListener('input', updatePreview);
+    preserveEmptyLinesEl?.addEventListener('change', updatePreview);
+    
+    // 適用ボタンのクリックイベント
+    function applyChanges() {
+      const options = {
+        japaneseCharLimit: parseInt(japaneseCharLimitEl.value) || 25,
+        englishCharLimit: parseInt(englishCharLimitEl.value) || 50,
+        preserveEmptyLines: preserveEmptyLinesEl.checked
+      };
+      
+      // Undo履歴に保存
+      if (!state.lyricsHistory) state.lyricsHistory = [];
+      state.lyricsHistory.push(originalLyrics);
+      if (state.lyricsHistory.length > 10) state.lyricsHistory.shift();
+      
+      // 歌詞を更新
+      const reducedLyrics = reduceLines(originalLyrics, options);
+      const lyricsInput = document.getElementById('lyrics-input');
+      if (lyricsInput) {
+        lyricsInput.value = reducedLyrics;
+        state.lyrics = reducedLyrics;
+      }
+      
+      // ページを再描画
+      renderPage(ctx);
+      persist();
+      
+      // モーダルを閉じる
+      closeModal();
+    }
+    
+    // モーダルを閉じる関数
+    function closeModal() {
+      modal.style.display = 'none';
+      
+      // イベントリスナーを削除
+      japaneseCharLimitEl?.removeEventListener('input', updatePreview);
+      englishCharLimitEl?.removeEventListener('input', updatePreview);
+      preserveEmptyLinesEl?.removeEventListener('change', updatePreview);
+      applyBtn?.removeEventListener('click', applyChanges);
+      cancelBtn?.removeEventListener('click', closeModal);
+      closeBtn?.removeEventListener('click', closeModal);
+    }
+    
+    // イベントリスナーを設定
+    applyBtn?.addEventListener('click', applyChanges);
+    cancelBtn?.addEventListener('click', closeModal);
+    closeBtn?.addEventListener('click', closeModal);
+    
+    // Escキーで閉じる
+    function handleKeydown(e) {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        closeModal();
+        document.removeEventListener('keydown', handleKeydown);
+      }
+    }
+    document.addEventListener('keydown', handleKeydown);
+    
+    // モーダルを表示
+    modal.style.display = 'flex';
+    
+    // フォーカスを適用ボタンに設定
+    setTimeout(() => applyBtn?.focus(), 100);
+  }
 
   // ヘルプ機能の設定
   setupHelpModal(ctx);
@@ -695,6 +832,3 @@ function setupHelpModal(_ctx) {
     switchTab(helpTabs[0]);
   }
 }
-
-
-

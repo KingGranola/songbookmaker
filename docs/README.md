@@ -153,6 +153,9 @@ songbookmaker/
 │   ├── SPECIFICATION.md    # 技術仕様書
 │   ├── CHORD_RULES.md      # コード理論ルール
 │   ├── USER_GUIDE.md       # カスタマイズガイド
+│   ├── DESIGN_SYSTEM.md    # デザインシステム
+│   ├── COMPONENT_CATALOG.md # コンポーネントカタログ
+│   ├── DESIGN_QUICK_REFERENCE.md # デザインクイックリファレンス
 │   └── CHANGELOG.md        # 変更履歴
 │
 └── 🔧 開発用

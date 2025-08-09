@@ -56,10 +56,7 @@
             <span>アーティスト</span>
             <input id="artist-input" type="text" placeholder="アーティスト名" aria-label="アーティスト名" aria-required="true" />
           </label>
-          <label class="field">
-            <span>作曲者</span>
-            <input id="composer-input" type="text" placeholder="作曲者名" aria-label="作曲者名" />
-          </label>
+
         </div>
         <label for="lyrics-input" class="visually-hidden">歌詞入力</label>
         <textarea 
@@ -142,6 +139,7 @@
             <button id="btn-set-custom">選択中コードに設定</button>
             <button id="btn-sep" class="chip" title="区切り線">｜</button>
             <button id="btn-eraser" class="danger ghost" style="display: none;">消しゴム</button>
+            <button id="btn-section-eraser" class="danger ghost" style="display: none;">セクション削除</button>
             <button id="btn-edit-mode" class="ghost" title="編集モード切り替え" style="display: none;">編集モード</button>
           </div>
 
@@ -162,7 +160,7 @@
             </div>
             <aside class="right-controls">
               <div class="ctrl-title">表示設定</div>
-              <label class="field"><span>歌詞フォント</span>
+              <label class="field"><span>フォント（歌詞・タイトル・アーティスト共通）</span>
                 <select id="lyrics-ff">
                   <option value="sans" selected>ゴシック</option>
                   <option value="serif">明朝</option>
@@ -655,6 +653,50 @@
         <footer class="modal-footer">
           <p>💡 <strong>ヒント:</strong> F1キーでいつでもこのヘルプを表示できます</p>
         </footer>
+      </div>
+    </div>
+
+    <!-- 行削減プレビューモーダル -->
+    <div id="reduce-lines-modal" class="modal-overlay" style="display: none;">
+      <div class="reduce-lines-modal">
+        <div class="modal-header">
+          <h2>行削減プレビュー</h2>
+          <button id="reduce-lines-close" class="modal-close" aria-label="閉じる">×</button>
+        </div>
+        
+        <div class="modal-content">
+          <div class="preview-comparison">
+            <div class="preview-section">
+              <h3>変更前</h3>
+              <div id="reduce-lines-before" class="lyrics-preview"></div>
+            </div>
+            <div class="preview-section">
+              <h3>変更後</h3>
+              <div id="reduce-lines-after" class="lyrics-preview"></div>
+            </div>
+          </div>
+          
+          <div class="reduce-lines-settings">
+            <h3>設定</h3>
+            <label class="field">
+              <span>日本語行の文字数制限</span>
+              <input id="japanese-char-limit" type="number" min="15" max="50" value="25" />
+            </label>
+            <label class="field">
+              <span>英語行の文字数制限</span>
+              <input id="english-char-limit" type="number" min="30" max="100" value="50" />
+            </label>
+            <label class="field">
+              <input id="preserve-empty-lines" type="checkbox" checked />
+              <span>空行を保持する</span>
+            </label>
+          </div>
+        </div>
+        
+        <div class="modal-footer">
+          <button id="reduce-lines-apply" class="primary">適用</button>
+          <button id="reduce-lines-cancel" class="ghost">キャンセル</button>
+        </div>
       </div>
     </div>
   </body>

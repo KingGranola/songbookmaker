@@ -173,6 +173,9 @@ export class KeyboardShortcutManager {
   }
 
   cancelCurrentAction() {
+    // 編集モード・消しゴムモードを解除
+    this.exitEditAndEraserModes();
+    
     if (this.ctx.setCurrentChord) {
       this.ctx.setCurrentChord(null);
     }
@@ -181,6 +184,35 @@ export class KeyboardShortcutManager {
     if (activeElement && activeElement.blur) {
       activeElement.blur();
     }
+  }
+
+  /**
+   * 編集モード・消しゴムモードを解除してA4プレビューの明るさを元に戻す
+   */
+  exitEditAndEraserModes() {
+    const pageContent = document.getElementById('page-content');
+    if (!pageContent) return;
+
+    // 編集モード・消しゴムモードのクラスを削除（明るさを元に戻す）
+    pageContent.classList.remove('edit-mode', 'eraser-mode');
+    
+    // 編集モードボタンの状態をリセット
+    const btnEditMode = document.getElementById('btn-edit-mode');
+    if (btnEditMode) {
+      btnEditMode.textContent = '編集モード';
+      btnEditMode.classList.remove('primary');
+      btnEditMode.classList.add('ghost');
+    }
+    
+    // 編集モード状態をリセット
+    window.isEditModeActive = false;
+    
+    // コントロールボタンの状態もリセット
+    const btnEditModeControls = document.getElementById('btn-edit-mode-controls');
+    const btnEraserControls = document.getElementById('btn-eraser-controls');
+    
+    if (btnEditModeControls) btnEditModeControls.classList.remove('active');
+    if (btnEraserControls) btnEraserControls.classList.remove('active');
   }
 
   insertSeparator() {
