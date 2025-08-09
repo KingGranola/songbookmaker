@@ -1,4 +1,5 @@
 // state.js: アプリ全体の状態、定数、保存/復元、共通ユーティリティ
+// import { StateManager } from './state-manager.js'; // 将来の使用のため
 
 export function setupState() {
   const state = {
@@ -105,7 +106,9 @@ export function setupState() {
         batchQueue: state.batchQueue,
       };
       localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-    } catch {}
+    } catch {
+      // エラーを無視
+    }
   }
 
   function restore() {
@@ -136,7 +139,9 @@ export function setupState() {
       if (el.letterSpacing) el.letterSpacing.value = String(state.letterSpacing);
       if (el.chordOffset) el.chordOffset.value = String(state.chordOffsetPx);
       if (el.lineOffset) el.lineOffset.value = String(state.lineOffsetPx);
-    } catch {}
+    } catch {
+      // エラーを無視
+    }
   }
 
   function normalizeRoot(root) {

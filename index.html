@@ -3,7 +3,21 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Songbook Maker</title>
+    <meta name="description" content="弾き語り向け A4サイズの歌詞＋コードネームが一体になった歌本メーカー" />
+    <meta name="keywords" content="楽譜, コード, 歌詞, 弾き語り, ギター, ピアノ" />
+    <title>Songbook Maker - 歌本メーカー</title>
+    
+    <!-- PWA マニフェスト -->
+    <link rel="manifest" href="./manifest.json" />
+    <meta name="theme-color" content="#3b82f6" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Songbook Maker" />
+    
+    <!-- アイコン -->
+    <link rel="icon" type="image/svg+xml" href="./icons/favicon.svg" />
+    <link rel="alternate icon" href="./icons/favicon.svg" />
+    <link rel="mask-icon" href="./icons/favicon.svg" color="#3b82f6" />
     <!-- 分割されたCSSファイルを読み込み -->
     <link rel="stylesheet" href="./styles/base.css" />
     <link rel="stylesheet" href="./styles/header.css" />
@@ -14,30 +28,54 @@
     <link rel="stylesheet" href="./styles/dialog.css" />
     <link rel="stylesheet" href="./styles/print.css" />
     <link rel="stylesheet" href="./styles/responsive.css" />
+    <link rel="stylesheet" href="./styles/mobile.css" />
+    <link rel="stylesheet" href="./styles/accessibility.css" />
   </head>
   <body>
-    <header class="app-header">
+    <header class="app-header" role="banner">
       <div class="brand">
-        SONGBOOK MAKER
-        <span class="version-badge" title="バージョン 0.3">v0.3</span>
+        <h1>SONGBOOK MAKER</h1>
+        <span class="version-badge" title="バージョン 0.5" aria-label="バージョン 0.5">v0.5</span>
       </div>
-      <div class="toolbar">
-        <button id="btn-print" class="primary">PDF書き出し</button>
-        <button id="btn-save" class="ghost">保存</button>
-        <button id="btn-load" class="ghost">読み込み</button>
-        <input id="file-input" type="file" accept="application/json" style="display:none" />
+      <div class="toolbar" role="toolbar" aria-label="メインツールバー">
+        <button id="btn-print" class="primary" aria-label="PDF書き出し" title="現在の楽譜をPDFとして書き出します (Ctrl+P)">
+          <span aria-hidden="true">📄</span> PDF書き出し
+        </button>
+        <button id="btn-save" class="ghost" aria-label="プロジェクトを保存" title="現在の作業をJSONファイルとして保存します (Ctrl+S)">
+          <span aria-hidden="true">💾</span> 保存
+        </button>
+        <button id="btn-load" class="ghost" aria-label="プロジェクトを読み込み" title="保存されたJSONファイルを読み込みます (Ctrl+O)">
+          <span aria-hidden="true">📁</span> 読み込み
+        </button>
+        <input id="file-input" type="file" accept="application/json" style="display:none" aria-label="ファイル選択" />
       </div>
     </header>
 
-    <main class="app-main">
-      <section class="left-panel">
-        <h2>Editor</h2>
-        <div class="meta-row">
-          <label class="field"><span>タイトル</span><input id="title-input" type="text" placeholder="曲名" /></label>
-          <label class="field"><span>アーティスト</span><input id="artist-input" type="text" placeholder="アーティスト名" /></label>
-          <label class="field"><span>作曲者</span><input id="composer-input" type="text" placeholder="作曲者名" /></label>
+    <main class="app-main" role="main">
+      <section class="left-panel" aria-labelledby="editor-heading">
+        <h2 id="editor-heading">Editor</h2>
+        <div class="meta-row" role="group" aria-label="楽曲情報">
+          <label class="field">
+            <span>タイトル</span>
+            <input id="title-input" type="text" placeholder="曲名" aria-label="楽曲タイトル" aria-required="true" />
+          </label>
+          <label class="field">
+            <span>アーティスト</span>
+            <input id="artist-input" type="text" placeholder="アーティスト名" aria-label="アーティスト名" aria-required="true" />
+          </label>
+          <label class="field">
+            <span>作曲者</span>
+            <input id="composer-input" type="text" placeholder="作曲者名" aria-label="作曲者名" />
+          </label>
         </div>
-        <textarea id="lyrics-input" placeholder="ここに歌詞を貼り付け/入力してください。改行で行が分割されます。"></textarea>
+        <label for="lyrics-input" class="visually-hidden">歌詞入力</label>
+        <textarea 
+          id="lyrics-input" 
+          placeholder="ここに歌詞を貼り付け/入力してください。改行で行が分割されます。" 
+          aria-label="歌詞テキスト"
+          aria-describedby="lyrics-help"
+        ></textarea>
+        <div id="lyrics-help" class="visually-hidden">歌詞を入力してください。改行で行が分割されます。</div>
         <div class="helpers">
           <button id="btn-clear" class="ghost">歌詞をクリア</button>
           <button id="btn-reduce-lines" class="ghost">行を減らす</button>
@@ -179,6 +217,40 @@
     </footer>
 
     <script type="module" src="./main.js"></script>
+    
+    <!-- Service Worker 登録 -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./sw.js')
+            .then((registration) => {
+              console.log('SW registered: ', registration);
+              
+              // アップデート検出
+              registration.addEventListener('updatefound', () => {
+                const newWorker = registration.installing;
+                newWorker.addEventListener('statechange', () => {
+                  if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                    // 新しいバージョンが利用可能
+                    if (confirm('新しいバージョンが利用可能です。更新しますか？')) {
+                      newWorker.postMessage({ type: 'SKIP_WAITING' });
+                      window.location.reload();
+                    }
+                  }
+                });
+              });
+            })
+            .catch((registrationError) => {
+              console.log('SW registration failed: ', registrationError);
+            });
+        });
+
+        // Service Worker の制御変更を監視
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+          window.location.reload();
+        });
+      }
+    </script>
   </body>
   </html>
 

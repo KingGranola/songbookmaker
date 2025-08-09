@@ -61,6 +61,7 @@ export function applyChordStyles(ctx) {
   });
 }
 
+// eslint-disable-next-line no-unused-vars
 function addToHistory(ctx, chord) {
   const { state } = ctx;
   
@@ -171,7 +172,7 @@ function editChord(chordEl, ctx) {
 
 // コード配置後の即座編集機能
 function placeChordAndEdit(chordsRow, offsetX, chord, ctx) {
-  const { state } = ctx;
+  const { state } = ctx; // eslint-disable-line no-unused-vars
   
   let chordAdded = false;
   let chordEl = null;
@@ -218,8 +219,9 @@ function placeChordAndEdit(chordsRow, offsetX, chord, ctx) {
 }
 
 // セクション配置機能
+// eslint-disable-next-line no-unused-vars
 function placeSection(chordsRow, offsetX, sectionName, ctx) {
-  const { state } = ctx;
+  const { state } = ctx; // eslint-disable-line no-unused-vars
   
   const sectionEl = document.createElement('span');
   sectionEl.className = 'section-inline';
@@ -279,7 +281,7 @@ function placeSection(chordsRow, offsetX, sectionName, ctx) {
 
 // ページ全体にセクション配置機能
 function placeSectionOnPage(pageContent, offsetX, offsetY, sectionName, ctx) {
-  const { state } = ctx;
+  const { state } = ctx; // eslint-disable-line no-unused-vars
   
   const sectionEl = document.createElement('span');
   sectionEl.className = 'section-inline';

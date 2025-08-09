@@ -1,0 +1,399 @@
+/* ========================================
+   Mobile Optimization Styles
+   ======================================== */
+
+/* タッチ操作最適化 */
+@media (max-width: 768px) {
+  /* 基本レイアウト調整 */
+  .app-main {
+    flex-direction: column;
+    height: auto;
+    min-height: 100vh;
+  }
+
+  .left-panel,
+  .right-panel {
+    width: 100%;
+    max-width: none;
+    min-height: auto;
+  }
+
+  .left-panel {
+    order: 1;
+    padding: 16px;
+  }
+
+  .right-panel {
+    order: 2;
+    padding: 16px;
+  }
+
+  /* ヘッダー調整 */
+  .app-header {
+    flex-wrap: wrap;
+    padding: 12px 16px;
+    gap: 12px;
+  }
+
+  .brand h1 {
+    font-size: 18px;
+  }
+
+  .toolbar {
+    width: 100%;
+    justify-content: space-around;
+  }
+
+  .toolbar button {
+    font-size: 14px;
+    padding: 8px 12px;
+    min-height: 44px; /* タッチターゲットサイズ */
+  }
+
+  /* メタ情報入力フィールド */
+  .meta-row {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .meta-row .field {
+    width: 100%;
+  }
+
+  /* 歌詞入力エリア */
+  #lyrics-input {
+    min-height: 200px;
+    font-size: 16px; /* iOS でズーム防止 */
+  }
+
+  /* ヘルパーボタン */
+  .helpers {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .helpers button {
+    min-height: 44px;
+    padding: 10px 16px;
+  }
+
+  /* パレット調整 */
+  .palette {
+    margin-top: 20px;
+  }
+
+  .palette-row {
+    margin-bottom: 16px;
+  }
+
+  .chip-row {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .chip,
+  .section-chip {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 8px 12px;
+    font-size: 14px;
+  }
+
+  /* キー選択エリア */
+  .field select,
+  .field input[type="range"] {
+    min-height: 44px;
+    font-size: 16px;
+  }
+
+  /* カスタムコード入力 */
+  #custom-chord {
+    min-height: 44px;
+    font-size: 16px;
+  }
+
+  /* プレビューエリア */
+  .right-content {
+    flex-direction: column;
+  }
+
+  .preview-wrap {
+    order: 2;
+    margin-top: 16px;
+  }
+
+  .right-sidebar {
+    order: 1;
+    width: 100%;
+    max-width: none;
+    margin-right: 0;
+    margin-bottom: 16px;
+  }
+
+  /* A4プレビュー調整 */
+  .page {
+    transform: scale(0.6);
+    transform-origin: top left;
+    margin-bottom: -150px; /* スケール調整 */
+  }
+
+  /* 現在のコード表示 */
+  .current-chord-display {
+    margin-bottom: 16px;
+  }
+
+  .current-chord-value {
+    font-size: 18px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* 表示設定コントロール */
+  .right-controls .field {
+    margin-bottom: 12px;
+  }
+
+  .right-controls label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 44px;
+  }
+
+  .right-controls input[type="range"] {
+    width: 120px;
+    min-height: 44px;
+  }
+
+  .right-controls select {
+    min-width: 120px;
+    min-height: 44px;
+  }
+
+  .right-controls input[type="color"] {
+    width: 60px;
+    height: 44px;
+    border-radius: 8px;
+  }
+
+  /* モードボタン */
+  #btn-eraser-controls,
+  #btn-edit-mode-controls {
+    min-height: 44px;
+    margin-bottom: 8px;
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+}
+
+/* 超小画面（iPhone SE等）対応 */
+@media (max-width: 375px) {
+  .toolbar {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .toolbar button {
+    width: 100%;
+  }
+
+  .chip-row {
+    justify-content: center;
+  }
+
+  .page {
+    transform: scale(0.5);
+    margin-bottom: -180px;
+  }
+
+  .right-controls input[type="range"] {
+    width: 100px;
+  }
+}
+
+/* タッチデバイス専用スタイル */
+@media (pointer: coarse) {
+  /* コード配置エリアのタッチ最適化 */
+  .chords-row {
+    min-height: 50px;
+    padding: 8px 0;
+  }
+
+  .chord {
+    min-width: 40px;
+    min-height: 40px;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .chord:hover {
+    transform: scale(1.1);
+    z-index: 10;
+  }
+
+  /* ドラッグ操作の改善 */
+  .chord.dragging {
+    transform: scale(1.2);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    z-index: 100;
+  }
+
+  /* プレビュー表示の改善 */
+  .ghost-preview {
+    opacity: 0.8;
+    transform: scale(1.1);
+    border: 2px dashed var(--primary);
+  }
+
+  /* セクション要素のタッチ最適化 */
+  .section-inline {
+    min-height: 40px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* スクロール改善 */
+  .preview-wrap {
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* ピンチズーム対応 */
+  .page-content {
+    touch-action: pan-x pan-y pinch-zoom;
+  }
+}
+
+/* ホバー不可能なデバイス（主にタッチデバイス）*/
+@media (hover: none) {
+  /* ホバー効果を無効化し、タップ効果に置き換え */
+  .chip:hover,
+  .section-chip:hover,
+  button:hover {
+    background: var(--muted-bg);
+    transform: none;
+  }
+
+  .chip:active,
+  .section-chip:active,
+  button:active {
+    background: var(--primary);
+    color: white;
+    transform: scale(0.95);
+  }
+
+  /* ツールチップをタップ表示に変更 */
+  [title]:hover::after,
+  [aria-label]:hover::after {
+    display: none;
+  }
+
+  /* フォーカス表示をタッチフレンドリーに */
+  *:focus {
+    outline: 3px solid var(--primary);
+    outline-offset: 2px;
+  }
+}
+
+/* 横向き対応 */
+@media (max-width: 768px) and (orientation: landscape) {
+  .app-main {
+    flex-direction: row;
+    height: 100vh;
+  }
+
+  .left-panel {
+    width: 40%;
+    order: 1;
+    overflow-y: auto;
+  }
+
+  .right-panel {
+    width: 60%;
+    order: 2;
+  }
+
+  .page {
+    transform: scale(0.7);
+    margin-bottom: -100px;
+  }
+}
+
+/* iOS Safari の安全領域対応 */
+@supports (padding: max(0px)) {
+  .app-header {
+    padding-top: max(12px, env(safe-area-inset-top));
+    padding-left: max(16px, env(safe-area-inset-left));
+    padding-right: max(16px, env(safe-area-inset-right));
+  }
+
+  .left-panel,
+  .right-panel {
+    padding-left: max(16px, env(safe-area-inset-left));
+    padding-right: max(16px, env(safe-area-inset-right));
+  }
+
+  .app-footer {
+    padding-bottom: max(12px, env(safe-area-inset-bottom));
+  }
+}
+
+/* PWA対応スタイル */
+@media (display-mode: standalone) {
+  .app-header {
+    padding-top: max(12px, env(safe-area-inset-top));
+  }
+
+  /* ステータスバー分の余白 */
+  body {
+    padding-top: env(safe-area-inset-top);
+  }
+}
+
+/* デバイス回転時のアニメーション */
+@media (max-width: 768px) {
+  .app-main {
+    transition: flex-direction 0.3s ease;
+  }
+
+  .left-panel,
+  .right-panel {
+    transition: width 0.3s ease, order 0.3s ease;
+  }
+}
+
+/* タッチジェスチャー用の追加スタイル */
+.gesture-area {
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+/* スワイプ操作のフィードバック */
+.swipe-left,
+.swipe-right {
+  transition: transform 0.2s ease;
+}
+
+.swipe-left {
+  transform: translateX(-10px);
+}
+
+.swipe-right {
+  transform: translateX(10px);
+}
