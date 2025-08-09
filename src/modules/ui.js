@@ -378,6 +378,37 @@ export function setupUI(ctx) {
     }
   });
 
+  // セクション専用消しゴムボタン
+  el.btnSectionEraser?.addEventListener('click', ()=> {
+    const pageContent = document.getElementById('page-content');
+    const isCurrentlySectionEraserMode = pageContent?.classList.contains('section-eraser-mode');
+    
+    if (isCurrentlySectionEraserMode) {
+      // セクション消しゴムモード解除
+      setCurrentChord(null);
+      if (pageContent) {
+        pageContent.classList.remove('section-eraser-mode');
+      }
+      el.btnSectionEraser.classList.remove('active');
+    } else {
+      // セクション消しゴムモード開始
+      setCurrentChord('__SECTION_ERASE__');
+      
+      // 他のモードを解除
+      if (pageContent) {
+        pageContent.classList.remove('eraser-mode', 'edit-mode');
+        pageContent.classList.add('section-eraser-mode');
+      }
+      
+      // ボタン状態を更新
+      if (btnEraserPage) btnEraserPage.classList.remove('active');
+      if (btnEditModePage) btnEditModePage.classList.remove('active');
+      if (btnEraserControls) btnEraserControls.classList.remove('active');
+      if (btnEditModeControls) btnEditModeControls.classList.remove('active');
+      el.btnSectionEraser.classList.add('active');
+    }
+  });
+
   // セクションチップのイベントハンドラー
   document.addEventListener('click', (ev) => {
     const sectionChip = ev.target.closest('.section-chip');

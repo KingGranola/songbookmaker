@@ -1,6 +1,6 @@
 {
   "name": "songbook-maker",
-  "version": "0.5.0",
+  "version": "0.7.0",
   "description": "弾き語り向け A4サイズの歌詞＋コードネームが一体になった歌本メーカー",
   "type": "module",
   "main": "main.js",

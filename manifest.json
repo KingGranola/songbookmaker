@@ -2,7 +2,7 @@
   "name": "Songbook Maker",
   "short_name": "Songbook",
   "description": "弾き語り向け A4サイズの歌詞＋コードネームが一体になった歌本メーカー",
-  "version": "0.3.1",
+  "version": "0.7.0",
   "start_url": "/",
   "display": "standalone",
   "orientation": "any",

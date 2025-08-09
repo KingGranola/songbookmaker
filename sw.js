@@ -1,6 +1,6 @@
 // Service Worker for Songbook Maker
-const STATIC_CACHE = 'songbook-static-v0.5.2';
-const DYNAMIC_CACHE = 'songbook-dynamic-v0.5.2';
+const STATIC_CACHE = 'songbook-static-v0.7.0';
+const DYNAMIC_CACHE = 'songbook-dynamic-v0.7.0';
 
 // キャッシュするリソース - 新しいファイル構造対応
 const STATIC_ASSETS = [
