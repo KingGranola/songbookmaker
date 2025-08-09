@@ -1,44 +1,51 @@
-# SONGBOOK MAKER 技術仕様書 (ver0.5.0)
+# SONGBOOK MAKER NEXT 技術仕様書 (ver0.6.0)
 
 ## 📋 概要
 
-弾き語り向けのA4サイズ歌詞＋コードネーム一体型歌本メーカー。モダンなWeb技術を使用したPWA（Progressive Web App）として設計されています。
+弾き語り向けのA4サイズ歌詞＋コードネーム一体型歌本メーカー。Next.js + React + TypeScriptで開発されたモダンなPWA（Progressive Web App）として設計されています。
 
 ## 🏗️ アーキテクチャ
 
 ### システム構成
 
 ```
-Frontend (Client)
-├── UI Layer (HTML/CSS)
-├── Application Layer (JavaScript ES2020+)
-├── State Management (Reactive Pattern)
+Frontend (Next.js App)
+├── UI Layer (React Components + TailwindCSS)
+├── Application Layer (TypeScript + React Hooks)
+├── State Management (Zustand Store)
 ├── Service Worker (PWA)
-└── Local Storage (IndexedDB/localStorage)
+└── Local Storage (localStorage + IndexedDB)
 ```
 
 ### 設計原則
 
-- **モジュラー設計**: 機能ごとの明確な責任分離
-- **リアクティブ状態管理**: 状態変更の自動反映
-- **プログレッシブエンハンスメント**: 基本機能からの段階的向上
-- **アクセシビリティファースト**: 包括的なユーザー体験
+- **コンポーネントベース設計**: React コンポーネントによる UI 分離
+- **型安全性**: TypeScript による静的型チェック
+- **リアクティブ状態管理**: Zustand による軽量状態管理
+- **アクセシビリティファースト**: Radix UI による包括的なユーザー体験
 
 ## 🛠️ 技術スタック
 
 ### フロントエンド
 
-- **HTML5**: セマンティックマークアップ
-- **CSS3**: Grid/Flexbox、CSS Variables、Media Queries
-- **JavaScript ES2020+**: モジュール、Promise、Proxy、Classes
-- **Web APIs**: Service Worker、IndexedDB、Intersection Observer
+- **Next.js 15**: React フレームワーク（App Router使用）
+- **React 19**: UIライブラリ（Concurrent Features対応）
+- **TypeScript**: 型安全な開発環境
+- **TailwindCSS 4**: ユーティリティファーストCSS
+- **Zustand**: 軽量状態管理ライブラリ
+
+### UI・UX
+
+- **Radix UI**: アクセシブルなUIコンポーネント
+- **Lucide React**: モダンなアイコンセット
+- **Framer Motion**: アニメーション・モーション
+- **React DnD**: ドラッグ&ドロップ機能
 
 ### 開発環境
 
-- **Vite**: 高速ビルドツール・開発サーバー
-- **Jest**: テストフレームワーク
+- **Turbopack**: 高速ビルドツール（Next.js 15統合）
 - **ESLint**: 静的解析・コード品質
-- **Prettier**: コードフォーマッター
+- **PostCSS**: CSS処理・最適化
 
 ### PWA機能
 
@@ -46,189 +53,232 @@ Frontend (Client)
 - **Web App Manifest**: インストール可能化
 - **Background Sync**: データ同期
 
-## 📦 モジュール設計
+## 📦 コンポーネント設計
 
-### コアモジュール
+### コアコンポーネント
 
-#### `main.js` - エントリーポイント
+#### `app/page.tsx` - エントリーポイント
 
-```javascript
-import { initApp } from './modules/app.js';
-initApp();
-```
+```typescript
+import { SongbookApp } from '@/components/songbook-app';
 
-#### `modules/bootstrap.js` - アプリケーション初期化
-
-```javascript
-export function initApp() {
-  // コア機能の初期化
-  // 拡張機能の読み込み
-  // イベントリスナー設定
+export default function Home() {
+  return <SongbookApp />;
 }
 ```
 
-#### `modules/state.js` - 基本状態管理
+#### `components/songbook-app.tsx` - メインアプリケーション
 
-```javascript
-export function setupState() {
-  return {
-    state: {
-      /* アプリケーション状態 */
-    },
-    el: {
-      /* DOM要素参照 */
-    },
-    persist: () => {
-      /* 永続化 */
-    },
-    // ユーティリティ関数
-  };
+```typescript
+'use client';
+
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
+import { useAppStore } from '@/stores/app-store';
+
+export function SongbookApp() {
+  const { loadFromStorage } = useAppStore();
+  // アプリケーション初期化・レンダリング
 }
 ```
 
-#### `modules/state-manager.js` - リアクティブ状態管理
+#### `stores/app-store.ts` - Zustand状態管理
 
-```javascript
-export class StateManager {
-  constructor(initialState) {
-    this.state = new Proxy(initialState, {
-      set: this.notifyListeners.bind(this),
-    });
-  }
+```typescript
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
-  subscribe(listener) {
-    /* 変更監視 */
-  }
-  setState(updates) {
-    /* 状態更新 */
-  }
+interface AppState {
+  // 楽曲情報
+  title: string;
+  artist: string;
+  lyrics: string;
+  // 設定情報
+  key: string;
+  mode: 'major' | 'minor';
+  // アクション
+  updateSong: (updates: Partial<SongInfo>) => void;
+  loadFromStorage: () => void;
 }
+
+export const useAppStore = create<AppState>()(
+  persist(
+    (set, get) => ({
+      // 状態とアクション定義
+    }),
+    { name: 'songbook-storage' }
+  )
+);
+```
+
+#### `components/ui/` - 再利用可能UIコンポーネント
+
+```typescript
+// Radix UI ベースのコンポーネント
+// button.tsx, input.tsx, select.tsx, etc.
 ```
 
 ### UI・レンダリング
 
-#### `modules/ui.js` - UI制御
+#### `components/left-panel.tsx` - 左パネル（入力エリア）
 
-- イベントハンドラー管理
-- フォーム要素の状態同期
-- 履歴・プリセット表示
-- 編集モード切り替え
+- 楽曲情報入力フォーム
+- 歌詞テキストエリア
+- プリセットチューダ選択
+- 編集履歴管理
 
-#### `modules/placement.js` - コード配置
+#### `components/preview-area.tsx` - プレビューエリア
 
-- A4プレビューレンダリング
-- コード配置・ドラッグ&ドロップ
-- リアルタイムプレビュー
-- セクション管理
+- A4サイズプレビューレンダリング
+- コード配置・ドラッグ&ドロップ（React DnD使用）
+- リアルタイムプレビュー更新
+- 印刷レイアウト表示
 
-#### `modules/presets.js` - プリセット生成
+#### `components/right-panel.tsx` - 右パネル（設定エリア）
+
+- フォント・色・サイズ設定
+- レイアウト調整
+- プリセット設定
+- エクスポート機能
+
+#### `lib/presets.ts` - プリセット生成
 
 - ダイアトニックコード計算
-- セカンダリードミナント
-- サブドミナントマイナー
-- キー変換・移調
+- セカンダリードミナント生成
+- サブドミナントマイナー対応
+- キー変換・移調処理
 
 ### 高度な機能
 
-#### `modules/keyboard-shortcuts.js` - キーボード操作
+#### キーボードショートカット
 
-```javascript
-export class KeyboardShortcutManager {
-  constructor(ctx) {
-    this.shortcuts = new Map();
-    this.setupDefaultShortcuts();
-  }
+```typescript
+// useEffect フックでキーボードイベント処理
+useEffect(() => {
+  const handleKeyDown = (event: KeyboardEvent) => {
+    if (event.ctrlKey || event.metaKey) {
+      switch (event.key) {
+        case 's':
+          event.preventDefault();
+          saveProject();
+          break;
+        case 'z':
+          event.preventDefault();
+          undo();
+          break;
+      }
+    }
+  };
+  
+  window.addEventListener('keydown', handleKeyDown);
+  return () => window.removeEventListener('keydown', handleKeyDown);
+}, []);
+```
 
-  addShortcut(combination, callback) {
-    /* ショートカット追加 */
-  }
-  handleKeyDown(event) {
-    /* キー処理 */
-  }
+#### タッチジェスチャー（React DnD）
+
+```typescript
+import { useDrag, useDrop } from 'react-dnd';
+
+function ChordComponent({ chord }: { chord: ChordData }) {
+  const [{ isDragging }, drag] = useDrag(() => ({
+    type: 'chord',
+    item: { id: chord.id },
+    collect: (monitor) => ({
+      isDragging: monitor.isDragging(),
+    }),
+  }));
+
+  return <div ref={drag} className={isDragging ? 'opacity-50' : ''}>{chord.name}</div>;
 }
 ```
 
-#### `modules/touch-gestures.js` - タッチジェスチャー
+#### パフォーマンス最適化（React Hooks）
 
-```javascript
-export class TouchGestureManager {
-  constructor(ctx) {
-    this.setupGestureListeners();
-  }
+```typescript
+import { useMemo, useCallback, useDebounce } from 'react';
 
-  handleSwipe(direction) {
-    /* スワイプ処理 */
-  }
-  handlePinch(scale) {
-    /* ピンチズーム */
-  }
-}
-```
+// メモ化
+const diatonicChords = useMemo(() => 
+  generateDiatonicChords(key, mode), [key, mode]
+);
 
-#### `modules/performance.js` - パフォーマンス最適化
+// コールバック最適化
+const updateLyrics = useCallback(
+  (newLyrics: string) => setLyrics(newLyrics),
+  []
+);
 
-```javascript
-export class PerformanceOptimizer {
-  debounce(func, delay) {
-    /* デバウンス */
-  }
-  throttle(func, delay) {
-    /* スロットル */
-  }
-  memoize(func) {
-    /* メモ化 */
-  }
-  batchUpdate(updateFn) {
-    /* バッチ更新 */
-  }
-}
+// デバウンス処理
+const debouncedSearch = useDebounce(searchTerm, 300);
 ```
 
 ## 🎨 スタイルシート設計
 
-### CSS アーキテクチャ
+### TailwindCSS アーキテクチャ
 
-- **BEM命名規則**: `.block__element--modifier`
-- **CSS Variables**: 色・サイズの一元管理
-- **モバイルファースト**: レスポンシブデザイン
-- **Progressive Enhancement**: 段階的機能向上
+- **ユーティリティファースト**: 事前定義されたクラスによる高速開発
+- **コンポーネント単位**: Reactコンポーネント内でのスタイル管理
+- **デザインシステム**: 一貫したデザイントークン
+- **レスポンシブデザイン**: モバイルファーストアプローチ
 
 ### ファイル構成
 
 ```
-styles/
-├── base.css         # 変数・リセット・基本スタイル
-├── layout.css       # グリッド・レイアウト
-├── header.css       # ヘッダー・ナビゲーション
-├── editor.css       # 左パネル・エディター
-├── preview.css      # 右パネル・プレビュー
-├── buttons.css      # ボタン・インタラクション
-├── dialog.css       # モーダル・ダイアログ
-├── responsive.css   # レスポンシブ調整
-├── mobile.css       # モバイル最適化
-├── accessibility.css # アクセシビリティ対応
-└── print.css        # 印刷専用スタイル
+src/
+├── app/
+│   └── globals.css        # TailwindCSS基本設定・カスタムスタイル
+├── components/
+│   ├── ui/               # Radix UI + TailwindCSSスタイル
+│   │   ├── button.tsx    # ボタンコンポーネント
+│   │   ├── input.tsx     # 入力フィールド
+│   │   └── card.tsx      # カードレイアウト
+│   └── *.tsx             # 各コンポーネントでTailwindクラス使用
+└── styles/               # カスタムCSSが必要な場合
 ```
 
-### CSS Variables
+### TailwindCSS設定
+
+```javascript
+// tailwind.config.ts
+export default {
+  content: ['./src/**/*.{js,ts,jsx,tsx,mdx}'],
+  theme: {
+    extend: {
+      colors: {
+        primary: {
+          50: '#eff6ff',
+          500: '#3b82f6',
+          900: '#1e3a8a',
+        },
+      },
+      fontFamily: {
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+        serif: ['Georgia', 'serif'],
+      },
+    },
+  },
+  plugins: [],
+};
+```
+
+### カスタムCSSクラス
 
 ```css
-:root {
-  /* カラーパレット */
-  --primary: #3b82f6;
-  --primary-light: #60a5fa;
-  --primary-dark: #1e40af;
+/* app/globals.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-  /* タイポグラフィ */
-  --font-sans: system-ui, sans-serif;
-  --font-serif: Georgia, serif;
-
-  /* レイアウト */
-  --spacing-xs: 4px;
-  --spacing-sm: 8px;
-  --spacing-md: 16px;
+@layer components {
+  .card-apple {
+    @apply bg-white/80 backdrop-blur-xl border border-gray-200/50 rounded-2xl shadow-xl;
+  }
+  
+  .music-panel {
+    @apply bg-gray-50/90 backdrop-blur-sm border-r border-gray-200;
+  }
 }
-```
 
 ## 📊 データ構造
 
