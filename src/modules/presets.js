@@ -135,16 +135,18 @@ export function getPresetChords(ctx) {
     }
   }
 
-  // セカンダリードミナント（異名同音対応は後で実装）
+  // セカンダリードミナント（CHORD_RULES.mdに基づく）
   let secondaries = [];
   if (state.mode === 'minor') {
-    const minorTargets = [3,5,7,8,10];
+    // マイナーキーのセカンダリードミナント: V/i, V/iv, V/v, V/♭III, V/♭VI
+    const minorTargets = [0,5,7,3,8]; // i, iv, v, ♭III, ♭VI
     secondaries = minorTargets.map((target) => {
       const root = SEMITONES[(keyIdx + target + 7) % 12];
       return root + '7';
     });
   } else {
-    const majorTargets = [2,4,5,7,9];
+    // メジャーキーのセカンダリードミナント: V/ii, V/iii, V/IV, V/V, V/vi
+    const majorTargets = [2,4,5,7,9]; // ii, iii, IV, V, vi
     secondaries = majorTargets.map((target) => {
       const root = SEMITONES[(keyIdx + target + 7) % 12];
       return root + '7';
@@ -175,18 +177,21 @@ export function getPresetChords(ctx) {
     }
   } else {
     // メジャーキーのサブドミナントマイナー（同主短調から借用）
+    // CHORD_RULES.mdに基づく4つのコード: IVm7, IIm7(♭5), ♭VImaj7, ♭VII7
     const parallelMinorScale = MINOR_ENHARMONIC_SCALES[state.key];
     if (parallelMinorScale) {
-      const iv = parallelMinorScale[3] + 'm';      // IVm (同主短調のiv)
-      const bVII = parallelMinorScale[6];          // bVII (同主短調のbVII)
-      const bII = parallelMinorScale[5] + '△7';    // bII△7 → 実際は♭VI△7
-      subDomMinor = [iv, bVII, bII];
+      const IVm7 = parallelMinorScale[3] + 'm7';     // IVm7 (同主短調のiv)
+      const IIm7b5 = parallelMinorScale[1] + 'm7(b5)'; // IIm7(♭5) (同主短調のii)
+      const bVImaj7 = parallelMinorScale[5] + '△7';   // ♭VImaj7 (同主短調のvi)
+      const bVII7 = parallelMinorScale[6] + '7';      // ♭VII7 (同主短調のbVII)
+      subDomMinor = [IVm7, IIm7b5, bVImaj7, bVII7];
     } else {
       // フォールバック
-      const iv = SEMITONES[(keyIdx + 5) % 12] + 'm';
-      const bVII = SEMITONES[(keyIdx + 10) % 12];
-      const bII = SEMITONES[(keyIdx + 1) % 12] + '△7';
-      subDomMinor = [iv, bVII, bII];
+      const IVm7 = SEMITONES[(keyIdx + 5) % 12] + 'm7';
+      const IIm7b5 = SEMITONES[(keyIdx + 2) % 12] + 'm7(b5)';
+      const bVImaj7 = SEMITONES[(keyIdx + 8) % 12] + '△7';
+      const bVII7 = SEMITONES[(keyIdx + 10) % 12] + '7';
+      subDomMinor = [IVm7, IIm7b5, bVImaj7, bVII7];
     }
   }
 
